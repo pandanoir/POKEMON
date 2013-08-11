@@ -1,5 +1,5 @@
-var testMode=true,
-doesEncount=false,
+var testMode=false,
+doesEncount=true,
 IntervalTime=50;
 window.onload=function(){
 	var d=document;
@@ -7,7 +7,16 @@ window.onload=function(){
 	for(var key in preloadImages){
 		preloadImages[key].src=key+".png";
 	}
-	var charaCanvas=document.getElementById("chara").getContext("2d"),$map=document.getElementById("map"),mapCanvas=$map.getContext("2d"),mapStyle=$map.style;
+	var $map=document.getElementById("map"),mapStyle=$map.style;
+	var Canvas={
+		chara:document.getElementById("chara").getContext("2d"),
+		map:document.getElementById("map").getContext("2d"),
+		menu:document.getElementById("menu").getContext("2d"),
+		width:480,
+		height:480
+	}
+	var menu={width:120,height:140}
+	var mainMenu=[{name:"メニュ"},{name:"レポートに書く"},{name:"設定"},{name:"手持ちのポケモン"},{name:"ゲームに戻る"},{name:"タイトル画面に戻る"}];
 	mapStyle.left=mapStyle.top="0px";
 	var chara={
 		x:0,
@@ -43,24 +52,31 @@ window.onload=function(){
 			switch(key){
 				case "left":
 					if(this.x-1>=0) this.x--;
+					else this.x=this.maxX;
 					break;
 				case "up":
 					if(this.y-1>=0)this.y--;
+					else this.y=this.maxY;
 					break;
 				case "right":
 					if(this.x+1<=this.maxX) this.x++;
+					else this.x=0;
 					break;
 				case "down":
 					if(this.y+1<=this.maxY) this.y++;
+					else this.y=0;
 					break;
 			}
 		}
 	}
 	var screen={
+		//見えている範囲の画面サイズ(ただしスムーズウォーキングのための画面外2マスを含む)とscreenの1マスのサイズ
 		width:17,
 		height:17,
 		chipSize:32
-	};//見えている範囲の画面サイズ(ただしスムーズウォーキングのための画面外2マスを含む)とscreenの1マスのサイズ
+	}
+	screen.realWidth=(screen.width-2)*screen.chipSize;//見えない2マス分を引いた
+	screen.realHeight=(screen.height-2)*screen.chipSize;//見えない2マス分を引いた
 	var world={
 		width:36,
 		height:36
@@ -132,9 +148,18 @@ window.onload=function(){
 				display.hide("title")
 				break;
 			case "menu":
-				display.hide("title")
-				cursorStyle.left=cursor.x+"px";
-				cursorStyle.top=cursor.y*20+30+"px";
+				display.hide("title");
+				Canvas.menu.clearRect(0,0,Canvas.width,Canvas.height);
+				Canvas.menu.rect((screen.realWidth-menu.width)/2,(screen.realHeight-menu.height)/2,menu.width,menu.height);
+				Canvas.menu.fillStyle="rgba(255,255,255,0.7)";
+				Canvas.menu.fill()
+				Canvas.menu.stroke();
+				Canvas.menu.fillStyle="#000";
+				Canvas.menu.fillText(">",cursor.x+(screen.realWidth-menu.width)/2,cursor.y*20+(screen.realHeight-menu.height)/2+20);
+				var cursorWidth=Canvas.menu.measureText("> ").width;
+				for(var i=0,j=mainMenu.length;i<j;i++){
+					Canvas.menu.fillText(mainMenu[i].name,(screen.realWidth-menu.width)/2+cursorWidth,i*20+(screen.realHeight-menu.height)/2);
+				}
 				break;
 		}
 	};
@@ -150,11 +175,11 @@ window.onload=function(){
 			case "sayBox":
 				break;
 			case "title":
-				charaCanvas.fillStyle = "#fff";
-				charaCanvas.fillRect(0,0,480,480)
-				charaCanvas.font = "18px 'MS Pゴシック'";
-				charaCanvas.fillStyle = "#000";
-				charaCanvas.fillText("ポケ☆モン", (480-charaCanvas.measureText("ポケ☆モン").width)/2, 200);
+				Canvas.chara.fillStyle = "#fff";
+				Canvas.chara.fillRect(0,0,Canvas.width,Canvas.height)
+				Canvas.chara.font = "18px 'MS Pゴシック'";
+				Canvas.chara.fillStyle = "#000";
+				Canvas.chara.fillText("ポケ☆モン", (Canvas.width-Canvas.chara.measureText("ポケ☆モン").width)/2, 200);
 				break;
 			case "mes":
 				break;
@@ -168,6 +193,8 @@ window.onload=function(){
 			case "charaScreen":
 				break;
 			case "menu":
+				Canvas.menu.clearRect(0,0,Canvas.width,Canvas.height);
+				cursor.y=0;
 				break;
 			case "sayBox":
 				break;
@@ -178,10 +205,19 @@ window.onload=function(){
 		}
 		return display;
 	}
-	var isKeyPressed={};
+	var isKeyPressed={
+			"space":0,
+			"left":0,
+			"up":0,
+			"right":0,
+			"down":0,
+			"m":0,
+			"e":0,
+			"d":0
+		};
 	var paint=function(data,x,y){
 		//マップ1チップの描写
-		mapCanvas.drawImage(preloadImages[mapImg[data]], x*screen.chipSize, y*screen.chipSize,screen.chipSize,screen.chipSize);
+		Canvas.map.drawImage(preloadImages[mapImg[data]], x*screen.chipSize, y*screen.chipSize,screen.chipSize,screen.chipSize);
 	},
 	move=function(dx,dy,doesMove){
 		//dx=xの移動量 dy=(略)
@@ -210,7 +246,7 @@ window.onload=function(){
 	},
 	mapImageAdd=function(url,x,y){
 		//マップのdiv要素のbackgroundImageのurlをたす。
-		charaCanvas.drawImage(preloadImages[url],x*screen.chipSize,y*screen.chipSize);
+		Canvas.chara.drawImage(preloadImages[url],x*screen.chipSize,y*screen.chipSize);
 	}
 	var switchMode=(function(){
 		var nowScene=situation;
@@ -237,8 +273,8 @@ window.onload=function(){
 				case "menu":
 					situation="menu";
 					cursor.maxX=0;
-					cursor.maxY=d.getElementById("menu").innerHTML.match(/<div[\s\S]*?>/g).length-3;
-					display.show("menu").show("screen").show("charaScreen")
+					cursor.maxY=mainMenu.length-2;
+					display.show("screen").show("charaScreen").show("menu");
 					break;
 				case "talk":
 					display.show("sayBox").show("screen").show("charaScreen")
@@ -274,7 +310,7 @@ window.onload=function(){
 					else if(situation=="map"&&chara.doesWalk<=1&&key=="up") chara.run("back");
 					else if(situation=="map"&&chara.doesWalk<=1&&key=="down") chara.run("front");
 				}
-				if(situation=="menu") cursor.move(key)
+				if(situation=="menu"&&isKeyPressed[key]===1) cursor.move(key)
 				break;
 			case "m":
 				switchMode("menu")
@@ -308,14 +344,14 @@ window.onload=function(){
 		}
 	};
 	window.onkeyup=function(e){
-		if(e.keyCode==32){isKeyPressed["space"]=false;return false;}//space
-		if(e.keyCode==37){isKeyPressed["left"]=false;keyAction("leave left");return false;}//left
-		if(e.keyCode==38){isKeyPressed["up"]=false;keyAction("leave up");return false;}//up
-		if(e.keyCode==39){isKeyPressed["right"]=false;keyAction("leave right");return false;}//right
-		if(e.keyCode==40){isKeyPressed["down"]=false;keyAction("leave down");return false;}//down
-		if(e.keyCode==77){isKeyPressed["m"]=false;return false;}//M key
-		if(e.keyCode==69){isKeyPressed["e"]=false;return false;}//E key
-		if(e.keyCode==68){isKeyPressed["d"]=false;return false;}//E key
+		if(e.keyCode==32){isKeyPressed["space"]=0;return false;}//space
+		if(e.keyCode==37){isKeyPressed["left"]=0;keyAction("leave left");return false;}//left
+		if(e.keyCode==38){isKeyPressed["up"]=0;keyAction("leave up");return false;}//up
+		if(e.keyCode==39){isKeyPressed["right"]=0;keyAction("leave right");return false;}//right
+		if(e.keyCode==40){isKeyPressed["down"]=0;keyAction("leave down");return false;}//down
+		if(e.keyCode==77){isKeyPressed["m"]=0;return false;}//M key
+		if(e.keyCode==69){isKeyPressed["e"]=0;return false;}//E key
+		if(e.keyCode==68){isKeyPressed["d"]=0;return false;}//E key
 	};
 	window.onkeydown=function(e){
 		if(e.keyCode==32){
@@ -325,15 +361,17 @@ window.onload=function(){
 			}
 			return false;
 		}//space
-		if(e.keyCode==37){isKeyPressed["left"]=true;return false;}//left
-		if(e.keyCode==38){isKeyPressed["up"]=true;return false;}//up
-		if(e.keyCode==39){isKeyPressed["right"]=true;return false;}//right
-		if(e.keyCode==40){isKeyPressed["down"]=true;return false;}//down
-		if(e.keyCode==68){isKeyPressed["d"]=true;return false;}//D key
+		if(e.keyCode==37){if(isKeyPressed["left"]===0){isKeyPressed["left"]+=1;}return false;}//left
+		if(e.keyCode==38){if(isKeyPressed["up"]===0){isKeyPressed["up"]+=1;}return false;}//up
+		if(e.keyCode==39){if(isKeyPressed["right"]===0){isKeyPressed["right"]+=1;}return false;}//right
+		if(e.keyCode==40){if(isKeyPressed["down"]===0){isKeyPressed["down"]+=1;}return false;}//down
+		if(e.keyCode==68){if(isKeyPressed["d"]===0){isKeyPressed["d"]+=1;}return false;}//D key
 		if(e.keyCode==77){
-			if(!isKeyPressed["m"]){
-				keyAction("m");
-				isKeyPressed["m"]=true;
+			if(isKeyPressed["m"]===0){
+				if(!isKeyPressed["m"]){
+					keyAction("m");
+					isKeyPressed["m"]=1;
+				}
 			}
 			return false;
 		}//M key
@@ -353,9 +391,12 @@ window.onload=function(){
 		}
 	}},300);
 	setInterval(function(){
-		charaCanvas.clearRect(0,0,480,480);
+		Canvas.chara.clearRect(0,0,Canvas.width,Canvas.height);
 		for(var key in isKeyPressed){
-			if(isKeyPressed[key]&&key!="m"&&key!="space"&&key!="e") keyAction(key);
+			if(isKeyPressed[key]!==0&&key!="m"&&key!="space"&&key!="e"){
+				keyAction(key);
+				isKeyPressed[key]++;
+			}
 		}
 		switch(situation){
 			case "title":

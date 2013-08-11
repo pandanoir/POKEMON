@@ -12,27 +12,29 @@
 			position:relative;
 			width:480px;
 			height:480px;
+			background:#000;
 			overflow:hidden;
 		}
-		#chara{
+		#chara,#menu{
 			position:absolute;
 			top:0;
 			left:0;
+			z-index:5;
 			background-color: transparent;
 		}
 		#map{
 			position:absolute;
 			top:0;
 			left:0;
-			z-index:-1;
 			/*transition: top 0.1s linear 0,left 0.1s linear 0;*/
 		}
 		</style>
 	</head>
 	<body>
 		<div id="screen">
-		<canvas width="480" height="480" id="chara"></canvas>
-		<canvas width="480" height="480" id="map"></canvas>
+			<canvas width="480" height="480" id="menu"></canvas>
+			<canvas width="480" height="480" id="chara"></canvas>
+			<canvas width="480" height="480" id="map"></canvas>
 		</div>
 		遊び方<br>
 		十字キーで移動<br>
