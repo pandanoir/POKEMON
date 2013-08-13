@@ -2,45 +2,98 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<script src="pokemons.js"></script>
-		<script src="pokemon.js" async></script>
+		<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+		<script src="pokemons.js" defer></script>
+		<script src="items.js" defer></script>
+		<script src="onloadEvent.js" defer></script>
+		<script src="display.js" defer></script>
+		<script src="pokemon.js" defer></script>
 		<meta name="description" content="">
 		<meta name="keywords" content="">
 		<title>ポケモン</title>
-		<style>
-		#screen{
-			position:relative;
-			width:480px;
-			height:480px;
-			background:#000;
-			overflow:hidden;
-		}
-		#chara,#menu{
-			position:absolute;
-			top:0;
-			left:0;
-			z-index:5;
-			background-color: transparent;
-		}
-		#map{
-			position:absolute;
-			top:0;
-			left:0;
-			/*transition: top 0.1s linear 0,left 0.1s linear 0;*/
-		}
-		</style>
+		<style>body{-webkit-text-size-adjust: 100%;margin:0;
+		}#screen{
+	position: relative;
+	width: 480px;
+	height: 480px;
+	background: #FFF;
+	overflow: hidden;
+}
+#chara, #menu, #enemy, #battle, #mes{
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 5;
+	background-color: transparent;
+}
+#map{
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+#pad{
+	display:none;
+	-webkit-user-select:none;
+	z-index: 10;
+	height: 80px;
+	width:480px;
+	position: fixed;
+	bottom: 0;
+}
+#pad_left,#pad_up,#pad_down,#pad_right,#pad_space,#pad_D,#pad_M{
+	text-align: center;
+	position: absolute;
+	border: 1px solid #333;
+	background: rgba(0, 0, 0, 0.1);
+	width: 39px;
+	height: 39px;
+}
+#pad_left{
+	top: 40px;
+	left: 0;
+}
+#pad_up{
+	top: 0;
+	left: 40px;
+}
+#pad_down{
+	top: 40px;
+	left: 40px;
+}
+#pad_right{
+	top: 40px;
+	left: 80px;
+}
+#pad_space{
+	top: 40px;
+	left: 180px;
+	width: 120px;
+	height: 40px;
+}
+#pad_D{
+	bottom:0;
+	right:0;
+}
+#pad_M{
+	right:0;
+}</style>
 	</head>
 	<body>
 		<div id="screen">
-			<canvas width="480" height="480" id="menu"></canvas>
+			<canvas width="480" height="480" id="battle"></canvas>
+			<canvas width="480" height="480" id="mes"></canvas>
+			<canvas width="480" height="480" id="enemy"></canvas>
 			<canvas width="480" height="480" id="chara"></canvas>
+			<canvas width="480" height="480" id="menu"></canvas>
 			<canvas width="480" height="480" id="map"></canvas>
 		</div>
+		<div id="pad"><div id="pad_left">←</div><div id="pad_up">↑</div><div id="pad_down">↓</div><div id="pad_right">→</div><div id="pad_space"></div><div id="pad_D">D</div><div id="pad_M">M</div></div>
 		遊び方<br>
 		十字キーで移動<br>
 		Mでメニューを開く(クリックしても実装してないから意味ないよ!)<br>
 		スペースで会話・調べる・宝箱を開ける(いずれも未実装でまだボックスが開くだけ)<br>
 		以上<br>
-		これからきちんとポケ◯モンしていく予定です。まあ大乱闘とかいろいろと違うのを混ぜたいです
+		これからきちんとポケ◯モンしていく予定です。まあ大乱闘とかいろいろと違うのを混ぜたいです<br>
+		<a href="history.html">更新履歴 &amp; 今後の予定</a>
 	</body>
 </html>
