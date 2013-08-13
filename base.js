@@ -1,23 +1,3 @@
-onloadEvent=(function(){
-	var events=[];
-	var onloadEvent=function(){
-	}
-	onloadEvent.Length=0;
-	onloadEvent.add=function(f){
-		events.push(f)
-		console.log(events)
-		onloadEvent.Length=events.length;
-	}
-	onloadEvent.read=function(i){
-		return events[i];
-	}
-	return onloadEvent;
-})();
-window.onload=function(){
-	for(var i=0;i<onloadEvent.Length;i++){
-		onloadEvent.read(i).call(null);
-	}
-}
 var Base={};
 Base.isKeyPressed={"space":0,"left":0,"up":0,"right":0,"down":0,"m":0,"e":0,"d":0};
 Base.chara={

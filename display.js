@@ -1,4 +1,4 @@
-onloadEvent.add(function(){
+window.addEventListener("load",function(){
 	var mapStyle=document.getElementById("map").style;
 	mapStyle.left=mapStyle.top="0px";
 	var Canvas={
@@ -241,4 +241,4 @@ onloadEvent.add(function(){
 		}
 		document.getElementById("screen").style.background="#000";//黒くする
 	},100);
-})
+},false)

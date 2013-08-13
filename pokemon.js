@@ -1,13 +1,12 @@
 var testMode=true,
 doesEncount=false,
 IntervalTime=50;
-onloadEvent.add(function(){
+window.addEventListener("load",function(){
 	var situation="title";
 	var livingMonster=[
 		["まさる","ドドロノゴメス","アクサワー","ヂヴァザン","ブロロウ","ヘィローセ","ビョロボロ","ボボヌザウルス","イパサスコ","チュパンディ","スサイミ","ハンシー","サイコ","ジャネン","コムシ","ンバジョー","ヒネリ"],
 		["まさる","ドドロノゴメス","アクサワー","ヂヴァザン","ブロロウ","ヘィローセ","ビョロボロ","ボボヌザウルス","イパサスコ","チュパンディ","スサイミ","ハンシー","サイコ","ジャネン","コムシ","ンバジョー","ヒネリ"]
 	];
-	//ディスプレイ跡地
 	move=function(dx,dy,doesMove,chara){
 		//dx=xの移動量 dy=(略)
 		chara=chara||"chara";
@@ -271,4 +270,4 @@ onloadEvent.add(function(){
 				break;
 		}
 	},IntervalTime);
-})
+},false)
