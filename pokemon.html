@@ -3,23 +3,33 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
-		<script src="pokemons.js" defer></script>
-		<script src="items.js" defer></script>
-		<script src="base.js" defer></script>
-		<script src="display.js" defer></script>
-		<script src="pokemon.js" defer></script>
+		<script src="js/underscore.js" defer></script>
+		<script src="js/jquery.js" defer></script>
+		<script src="js/backbone-min.js" defer></script>
+		<script src="js/pokemons.js" defer></script>
+		<script src="js/items.js" defer></script>
+		<script src="js/shop.js" defer></script>
+		<script src="js/items.js" defer></script>
+		<script src="js/model.js" defer></script>
+		<script src="js/pokemon.js" defer></script>
+		</script>
 		<meta name="description" content="">
 		<meta name="keywords" content="">
 		<title>ポケモン</title>
-		<style>body{-webkit-text-size-adjust: 100%;margin:0;
-		}#screen{
+		<style>
+body{
+	-webkit-text-size-adjust: 100%;
+	margin: 0;
+}
+#screen{
+	border: 1px solid #EEE;
 	position: relative;
 	width: 480px;
 	height: 480px;
 	background: #FFF;
 	overflow: hidden;
 }
-#chara, #menu, #enemy, #battle, #mes{
+#chara, #menu, #enemy, #shop, #mes, #battle{
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -32,19 +42,22 @@
 	left: 0;
 }
 #pad{
-	display:none;
-	-webkit-user-select:none;
+	display: none;
+	-webkit-user-select: none;
+	text-shadow:-1px -1px 0 rgba(255,255,255,0.7);
 	z-index: 10;
 	height: 80px;
-	width:480px;
+	width: 480px;
 	position: fixed;
 	bottom: 0;
 }
-#pad_left,#pad_up,#pad_down,#pad_right,#pad_space,#pad_D,#pad_M{
+#pad_left, #pad_up, #pad_down, #pad_right, #pad_space, #pad_D, #pad_M{
+	box-shadow:1px 1px 0 rgba(255,255,255,0.7) inset;
 	text-align: center;
 	position: absolute;
 	border: 1px solid #333;
-	background: rgba(0, 0, 0, 0.1);
+	background: rgba(255, 255, 255, 0.1);
+	background: -webkit-linear-gradient(rgba(255, 255, 255, 0.3), rgba(221, 221, 221, 0.3))background:-webkit-gradient(linear, left top, left bottom, color-stop(1.00, rgba(221, 221, 221, 0.3)), color-stop(0.00, rgba(255, 255, 255, 0.3)));
 	width: 39px;
 	height: 39px;
 }
@@ -71,22 +84,20 @@
 	height: 40px;
 }
 #pad_D{
-	bottom:0;
-	right:0;
+	bottom: 0;
+	right: 0;
 }
 #pad_M{
-	right:0;
-}</style>
+	right: 0;
+}
+#audio{display:none}</style>
 	</head>
 	<body>
 		<div id="screen">
-			<canvas width="480" height="480" id="battle"></canvas>
-			<canvas width="480" height="480" id="mes"></canvas>
-			<canvas width="480" height="480" id="enemy"></canvas>
-			<canvas width="480" height="480" id="chara"></canvas>
-			<canvas width="480" height="480" id="menu"></canvas>
-			<canvas width="480" height="480" id="map"></canvas>
+		Loading...
+<canvas width="480" height="480" id="shop"></canvas><canvas width="480" height="480" id="battle"></canvas><canvas width="480" height="480" id="mes"></canvas><canvas width="480" height="480" id="enemy"></canvas><canvas width="480" height="480" id="chara"></canvas><canvas width="480" height="480" id="menu"></canvas><canvas width="480" height="480" id="map"></canvas>
 		</div>
+		<div id="audio"></div>
 		<div id="pad"><div id="pad_left">←</div><div id="pad_up">↑</div><div id="pad_down">↓</div><div id="pad_right">→</div><div id="pad_space"></div><div id="pad_D">D</div><div id="pad_M">M</div></div>
 		遊び方<br>
 		十字キーで移動<br>
