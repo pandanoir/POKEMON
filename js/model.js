@@ -102,6 +102,9 @@ var Model=Backbone.Collection.extend();
 		}
 	});
 	var world=BB.Model.extend();
+	var setting=BB.Model.extend();
+
+
 	isKeyPressed=new isKeyPressed({"space":0,"left":0,"up":0,"right":0,"down":0,"m":0,"e":0,"d":0});
 	chara=new chara({
 		x:0,
@@ -127,6 +130,12 @@ var Model=Backbone.Collection.extend();
 		width:36,
 		height:36
 	});
+	setting=new setting({
+		savingMethod:"cookie"
+	});
+
+
+
 	isKeyPressed.set("id","isKeyPressed");
 	chara.set("id","chara");
 	mapData.set("id","mapData");
@@ -134,10 +143,39 @@ var Model=Backbone.Collection.extend();
 	cursor.set("id","cursor");
 	Func.set("id","Func");
 	world.set("id","world");
-	
-	Model=new Model([isKeyPressed,chara,mapData,mapAttr,cursor,Func,world]);
-})(Backbone);
+	setting.set("id","setting");
 
+	Model=new Model([isKeyPressed,chara,mapData,mapAttr,cursor,Func,world,setting]);
+})(Backbone);
+(function(){
+	function getCookie(c_name){
+		var st="";
+		var ed="";
+		if(document.cookie.length>0){
+			// クッキーの値を取り出す
+			st=document.cookie.indexOf(c_name + "=");
+			if(st!=-1){ 
+				st=st+c_name.length+1;
+				ed=document.cookie.indexOf(";",st);
+				if(ed==-1) ed=document.cookie.length;
+				// 値をデコードして返す
+				return unescape(document.cookie.substring(st,ed));
+			} 
+		}
+		return "";
+	}
+	if(getCookie("save_data")){
+		var JSONCookie=JSON.parse(getCookie("save_data"))
+		for(var i=0;i<JSONCookie.length;i++){
+			//JSONを回す
+			if(!JSONCookie) continue;
+			for(var key in JSONCookie[i]){
+				//JSONの中のkeyで回す。
+				Model.models[i].set(key,JSONCookie[i][key]);
+			}
+		}
+	}
+})()
 
 var enemy=new Backbone.Collection();
 var friend=new Backbone.Collection([new Pokemon("まさる"),new Pokemon("まさる"),new Pokemon("まさる"),new Pokemon("まさる"),new Pokemon("まさる"),new Pokemon("まさる")]);//global

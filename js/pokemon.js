@@ -1,7 +1,35 @@
 var testMode=true,
-doesEncount=false,
+doesEncount=true,
 IntervalTime=50;
 window.addEventListener("load",function(){
+	// クッキー保存　setCookie(クッキー名, クッキーの値, クッキーの有効日数); //
+	var isSmartPhone="ontouchstart" in window;
+	function setCookie(c_name,value,expiredays){
+		// pathの指定
+		var path = location.pathname;
+		// pathをフォルダ毎に指定する場合のIE対策
+		var paths = new Array();
+		paths = path.split("/");
+		if(paths[paths.length-1] != ""){
+			paths[paths.length-1] = "";
+			path = paths.join("/");
+		}
+		// 有効期限の日付
+		var extime = new Date().getTime();
+		var cltime = new Date(extime + (60*60*24*1000*expiredays));
+		var exdate = cltime.toUTCString();
+		// クッキーに保存する文字列を生成
+		var s="";
+		s += c_name +"="+ escape(value);// 値はエンコードしておく
+		s += "; path="+ path;
+		if(expiredays){
+			s += "; expires=" +exdate+"; ";
+		}else{
+			s += "; ";
+		}
+		// クッキーに保存
+		document.cookie=s;
+	}
 	var mapStyle=document.getElementById("map").style;
 	mapStyle.left=mapStyle.top="0px";//スムースウォーキングのためにmapを動かす時に必要な設定。
 	var situation="title";
@@ -14,6 +42,7 @@ window.addEventListener("load",function(){
 		menu	:document.getElementById("menu").getContext("2d"),
 		enemy	:document.getElementById("enemy").getContext("2d"),
 		shop	:document.getElementById("shop").getContext("2d"),
+		setting	:document.getElementById("setting").getContext("2d"),
 		mes		:document.getElementById("mes").getContext("2d"),
 		width	:480,
 		height	:480
@@ -24,9 +53,8 @@ window.addEventListener("load",function(){
 		chipSize:32
 	},
 	livingMonster=[
-//		["まさる","ドドロノゴメス","アクサワー","ヂヴァザン","ブロロウ","ヘィローセ","ビョロボロ","ボボヌザウルス","イパサスコ","チュパンディ","スサイミ","ハンシー","サイコ","ジャネン","コムシ","ンバジョー","ヒネリ"],
-//		["まさる","ドドロノゴメス","アクサワー","ヂヴァザン","ブロロウ","ヘィローセ","ビョロボロ","ボボヌザウルス","イパサスコ","チュパンディ","スサイミ","ハンシー","サイコ","ジャネン","コムシ","ンバジョー","ヒネリ"]
-		["ごんざれす2"]
+		["まさる","ドドロノゴメス","アクサワー","ヂヴァザン","ブロロウ","ヘィローセ","ビョロボロ","ボボヌザウルス","イパサスコ","チュパンディ","スサイミ","ハンシー","サイコ","ジャネン","コムシ","ンバジョー","ヒネリ"],
+		["まさる","ドドロノゴメス","アクサワー","ヂヴァザン","ブロロウ","ヘィローセ","ビョロボロ","ボボヌザウルス","イパサスコ","チュパンディ","スサイミ","ハンシー","サイコ","ジャネン","コムシ","ンバジョー","ヒネリ"]
 	],
 	antiKeyAction=false,
 	encount=function(test){
@@ -65,25 +93,12 @@ window.addEventListener("load",function(){
 			switch(Model.get("cursor").num()){
 				case 0:
 					//攻撃を選んだ時
-					var beforeHP=enemy.get("hp");
-					if (friend.at(now).get("item") && friend.at(now).get("item").effect){
-						if(Model.get("Func").searchArray(friend.at(now).get("item").effect.split(","), "attack") != -1) {
-							//効果にattackがあったら
-							enemy.set("hp",enemy.get("hp") - friend.at(now).get("attack") * Model.get("Func").parseInt(friend.at(now).get("item").effect.split(",")[Model.get("Func").searchArray(friend.at(now).get("item").effect.split(","), "attack")].split(" ")[1]));
-						} else if (Model.get("Func").searchArray(friend.at(now).get("item").effect.split(","), "all") != -1) {
-							//効果にallがあったら
-							enemy.set("hp",enemy.get("hp") - friend.at(now).get("attack") * Model.get("Func").parseInt(friend.at(now).get("item").effect.split(",")[Model.get("Func").searchArray(friend.at(now).get("item").effect.split(","), "all")].split(" ")[1]));
-						}
-					} else enemy.set("hp",enemy.get("hp") - friend.at(now).get("attack"));//持ち物に効果がない
-
-					view.mes({message: friend.at(now).get("name") + " の攻撃!"});
-					if (enemy.get("hp") <= 0){
-						setTimeout(function(){view.mes({message:enemy.get("name") + " に" + (beforeHP-enemy.get("hp")) + " のダメージ!"})},1);
-						//倒した時
-						setTimeout(function(){view.mes({message: enemy.get("name") + "を倒した!",callback:function(){
-							battle({end:true});
-						}})},2);
-					}else setTimeout(function(){view.mes({message:enemy.get("name") + " に" + (beforeHP-enemy.get("hp")) + " のダメージ!",callback:function(){battle({turnStart:true})}})},1);
+					if(enemy.get("speed")<=friend.at(now).get("speed")){
+						//自分の攻撃が先
+						battle({attack:[enemy,friend.at(now)],next:function(){battle({attack:[friend.at(now),enemy]})}});//バトルが終わってるかもしれないから
+					}else{
+						battle({attack:[friend.at(now),enemy],next:function(){if(situation=="battle")battle({attack:[enemy,friend.at(now)]})}})
+					}
 					break;
 				case 1:
 					view.mes({message:"アイテム!"})
@@ -93,9 +108,36 @@ window.addEventListener("load",function(){
 					break;
 				case 3:
 					view.mes({message:"ゆかりは逃げだした!"});
-					if(Math.random()*(enemy.get("speed")-friend.at(now).get("speed"))|0==1) setTimeout(function(){view.mes({message:"しかし逃げきれなかった!",callback:function(){battle({turnStart:true})}})},2);
+					if(Math.random()*(enemy.get("speed")-friend.at(now).get("speed"))|0==1){
+						setTimeout(function(){view.mes({message:"しかし逃げきれなかった!",callback:function(){battle({attack:[friend.at(now),enemy]})}})},2);
+					}
 					else setTimeout(function(){view.mes({message:"逃げきれた!",callback:function(){switchMode("map");situation="map"}})},2);
 					break;
+			}
+		}
+		if(option.attack){
+			//attack[1]が攻撃側、attack[0]が防御側
+			var beforeHP=enemy.get("hp");
+			if (option.attack[1].get("item") && option.attack[1].get("item").effect){
+				if(Model.get("Func").searchArray(option.attack[1].get("item").effect.split(","), "attack") != -1) {
+					//効果にattackがあったら
+					option.attack[0].set("hp",option.attack[0].get("hp") - option.attack[1].get("attack") * Model.get("Func").parseInt(option.attack[1].get("item").effect.split(",")[Model.get("Func").searchArray(option.attack[1].get("item").effect.split(","), "attack")].split(" ")[1]));
+				} else if (Model.get("Func").searchArray(option.attack[1].get("item").effect.split(","), "all") != -1) {
+					//効果にallがあったら
+					option.attack[0].set("hp",option.attack[0].get("hp") - option.attack[1].get("attack") * Model.get("Func").parseInt(option.attack[1].get("item").effect.split(",")[Model.get("Func").searchArray(option.attack[1].get("item").effect.split(","), "all")].split(" ")[1]));
+				}
+			} else option.attack[0].set("hp",option.attack[0].get("hp") - option.attack[1].get("attack"));//持ち物に効果がない
+
+			view.mes({message: option.attack[1].get("name") + " の攻撃!"});
+			console.log(option.attack[1].get("name") + " の攻撃!")
+			if (option.attack[0].get("hp") <= 0){
+				//倒した時
+				setTimeout(function(){view.mes({message:option.attack[0].get("name") + " に" + (beforeHP-option.attack[0].get("hp")) + " のダメージ!"})},1);
+				setTimeout(function(){view.mes({message: option.attack[0].get("name") + "を倒した!",callback:function(){
+					battle({end:true});
+				}})},2);
+			}else{
+				setTimeout(function(){view.mes({message:option.attack[0].get("name") + " に" + (beforeHP-option.attack[0].get("hp")) + " のダメージ!",callback:function(){option.next?option.next():battle({turnStart:true})}})},1);
 			}
 		}
 		if(option.end){
@@ -125,9 +167,11 @@ window.addEventListener("load",function(){
 	},
 	talkTask=0,
 	talking=false,
-	menu={width:120,height:140},
-	mainMenu=[{name:"メニュ"},{name:"レポートに書く"},{name:"設定"},{name:"手持ちのポケモン"},{name:"アイテム"},{name:"ゲームに戻る"},{name:"タイトル画面に戻る"}];
-	if("ontouchstart" in window){
+	menu={width:120,height:140},//メニュ画面の幅と高さ
+	setting={width:200,height:250,nest:0},//セッティング画面の幅と高さ
+	mainMenu=[{name:"メニュ"},{name:"レポートに書く"},{name:"設定"},{name:"手持ちのポケモン"},{name:"アイテム"},{name:"ゲームに戻る"},{name:"タイトル画面に戻る"}],
+	settingOption=[{name:"戻る"}];//選択肢
+	if(isSmartPhone){
 		Canvas.height=320;
 		for(var key in Canvas){
 			if(document.getElementById(key)){
@@ -250,6 +294,34 @@ window.addEventListener("load",function(){
 				case "title":
 					view.show("title")
 					break;
+				case "setting":
+					//設定画面
+					if(setting.nest==0) Model.get("cursor").set({"maxX":0,"maxY":settingOption.length-1});
+					else Model.get("cursor").set({"maxX":0,"maxY":settingOption[setting.target].option.length-1});
+					Canvas.setting.clearRect(0,0,Canvas.width,Canvas.height);
+					Canvas.setting.rect((screen.realWidth-setting.width)/2,(screen.realHeight-setting.height)/2,setting.width,setting.height);
+					if(setting.nest==0) Canvas.setting.fillStyle="rgba(255,255,255,0.7)";
+					else Canvas.setting.fillStyle="rgba(136,136,136,0.7)";
+					Canvas.setting.fill();
+					Canvas.setting.stroke();
+					Canvas.setting.fillStyle="#000";
+					if(setting.nest==0) Canvas.setting.fillText(">",Model.get("cursor").get("x")+(screen.realWidth-setting.width)/2+2,Model.get("cursor").get("y")*20+(screen.realHeight-setting.height)/2+20);
+					var cursorWidth=Canvas.setting.measureText("> ").width;
+					for(var i=0,j=settingOption.length;i<j;i++){
+						Canvas.setting.fillText(settingOption[i].name,(screen.realWidth-setting.width)/2+cursorWidth,i*20+(screen.realHeight-setting.height)/2+20);
+					}
+					if(setting.nest>0){
+						Canvas.setting.rect((screen.realWidth-setting.width+40)/2+20,(screen.realHeight-setting.height)/2,setting.width-40,setting.height);
+						Canvas.setting.fillStyle="rgba(255,255,255,0.7)";
+						Canvas.setting.fill();
+						Canvas.setting.stroke();
+						Canvas.setting.fillStyle="#000";
+						Canvas.setting.fillText(">",Model.get("cursor").get("x")+(screen.realWidth-setting.width+40)/2+22,Model.get("cursor").get("y")*20+(screen.realHeight-setting.height)/2+20);
+						var cursorWidth=Canvas.setting.measureText("> ").width;
+						for(var i=0,j=settingOption[setting.target].option.length;i<j;i++){
+							Canvas.setting.fillText(settingOption[setting.target].option[i],(screen.realWidth-setting.width+40)/2+cursorWidth+20,i*20+(screen.realHeight-setting.height)/2+20);
+						}
+					}
 				case "chara":
 					view.hide("title")
 					for(var i=0,j=villagers.length;i<j;i++){
@@ -381,7 +453,8 @@ window.addEventListener("load",function(){
 					Canvas.battle.clearRect(0,0,screen.realWidth,screen.realHeight);
 					break;
 				case "enemy":
-					Canvas.enemy.drawImage(enemy.get("img"),(screen.realWidth-320)/2,0,320,320);
+					if(isSmartPhone) Canvas.enemy.drawImage(enemy.get("img"),(screen.realWidth-200)/2,0,200,200);
+					else Canvas.enemy.drawImage(enemy.get("img"),(screen.realWidth-320)/2,0,320,320);
 					break;
 			}
 			return view;
@@ -400,13 +473,10 @@ window.addEventListener("load",function(){
 				case "title":
 					break;
 				case "mes":
-					Canvas.mes.clearRect(0,0,screen.realWidth,screen.realHeight);
-					break;
 				case "battle":
-					Canvas.battle.clearRect(0,0,screen.realWidth,screen.realHeight);
-					break;
 				case "enemy":
-					Canvas.enemy.clearRect(0,0,screen.realWidth,screen.realHeight);
+				case "setting":
+					Canvas[target].clearRect(0,0,screen.realWidth,screen.realHeight);
 					break;
 			}
 			return view;
@@ -448,6 +518,7 @@ window.addEventListener("load",function(){
 							}
 							break;
 						case "menu":
+						case "setting":
 							if(Model.get("isKeyPressed").get(key)===1) Model.get("cursor").move(key);
 							break;
 						case "battle":
@@ -480,9 +551,13 @@ window.addEventListener("load",function(){
 							switch(mainMenu[Model.get("cursor").get("y")+1].name){
 								case "レポートに書く":
 									//レポートに書く
-									view.mes({message:"レポートを書きますか?"});
+									setCookie("save_data",JSON.stringify(_.map(Model.models,function(model){if(model.id!="mapData") return model.toJSON()})),60)//クッキーバージョン
+									view.mes({message:"レポートを書きました。"});
 									break;
-								case "設定":case "手持ちのポケモン":case "アイテム":
+								case "設定":
+									switchMode("setting");
+									break;
+								case "手持ちのポケモン":case "アイテム":
 									break;
 								case "ゲームに戻る":
 									switchMode("map");
@@ -490,6 +565,21 @@ window.addEventListener("load",function(){
 								case "タイトル画面に戻る":
 									switchMode("title");
 									break;
+							}
+							break;
+						case "setting":
+							if(setting.nest==0){
+								switch(settingOption[Model.get("cursor").get("y")].name){
+									case "戻る":
+										switchMode("menu");
+										break;
+								}
+							}else if(setting.nest==1){
+								switch(settingOption[setting.target].name){
+									case "戻る":
+										switchMode("menu");
+										break;
+								}
 							}
 							break;
 						case "title":
@@ -540,6 +630,10 @@ window.addEventListener("load",function(){
 					view.display("chara");
 					view.display("menu");
 					break;
+				case "setting":
+					view.display("map");
+					view.display("chara");
+					view.display("setting");
 			}
 		}
 	});
@@ -563,6 +657,9 @@ window.addEventListener("load",function(){
 				case "battle":
 					view.hide("mes").hide("battle").hide("enemy")
 					break;
+				case "setting":
+					view.hide("setting");
+					break;
 			}
 			switch(scene){
 				case "menu":
@@ -585,6 +682,9 @@ window.addEventListener("load",function(){
 					situation="battle";
 					view.show("mes").show("battle");
 					break;
+				case "setting":
+					situation="setting";
+					view.show("screen").show("charaScreen").show("setting");
 			}
 			nowScene=scene
 		}
@@ -675,7 +775,7 @@ window.addEventListener("load",function(){
 		}
 	}
 	var padKey=[["space",32],["left",37],["up",38],["right",39],["down",40],["D",68],["M",77]];
-	if("ontouchstart" in window){
+	if(isSmartPhone){
 		document.getElementById("pad").style.display="block";
 		for(var i=0;i<padKey.length;i++){
 			document.getElementById("pad_"+padKey[i][0]).addEventListener("touchstart",(function(i){
