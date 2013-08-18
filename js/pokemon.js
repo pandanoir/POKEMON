@@ -1,4 +1,4 @@
-var testMode=true,
+var testMode=false,
 doesEncount=true,
 IntervalTime=50;
 window.addEventListener("load",function(){
@@ -53,8 +53,8 @@ window.addEventListener("load",function(){
 		chipSize:32
 	},
 	livingMonster=[
-		["まさる","ドドロノゴメス","アクサワー","ヂヴァザン","ブロロウ","ヘィローセ","ビョロボロ","ボボヌザウルス","イパサスコ","チュパンディ","スサイミ","ハンシー","サイコ","ジャネン","コムシ","ンバジョー","ヒネリ"],
-		["まさる","ドドロノゴメス","アクサワー","ヂヴァザン","ブロロウ","ヘィローセ","ビョロボロ","ボボヌザウルス","イパサスコ","チュパンディ","スサイミ","ハンシー","サイコ","ジャネン","コムシ","ンバジョー","ヒネリ"]
+		["アクサワー", "ボボヌザウルス", "ブベツ", "ブロロウ", "ビョロボロ", "ヂヴァザン", "ドドロノゴメス", "ドフ", "フォッド", "ごんざれす", "ハンシー", "ヘィローセ", "ヒネリ", "イパサスコ", "ジャネン", "コムシ", "コロゾウ", "マクジョウ", "マムー", "まさる", "ンバジョー", "ラストダンケ", "サイコ", "スサイミ", "テカイン", "チュパンディ", "ウラミ"],
+		["アクサワー", "ボボヌザウルス", "ブベツ", "ブロロウ", "ビョロボロ", "ヂヴァザン", "ドドロノゴメス", "ドフ", "フォッド", "ごんざれす", "ハンシー", "ヘィローセ", "ヒネリ", "イパサスコ", "ジャネン", "コムシ", "コロゾウ", "マクジョウ", "マムー", "まさる", "ンバジョー", "ラストダンケ", "サイコ", "スサイミ", "テカイン", "チュパンディ", "ウラミ"]
 	],
 	antiKeyAction=false,
 	encount=function(test){
@@ -74,7 +74,7 @@ window.addEventListener("load",function(){
 				"x":0,
 				"y":0
 			});
-			enemy=new Pokemon(option.monster[Math.random()*option.monster.length|0]);
+			enemy=new Pokemon({name:option.monster[Math.random()*option.monster.length|0],lv:5});
 			enemy.set("img",new Image());
 			enemy.get("img").src=enemy.get("src");
 			battle({turnStart:true});
@@ -95,9 +95,9 @@ window.addEventListener("load",function(){
 					//攻撃を選んだ時
 					if(enemy.get("speed")<=friend.at(now).get("speed")){
 						//自分の攻撃が先
-						battle({attack:[enemy,friend.at(now)],next:function(){battle({attack:[friend.at(now),enemy]})}});//バトルが終わってるかもしれないから
+						battle({attack:[enemy,friend.at(now),friend.at(now).get("technique")[Model.get("cursor").get("x")+Model.get("cursor").get("y")*2]],next:function(){battle({attack:[friend.at(now),enemy,enemy.get("technique")[Math.random()*4|0]]})}});//バトルが終わってるかもしれないから
 					}else{
-						battle({attack:[friend.at(now),enemy],next:function(){if(situation=="battle")battle({attack:[enemy,friend.at(now)]})}})
+						battle({attack:[friend.at(now),enemy,enemy.get("technique")[Math.random()*4|0]],next:function(){if(situation=="battle")battle({attack:[enemy,friend.at(now),friend.at(now).get("technique")[Model.get("cursor").get("x")+Model.get("cursor").get("y")*2]]})}})
 					}
 					break;
 				case 1:
@@ -116,17 +116,23 @@ window.addEventListener("load",function(){
 			}
 		}
 		if(option.attack){
-			//attack[1]が攻撃側、attack[0]が防御側
-			var beforeHP=enemy.get("hp");
+			//option.attack[1]が攻撃側、option.attack[0]が防御側、option.attack[2]が技
+			var beforeHP=option.attack[0].get("hp");
+			var technique=new Technique(option.attack[2]);
+			var damage=Math.floor((option.attack[1].get("lv")*2/5+2)*technique.get("damage")*option.attack[1].attack()/option.attack[0].defence()/50 + 2)*(Math.random()*16|0+85)/100;
 			if (option.attack[1].get("item") && option.attack[1].get("item").effect){
+				//持ち物による付与効果
 				if(Model.get("Func").searchArray(option.attack[1].get("item").effect.split(","), "attack") != -1) {
 					//効果にattackがあったら
-					option.attack[0].set("hp",option.attack[0].get("hp") - option.attack[1].get("attack") * Model.get("Func").parseInt(option.attack[1].get("item").effect.split(",")[Model.get("Func").searchArray(option.attack[1].get("item").effect.split(","), "attack")].split(" ")[1]));
+					damage=Math.floor(damage*Model.get("Func").parseInt(option.attack[1].get("item").effect.split(",")[Model.get("Func").searchArray(option.attack[1].get("item").effect.split(","), "attack")].split(" ")[1]));
 				} else if (Model.get("Func").searchArray(option.attack[1].get("item").effect.split(","), "all") != -1) {
 					//効果にallがあったら
-					option.attack[0].set("hp",option.attack[0].get("hp") - option.attack[1].get("attack") * Model.get("Func").parseInt(option.attack[1].get("item").effect.split(",")[Model.get("Func").searchArray(option.attack[1].get("item").effect.split(","), "all")].split(" ")[1]));
+					damage=Math.floor(damage*option.attack[1].get("attack") * Model.get("Func").parseInt(option.attack[1].get("item").effect.split(",")[Model.get("Func").searchArray(option.attack[1].get("item").effect.split(","), "all")].split(" ")[1]));
 				}
-			} else option.attack[0].set("hp",option.attack[0].get("hp") - option.attack[1].get("attack"));//持ち物に効果がない
+			}
+			if(damage<0) damage=0;
+			damage=Math.floor(damage);
+			option.attack[0].set("hp",option.attack[0].get("hp")-damage);
 
 			view.mes({message: option.attack[1].get("name") + " の攻撃!"});
 			console.log(option.attack[1].get("name") + " の攻撃!")
@@ -190,6 +196,8 @@ window.addEventListener("load",function(){
 	for(var key in preloadImages){
 		preloadImages[key].src=key+".png";
 	}
+	preloadImages["map"]=new Image();
+	preloadImages["map"].src="map/map.png";
 	var Display=Backbone.View.extend({
 		mes:(function(){
 			var messages=[];
@@ -326,7 +334,10 @@ window.addEventListener("load",function(){
 					view.hide("title")
 					for(var i=0,j=villagers.length;i<j;i++){
 	//					view.paint(villagers.at(i).get("job"),villagers.at(i).get("x"),villagers.at(i).get("y"));//職業ごとに違う絵柄の予定。今はテストなので下の方
-						view.paint("villager",villagers.at(i).get("x"),villagers.at(i).get("y"));
+						if(!villagers.at(i).get("isPainted")){
+							view.paint("villager",villagers.at(i).get("x"),villagers.at(i).get("y"));
+							villagers.at(i).set("isPainted",true)
+						}
 						if(villagers.at(i).get("move")&&(Math.random()*10|0)==0){
 							switch(Math.random()*4|0){
 								case 0:
@@ -342,6 +353,7 @@ window.addEventListener("load",function(){
 									move(0,-1,true,"villager["+i+"]");
 									break;
 							}
+							view.paint("villager",villagers.at(i).get("x"),villagers.at(i).get("y"));
 						}
 					}
 					//キャラの表示。
@@ -481,9 +493,18 @@ window.addEventListener("load",function(){
 			}
 			return view;
 		},
-		paint:function(data,x,y){
+		paint:function(data,sx,sy,sw,sh,dx,dy){
+			if(sw===undefined){
+				//data,dx,dyを想定
+				dx=sx;
+				sx=0;
+				sw=screen.chipSize;
+				dy=sy;
+				sy=0;
+				sh=screen.chipSize;
+			}
 			//マップ1チップの描写
-			Canvas.map.drawImage(preloadImages[data], x*screen.chipSize, y*screen.chipSize,screen.chipSize,screen.chipSize);
+			Canvas.map.drawImage(preloadImages[data], sx, sy,sw,sh, dx*screen.chipSize, dy*screen.chipSize,screen.chipSize,screen.chipSize);
 		},
 		textWidth:function(str){
 			return Canvas.menu.measureText(str).width
@@ -705,8 +726,9 @@ window.addEventListener("load",function(){
 		for(var j=0;j<Model.get("world").get("height");j++){
 			//マップの描写
 			for(var i=0;i<Model.get("world").get("width");i++){
-				if(Model.get("mapData").get(j)!==undefined&&Model.get("mapData").get(j)[i]!==undefined) view.paint(Model.get("mapAttr").get(Model.get("mapData").get(j)[i]).img,i,j);
-				else view.paint(Model.get("mapAttr").get("-1").img,i*screen.chipSize,j*screen.chipSize);
+				if(Model.get("mapData").get(j)!==undefined&&Model.get("mapData").get(j)[i]!==undefined){
+					view.paint("map",Model.get("mapAttr").get(Model.get("mapData").get(j)[i]).img[0],Model.get("mapAttr").get(Model.get("mapData").get(j)[i]).img[1],16,16,i,j);
+				}else view.paint(Model.get("mapAttr").get("-1").img,i*screen.chipSize,j*screen.chipSize);
 			}
 		}
 		document.getElementById("screen").style.background="#000";//黒くする
