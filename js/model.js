@@ -169,6 +169,7 @@ var Model=Backbone.Collection.extend();
 		for(var i=0;i<JSONCookie.length;i++){
 			//JSONを回す
 			if(!JSONCookie) continue;
+			if(Model.models[i].get("id")=="mapAttr") continue;
 			for(var key in JSONCookie[i]){
 				//JSONの中のkeyで回す。
 				Model.models[i].set(key,JSONCookie[i][key]);

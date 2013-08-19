@@ -109,7 +109,7 @@ window.addEventListener("load",function(){
 				case 3:
 					view.mes({message:"ゆかりは逃げだした!"});
 					if(Math.random()*(enemy.get("speed")-friend.at(now).get("speed"))|0==1){
-						setTimeout(function(){view.mes({message:"しかし逃げきれなかった!",callback:function(){battle({attack:[friend.at(now),enemy]})}})},2);
+						setTimeout(function(){view.mes({message:"しかし逃げきれなかった!",callback:function(){battle({attack:[friend.at(now),enemy,enemy.get("technique")[Math.random()*4|0]]})}})},2);
 					}
 					else setTimeout(function(){view.mes({message:"逃げきれた!",callback:function(){switchMode("map");situation="map"}})},2);
 					break;
@@ -727,7 +727,8 @@ window.addEventListener("load",function(){
 			//マップの描写
 			for(var i=0;i<Model.get("world").get("width");i++){
 				if(Model.get("mapData").get(j)!==undefined&&Model.get("mapData").get(j)[i]!==undefined){
-					view.paint("map",Model.get("mapAttr").get(Model.get("mapData").get(j)[i]).img[0],Model.get("mapAttr").get(Model.get("mapData").get(j)[i]).img[1],16,16,i,j);
+					var mapData=Model.get("mapData").get(j)[i];
+					view.paint("map", Model.get("mapAttr").get(mapData).img[0], Model.get("mapAttr").get(mapData).img[1], 16, 16, i, j);
 				}else view.paint(Model.get("mapAttr").get("-1").img,i*screen.chipSize,j*screen.chipSize);
 			}
 		}
