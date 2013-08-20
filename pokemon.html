@@ -29,17 +29,11 @@ body{
 	background: #FFF;
 	overflow: hidden;
 }
-#chara, #menu, #enemy, #shop, #mes, #battle,#setting{
+#chara, #menu, #enemy, #shop, #mes, #battle,#setting,#frontMap,#map{
 	position: absolute;
 	top: 0;
 	left: 0;
-	z-index: 5;
 	background-color: transparent;
-}
-#map{
-	position: absolute;
-	top: 0;
-	left: 0;
 }
 #pad{
 	display: none;
@@ -95,7 +89,14 @@ body{
 	<body>
 		<div id="screen">
 		Loading...
-<canvas width="480" height="480" id="shop"></canvas><canvas width="480" height="480" id="battle"></canvas><canvas width="480" height="480" id="mes"></canvas><canvas width="480" height="480" id="enemy"></canvas><canvas width="480" height="480" id="chara"></canvas><canvas width="480" height="480" id="menu"></canvas><canvas width="480" height="480" id="setting"></canvas><canvas width="480" height="480" id="map"></canvas>
+		<canvas width="480" height="480" id="map"></canvas>
+		<canvas width="480" height="480" id="chara"></canvas>
+		<canvas width="480" height="480" id="frontMap"></canvas>
+		<canvas width="480" height="480" id="menu"></canvas>
+		<canvas width="480" height="480" id="enemy"></canvas>
+		<canvas width="480" height="480" id="mes"></canvas>
+		<canvas width="480" height="480" id="battle"></canvas>
+		<canvas width="480" height="480" id="shop"></canvas>
 		</div>
 		<div id="audio"></div>
 		<div id="pad"><div id="pad_left">←</div><div id="pad_up">↑</div><div id="pad_down">↓</div><div id="pad_right">→</div><div id="pad_space"></div><div id="pad_D">D</div><div id="pad_M">M</div></div>

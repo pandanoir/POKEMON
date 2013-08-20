@@ -26,10 +26,10 @@ var Technique=Backbone.Model.extend({
 	}
 });
 var technique={
-	"叩く":{damage:3},
-	"殴る":{damage:10},
+	"叩く":{damage:30},
+	"殴る":{damage:50},
 	"ける":{damage:15},
-	"押し倒す":{damage:1}
+	"押し倒す":{damage:15}
 }
 var pokemonValue={
 	"アクサワー":{attack:20,defence:13,speed:20,hp:44,src:"akusawa"},
