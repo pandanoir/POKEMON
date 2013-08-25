@@ -4,13 +4,13 @@ var Pokemon=Backbone.Model.extend({
 		this.set("defence",parseInt(pokemonValue[option.name].defence,10));
 		this.set("speed",parseInt(pokemonValue[option.name].speed,10));
 		this.set("hp",parseInt(pokemonValue[option.name].hp,10));
+		this.set("maxHp",parseInt(pokemonValue[option.name].hp,10));
 		this.set("src","pokemon/"+pokemonValue[option.name].src+".png");
 		this.set("name",option.name);
 		this.set("nickname",option.name);
 		this.set("description",pokemonValue[option.name].description||"none");
 		this.set("type",pokemonValue[option.name].type);
 		this.set("lv",option.lv);
-		this.set("exp",0);//exp=経験値
 		this.set("technique",["叩く","殴る","ける","押し倒す"]);
 	},
 	attack:function(){
@@ -18,6 +18,9 @@ var Pokemon=Backbone.Model.extend({
 	},
 	defence:function(){
 		return (((this.get("defence")*2/*+個体値+努力値/4*/)*this.get("lv")/100)+5);
+	},
+	defaults:{
+		exp:0
 	}
 });
 var Technique=Backbone.Model.extend({
@@ -55,6 +58,7 @@ var pokemonValue={
 	"マムー":{attack:6,defence:4,speed:9,hp:3,src:"mamu-"},
 	"まさる":{attack:33,defence:24,speed:43,hp:51,src:"masaru2"},
 	"ンバジョー":{attack:67,defence:24,speed:50,hp:59,src:"nbajo"},
+	"ピサンチョー":{attack:3,defence:9,speed:10,hp:40,src:"pisantyo"},
 	"ラストダンケ":{attack:26,defence:31,speed:53,hp:46,src:"rasutodanke"},
 	"サイコ":{attack:97,defence:66,speed:91,hp:73,src:"saiko"},
 	"スサイミ":{attack:37,defence:87,speed:47,hp:78,src:"susaimi"},

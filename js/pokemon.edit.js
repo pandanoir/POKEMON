@@ -2,33 +2,60 @@ var testMode=false,
 doesEncount=true,
 IntervalTime=50;
 window.addEventListener("load",function(){
+
 	// クッキー保存　setCookie(クッキー名, クッキーの値, クッキーの有効日数); //
 	var isSmartPhone="ontouchstart" in window;
+
 	function setCookie(c_name,value,expiredays){
+
 		// pathの指定
+
 		var path = location.pathname;
+
 		// pathをフォルダ毎に指定する場合のIE対策
+
 		var paths = new Array();
+
 		paths = path.split("/");
+
 		if(paths[paths.length-1] != ""){
+
 			paths[paths.length-1] = "";
+
 			path = paths.join("/");
+
 		}
+
 		// 有効期限の日付
+
 		var extime = new Date().getTime();
+
 		var cltime = new Date(extime + (60*60*24*1000*expiredays));
+
 		var exdate = cltime.toUTCString();
+
 		// クッキーに保存する文字列を生成
+
 		var s="";
+
 		s += c_name +"="+ escape(value);// 値はエンコードしておく
+
 		s += "; path="+ path;
+
 		if(expiredays){
+
 			s += "; expires=" +exdate+"; ";
+
 		}else{
+
 			s += "; ";
+
 		}
+
 		// クッキーに保存
+
 		document.cookie=s;
+
 	}
 	var mapStyle=document.getElementById("map").style;
 	mapStyle.left=mapStyle.top="0px";//スムースウォーキングのためにmapを動かす時に必要な設定。
@@ -168,7 +195,7 @@ window.addEventListener("load",function(){
 				break;
 		}
 		var i=0;
-		if((i=Model.get("Func").villagerDoesExist(Model.get("chara").get("x")+dx,Model.get("chara").get("y")+dy))!=-1) villagers.at(i).talk();
+		if((i=Model.get("Func").doesVillagerExist(Model.get("chara").get("x")+dx,Model.get("chara").get("y")+dy))!=-1) villagers.at(i).talk();
 		else view.mes({message:"たからばこをぱっけんした。"});
 	},
 	talkTask=0,
@@ -739,7 +766,7 @@ window.addEventListener("load",function(){
 	move=function(dx,dy,doesMove,chara){
 		//dx=xの移動量 dy=(略)
 		chara=chara||"chara";
-		if (Model.get("chara").get("x") + dx<= Model.get("world").get("width")-1 && Model.get("chara").get("x") + dx >= 0 && Model.get("chara").get("y") + dy <= Model.get("world").get("height")-1 && Model.get("chara").get("y") + dy >= 0 && Model.get("mapAttr").get(Model.get("mapData").get(Model.get("chara").get("y")+dy)[Model.get("chara").get("x")+dx]).isNotBarrier&&Model.get("Func").villagerDoesExist(Model.get("chara").get("x")+dx,Model.get("chara").get("y")+dy)==-1) {
+		if (Model.get("chara").get("x") + dx<= Model.get("world").get("width")-1 && Model.get("chara").get("x") + dx >= 0 && Model.get("chara").get("y") + dy <= Model.get("world").get("height")-1 && Model.get("chara").get("y") + dy >= 0 && Model.get("mapAttr").get(Model.get("mapData").get(Model.get("chara").get("y")+dy)[Model.get("chara").get("x")+dx]).isNotBarrier&&Model.get("Func").doesVillagerExist(Model.get("chara").get("x")+dx,Model.get("chara").get("y")+dy)==-1) {
 			if(doesMove){
 				Model.get("chara").incrementX(dx);
 				Model.get("chara").incrementY(dy);
