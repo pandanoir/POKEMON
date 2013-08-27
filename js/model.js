@@ -37,13 +37,14 @@ var Person=Backbone.Model.extend({
 		}
 	}
 });
+
+
 (function(BB){
 	App=BB.Model.extend({
 		log:function(mes){
 			var now=new Date;
 			this.set("log",this.get("log")+mes+":"+(now-this.get("date"))+"\n")
 			if(this.get("console")) console.log(mes+":"+(now-this.get("date")))
-			document.getElementById("loading").innerText+="\n"+mes;
 		},
 		noConsole:function(){
 			this.set(!this.get("console"))
@@ -62,6 +63,24 @@ var Person=Backbone.Model.extend({
 			this.set(target,this.get(target)+1);//押され始めて何秒か記録(正確には何秒かではない)
 		}
 	});
+	/*ポケモンずかん
+	機能は
+	1.見る(個別に)
+	2.見る(図鑑として一覧的に)
+	2.登録
+	3.記録の維持
+	*/
+	var pokedex=BB.Model.extend({
+		view:function(n){
+			if(n===undefined){
+				//2の機能
+				for(var i=0;i<pokemonValue.length;i++){
+					console.log(pokemonValue.at(i).get("id"));//一匹一匹の名前を取得
+				}
+			}else return pokemonValue.get(n)//1の機能
+		}
+	})
+	pokedex=new pokedex();
 	var cursor=BB.Model.extend({
 		move:function(key,loop){
 			//loopは一番上から一番下へ移動とかするかどうか
@@ -182,8 +201,13 @@ var Person=Backbone.Model.extend({
 		height:36
 	});
 	var setting=new klass({
-		savingMethod:"cookie"
+		savingMethod:"cookie",
+		volume:1
 	});
+	setting.on("change:volume",function(model,value){
+		audio.volume=value;
+		console.log(audio);
+	})
 
 
 
@@ -196,47 +220,19 @@ var Person=Backbone.Model.extend({
 	Func.set("id","Func");
 	world.set("id","world");
 	setting.set("id","setting");
+	pokedex.set("id","pokedex");
 
-	Model=new Model([isKeyPressed,chara,mapData,mapAttr,cursor,Func,world,setting,frontMapData]);
+	Model=new Model([isKeyPressed,chara,mapData,mapAttr,cursor,Func,world,setting,frontMapData,pokedex]);
 })(Backbone);
 (function(){
-	function getCookie(c_name){
+	function getCookie(c){var a="",b="";return 0<document.cookie.length&&(a=document.cookie.indexOf(c+"="),-1!=a)?(a=a+c.length+1,b=document.cookie.indexOf(";",a),-1==b&&(b=document.cookie.length),unescape(document.cookie.substring(a,b))):""};
 
-		var st="";
-
-		var ed="";
-
-		if(document.cookie.length>0){
-
-			// クッキーの値を取り出す
-
-			st=document.cookie.indexOf(c_name + "=");
-
-			if(st!=-1){ 
-
-				st=st+c_name.length+1;
-
-				ed=document.cookie.indexOf(";",st);
-
-				if(ed==-1) ed=document.cookie.length;
-
-				// 値をデコードして返す
-
-				return unescape(document.cookie.substring(st,ed));
-
-			} 
-
-		}
-
-		return "";
-
-	}
 	if(getCookie("save_data")){
 		var JSONCookie=JSON.parse(getCookie("save_data"))
 		for(var i=0;i<JSONCookie.length;i++){
 			//JSONを回す
 			if(!JSONCookie) continue;
-			if(Model.models[i].get("id")=="mapData"||Model.models[i].get("id")=="frontMapData"||Model.models[i].get("id")=="isKeyPressed"||Model.models[i].get("id")=="mapAttr"||Model.models[i].get("id")=="Func"||Model.models[i].get("id")=="world") continue;
+			if(Model.models[i].get("id")!="chara"&&Model.models[i].get("id")!="setting") continue;
 			for(var key in JSONCookie[i]){
 				//JSONの中のkeyで回す。
 				Model.models[i].set(key,JSONCookie[i][key]);
@@ -252,15 +248,15 @@ var Villager=Person.extend({
 	talk:function(){
 		switch(this.get("job")){
 			case "farmer":
-				view.mes("こんにちは!農民です。野菜はいかがですか?");
-				view.mes("さようなら");
+				view.mes("農民だガハハハハハハハハハハハハハハ野菜食ってけ!");
+				view.mes("じゃあな");
 				break;
 			case "blacksmith":
-				view.mes("こんにちは!鍛冶屋です。武器はいかがですか?");
-				view.mes("さようなら");
+				view.mes("鍛冶屋だ。俺様の武器は高いぞ");
+				view.mes("じゃあな");
 				break;
-			case "curio shop":
-				view.mes("こんにちは!道具屋です。");
+			case "curioshop":
+				view.mes("道具屋です。どうぞご覧ください");
 				view.mes("さようなら");
 				break;
 			case "butcher":
@@ -272,12 +268,12 @@ var Villager=Person.extend({
 				break;
 		}
 	},
-	defaults:{isPainted:false}
+	defaults:{isPainted:false,direction:"front"}
 })
 var villagers=new Backbone.Collection([
 	new Villager({name:"鍛冶屋",job:"blacksmith",move:false,x:10,y:6,shop:new Shop(["ぼろい弓","すごい弓","ものすごい弓","センス","和傘","お布団"],"伝説の鍛冶屋")}),
-	new Villager({name:"道具屋",job:"curio shop",move:false,x:15,y:6,shop:new Shop(["ぼろい弓","すごい弓","ものすごい弓","センス","和傘","お布団"],"伝説の道具屋")}),
+	new Villager({name:"道具屋",job:"curioshop",move:false,x:15,y:6,shop:new Shop(["ぼろい弓","すごい弓","ものすごい弓","センス","和傘","お布団"],"伝説の道具屋")}),
 	new Villager({name:"肉屋",job:"butcher",move:false,x:20,y:6}),
 	new Villager({name:"農民",job:"farmer",move:false,x:25,y:6}),
-	new Villager({name:"市民",job:"citizen",move:true,x:3,y:3,mes:"こんにちは!"})
+	new Villager({name:"市民",job:"citizen",move:true,x:3,y:3,defaultX:3,defaultY:3,range:1,mes:"こんにちは!"})
 ]);

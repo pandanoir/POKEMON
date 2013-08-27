@@ -1,7 +1,8 @@
-<!DOCTYPE HTML>
 <html>
 	<head>
 		<meta charset="utf-8">
+		<link rel="stylesheet" href="style.css" type="text/css">
+		<style>body{-webkit-text-size-adjust:100%;margin:0}#screen{-webkit-user-select:none;position:relative;width:480px;height:480px;z-index:1;background:#FFF;overflow:hidden}#chara,#menu,#shop,#mes,#battle,#setting,#frontMap,#map,#villager{position:absolute;top:0;left:0;background-color:transparent}#pad{display:none;-webkit-user-select:none;text-shadow:-1px -1px 0 rgba(255,255,255,.7);z-index:10;height:80px;width:480px;position:fixed;bottom:0}#pad_left,#pad_up,#pad_down,#pad_right,#pad_space,#pad_D,#pad_M{box-shadow:1px 1px 0 rgba(255,255,255,.7) inset;text-align:center;position:absolute;border:1px solid #333;background:rgba(255,255,255,.1);background:-webkit-linear-gradient(rgba(255,255,255,.3),rgba(221,221,221,.3));background:-webkit-gradient(linear,left top,left bottom,color-stop(1.00,rgba(221,221,221,.3)),color-stop(.00,rgba(255,255,255,.3)));width:39px;height:39px}#pad_left{top:40px;left:0}#pad_up{top:0;left:40px}#pad_down{top:40px;left:40px}#pad_right{top:40px;left:80px}#pad_space{top:40px;left:180px;width:120px;height:40px}#pad_D{bottom:0;right:0}#pad_M{right:0}#audio{display:none}</style>
 		<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" defer></script>
 		<script src="js/underscore.js" defer></script>
@@ -14,29 +15,32 @@
 		<script src="js/pokemon.js" defer></script>
 		<meta name="description" content="">
 		<meta name="keywords" content="">
-		<title>ポケモン</title>
-		<style>body{-webkit-text-size-adjust:100%;margin:0}#screen{-webkit-user-select:none;border:1px solid #EEE;position:relative;width:480px;height:480px;z-index:1;background:#FFF;overflow:hidden}#chara,#menu,#shop,#mes,#battle,#setting,#frontMap,#map,#villager{position:absolute;top:0;left:0;background-color:transparent}#pad{display:none;-webkit-user-select:none;text-shadow:-1px -1px 0 rgba(255,255,255,.7);z-index:10;height:80px;width:480px;position:fixed;bottom:0}#pad_left,#pad_up,#pad_down,#pad_right,#pad_space,#pad_D,#pad_M{box-shadow:1px 1px 0 rgba(255,255,255,.7) inset;text-align:center;position:absolute;border:1px solid #333;background:rgba(255,255,255,.1);background:-webkit-linear-gradient(rgba(255,255,255,.3),rgba(221,221,221,.3));background:-webkit-gradient(linear,left top,left bottom,color-stop(1.00,rgba(221,221,221,.3)),color-stop(.00,rgba(255,255,255,.3)));width:39px;height:39px}#pad_left{top:40px;left:0}#pad_up{top:0;left:40px}#pad_down{top:40px;left:40px}#pad_right{top:40px;left:80px}#pad_space{top:40px;left:180px;width:120px;height:40px}#pad_D{bottom:0;right:0}#pad_M{right:0}#audio{display:none}</style>
+		<title>ポケモンAA</title>
 	</head>
 	<body>
+	<div id="main">
 		<div id="screen">
-		<div id="loading">Loading...</div>
-		<canvas width="480" height="480" id="map"></canvas>
-		<canvas width="480" height="480" id="villager"></canvas>
-		<canvas width="480" height="480" id="chara"></canvas>
-		<canvas width="480" height="480" id="frontMap"></canvas>
-		<canvas width="480" height="480" id="menu"></canvas>
-		<canvas width="480" height="480" id="battle"></canvas>
-		<canvas width="480" height="480" id="mes"></canvas>
-		<canvas width="480" height="480" id="shop"></canvas>
+			<div id="loading">Loading...</div>
+			<canvas width="480" height="480" id="map"></canvas>
+			<canvas width="480" height="480" id="villager"></canvas>
+			<canvas width="480" height="480" id="chara"></canvas>
+			<canvas width="480" height="480" id="frontMap"></canvas>
+			<canvas width="480" height="480" id="menu"></canvas>
+			<canvas width="480" height="480" id="battle"></canvas>
+			<canvas width="480" height="480" id="mes"></canvas>
+			<canvas width="480" height="480" id="shop"></canvas>
 		</div>
 		<div id="audio"></div>
-		<div id="pad"><div id="pad_left">←</div><div id="pad_up">↑</div><div id="pad_down">↓</div><div id="pad_right">→</div><div id="pad_space"></div><div id="pad_D">D</div><div id="pad_M">M</div></div>
-		遊び方<br>
-		十字キーで移動<br>
-		Mでメニューを開く(クリックしても実装してないから意味ないよ!)<br>
-		スペースで会話・調べる・宝箱を開ける(いずれも未実装でまだボックスが開くだけ)<br>
-		以上<br>
-		これからきちんとポケ◯モンしていく予定です。まあ大乱闘とかいろいろと違うのを混ぜたいです<br>
-		<a href="history.html">更新履歴 &amp; 今後の予定</a>
+		<div id="pad">
+			<div id="pad_left">←</div><div id="pad_up">↑</div><div id="pad_down">↓</div><div id="pad_right">→</div><div id="pad_space"></div><div id="pad_D">D</div><div id="pad_M">M</div>
+		</div>
+	</div>
+	<div id="left">
+		<ul>
+		<li><a href="pokemon.html">ゲーム</a></li>
+		<li><a href="howto.html">遊び方</a></li>
+		<li><a href="history.html">更新履歴 &amp; 今後の予定</a></li>
+		</ul>
+	</div>
 	</body>
 </html>

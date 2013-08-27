@@ -41,24 +41,12 @@ window.addEventListener("load",function(){
 		return function(scene){
 			switch(nowScene){
 				//切り替えでOFFにする方
-				case "menu":
-					view.hide("map").hide("charaScreen").hide("menu")
-					break;
-				case "talk":
-					view.hide("map").hide("charaScreen").hide("mes")
-					break;
-				case "map":
-					if(scene!="talk") view.hide("map").hide("charaScreen")
-					break;
-				case "title":
-					view.hide("title")
-					break;
-				case "battle":
-					view.hide("mes").hide("battle")
-					break;
-				case "setting":
-					view.hide("menu");
-					break;
+				case "menu":view.hide("map").hide("charaScreen").hide("menu");break;
+				case "talk":view.hide("map").hide("charaScreen").hide("mes");break;
+				case "map":if(scene!="talk") view.hide("map").hide("charaScreen");break;
+				case "title":view.hide("title");break;
+				case "battle":view.hide("mes").hide("battle");break;
+				case "setting":view.hide("menu");break;
 			}
 			switch(scene){
 				case "menu":
@@ -206,10 +194,29 @@ window.addEventListener("load",function(){
 			case "back":dy=-1;break;
 		}
 		var i=Model.get("Func").doesVillagerExist(Model.get("chara").get("x")+dx,Model.get("chara").get("y")+dy);
-		if(i!=-1) villagers.at(i).talk();
-		else if(Model.get("frontMapData").get(Model.get("chara").get("y")+dy)[Model.get("chara").get("x")+dx]==5&&Model.get("Func").doesVillagerExist(Model.get("chara").get("x")+dx*3,Model.get("chara").get("y")+dy*3)!=-1){
+		if(i!=-1){
+			var i=Model.get("Func").doesVillagerExist(Model.get("chara").get("x")+dx,Model.get("chara").get("y")+dy);
+			switch(Model.get("chara").get("direction")){
+				case "left":villagers.at(i).set("direction","right");break;
+				case "right":villagers.at(i).set("direction","left");break;
+				case "back":villagers.at(i).set("direction","front");break;
+				case "front":villagers.at(i).set("direction","back");break;
+			}
+			view.clear("villager",villagers.at(i).get("x"),villagers.at(i).get("y"));
+			view.paintVillager(i);
+			villagers.at(i).talk();
+		}else if(Model.get("frontMapData").get(Model.get("chara").get("y")+dy)[Model.get("chara").get("x")+dx]==5&&Model.get("Func").doesVillagerExist(Model.get("chara").get("x")+dx*3,Model.get("chara").get("y")+dy*3)!=-1){
 			//屋台の中のひとにはなしかけるとき
-			villagers.at(Model.get("Func").doesVillagerExist(Model.get("chara").get("x")+dx*3,Model.get("chara").get("y")+dy*3)).talk();
+			var i=Model.get("Func").doesVillagerExist(Model.get("chara").get("x")+dx*3,Model.get("chara").get("y")+dy*3);
+			switch(Model.get("chara").get("direction")){
+				case "left":villagers.at(i).set("direction","right");break;
+				case "right":villagers.at(i).set("direction","left");break;
+				case "back":villagers.at(i).set("direction","front");break;
+				case "front":villagers.at(i).set("direction","back");break;
+			}
+			view.clear("villager",villagers.at(i).get("x"),villagers.at(i).get("y"));
+			view.paintVillager(i);
+			villagers.at(i).talk();
 		}else view.mes({message:"あやしいところは特になにもないようだ"});
 	},
 	talkTask=0,
@@ -218,8 +225,8 @@ window.addEventListener("load",function(){
 	setting={width:200,height:250,nest:0},//セッティング画面の幅と高さ
 	hpGauge={width:140,height:20},//HPゲージの幅と高さ
 	mesBox={height:80},//表示するボックスのサイズ(幅はめいいっぱい)
-	mainMenu=[{name:"メニュ"},{name:"レポートに書く"},{name:"設定"},{name:"手持ちのポケモン"},{name:"アイテム"},{name:"ゲームに戻る"},{name:"タイトル画面に戻る"},{name:"セーブデータを消す"},{name:"App"}],
-	settingOption=[{name:"戻る"}];//選択肢
+	mainMenu=[{name:"メニュ"},{name:"図鑑"},{name:"レポートに書く"},{name:"設定"},{name:"手持ちのポケモン"},{name:"アイテム"},{name:"ゲームに戻る"},{name:"タイトル画面に戻る"},{name:"セーブデータを消す"},{name:"App"}],
+	settingOption=[{name:"音量",option:["0%","50%","100%","戻る"]},{name:"戻る"}];//選択肢
 	if(isSmartPhone){
 		Canvas.height=320;
 		for(var key in Canvas){
@@ -233,7 +240,7 @@ window.addEventListener("load",function(){
 	screen.realWidth=(screen.width-2)*screen.chipSize;//見えない2マス分を引いた
 	screen.realHeight=(screen.height-2)*screen.chipSize;//見えない2マス分を引いた
 	//画面外も含めたマップのサイズ
-	var preloadImages={"chara":new Image(),"black":new Image(),"villager":new Image(),"farmer":new Image(),"blacksmith":new Image(),"butcher":new Image()}
+	var preloadImages={"chara":new Image(),"black":new Image(),"villager/farmer":new Image(),"villager/blacksmith":new Image(),"villager/butcher":new Image(),"villager/citizen":new Image(),"villager/curioshop":new Image()}
 	App.log("images began loading")
 	for(var key in preloadImages){
 		preloadImages[key].src=key+".png";
@@ -246,11 +253,16 @@ window.addEventListener("load",function(){
 	var imageLoad=function(){
 		App.log(this.src.replace(/([\s\S]+?)([^\/]+?).(png|gif)/,"$2.$3")+" loaded")
 		loadedImages++;
-		if(loadedImages==preloadImages.Length){
+		document.getElementById("loading").innerText=loadedImages/(preloadImages.Length+1)*100+"%"
+		if(loadedImages==preloadImages.Length+1){
+			//画像+BGMの数
 			App.log("images loaded")
 			main(_);
 		}
 	}
+	audio=new Audio("music/village.mp3");
+	audio.addEventListener("canplaythrough",imageLoad);
+
 	var i=0;
 	for(var key in preloadImages){
 		preloadImages[key].onload=imageLoad;
@@ -302,7 +314,7 @@ window.addEventListener("load",function(){
 						}else messages.push({message:message,x:x,y:y})
 						
 						Canvas.mes.clearRect(0,screen.realHeight-mesBox.height,screen.realWidth,screen.realHeight);
-						Canvas.mes.fillStyle="rgba(0,0,0,0.8)";
+						Canvas.mes.fillStyle="rgba(0,0,0,0.7)";
 						Canvas.mes.strokeStyle="#fff";
 						Canvas.mes.rect(0,screen.realHeight-mesBox.height,screen.realWidth,mesBox.height);
 						Canvas.mes.stroke();
@@ -323,10 +335,8 @@ window.addEventListener("load",function(){
 							option.callback&&option.callback();
 						}else{
 							var mesKeyDown=function(e){
-								e.preventDefault&&e.preventDefault();
 								if(e.keyCode==32){
 									talking=false;
-									console.log("ok")
 									window.removeEventListener("keydown",mesKeyDown,false);
 									window.removeEventListener("touchstart",mesTouch,false);
 									mesTouch=void 0;
@@ -439,28 +449,45 @@ window.addEventListener("load",function(){
 					case "chara":
 						view.hide("title")
 						for(var i=0,j=villagers.length;i<j;i++){
-		//					view.paint("map",villagers.at(i).get("job"),villagers.at(i).get("x"),villagers.at(i).get("y"));//職業ごとに違う絵柄の予定。今はテストなので下の方
 							if(!villagers.at(i).get("isPainted")){
-								view.paint("villager","villager",villagers.at(i).get("x"),villagers.at(i).get("y"));
+//								view.paint("villager","villager",villagers.at(i).get("x"),villagers.at(i).get("y"));//村人はすべて同じバージョン
+								view.paintVillager(i);
 								villagers.at(i).set("isPainted",true)
 							}
-							if(villagers.at(i).get("move")&&(Math.random()*40|0)==0&&situation!="talk"){
+							if(villagers.at(i).get("move")&&(Math.random()*100|0)==0&&situation!="talk"&&situation!="menu"){
 								view.clear("villager",villagers.at(i).get("x"),villagers.at(i).get("y"));
 								switch(Math.random()*4|0){
+									//方向を決める
 									case 0:
-										move(-1,0,true,villagers.at(i));
+										//左へ
+										if(villagers.at(i).get("x")-1>=villagers.at(i).get("defaultX")-villagers.at(i).get("range")){
+											move(-1,0,true,villagers.at(i));
+											villagers.at(i).set("direction","left");
+										}
 										break;
 									case 1:
-										move(1,0,true,villagers.at(i));
+										//右へ
+										if(villagers.at(i).get("x")+1<=villagers.at(i).get("defaultX")+villagers.at(i).get("range")){
+											move(1,0,true,villagers.at(i));
+											villagers.at(i).set("direction","right");
+										}
 										break;
 									case 2:
-										move(0,1,true,villagers.at(i));
+										//下へ
+										if(villagers.at(i).get("y")+1<=villagers.at(i).get("defaultY")+villagers.at(i).get("range")){
+											move(0,1,true,villagers.at(i));
+											villagers.at(i).set("direction","front");
+										}
 										break;
 									case 3:
-										move(0,-1,true,villagers.at(i));
+										//上へ
+										if(villagers.at(i).get("y")-1>=villagers.at(i).get("defaultY")-villagers.at(i).get("range")){
+											move(0,-1,true,villagers.at(i));
+											villagers.at(i).set("direction","back");
+										}
 										break;
 								}
-								view.paint("villager","villager",villagers.at(i).get("x"),villagers.at(i).get("y"));
+								view.paintVillager(i);
 							}
 						}
 						//キャラの表示。
@@ -526,7 +553,7 @@ window.addEventListener("load",function(){
 						break;
 					case "battle":
 						view.hide("title");
-						if(isSmartPhone)Canvas.battle.drawImage(enemy.get("img"),(screen.realWidth-200)/2,0,200,200);
+						if(isSmartPhone) Canvas.battle.drawImage(enemy.get("img"),(screen.realWidth-200)/2,0,200,200);
 						else Canvas.battle.drawImage(enemy.get("img"),(screen.realWidth-320)/2,0,320,320);
 						break;
 					case "talk":
@@ -615,6 +642,22 @@ window.addEventListener("load",function(){
 				//マップ1チップの描写
 				Canvas[target].drawImage(preloadImages[data], sx, sy,sw,sh, dx*screen.chipSize, dy*screen.chipSize,screen.chipSize,screen.chipSize);
 			},
+			paintVillager:function(i){
+				switch(villagers.at(i).get("direction")){
+					case "front":
+						view.paint("villager","villager/"+villagers.at(i).get("job"),32,0,32,32,villagers.at(i).get("x"),villagers.at(i).get("y"));//職業ごとに違うイラストバージョン
+						break;
+					case "left":
+						view.paint("villager","villager/"+villagers.at(i).get("job"),32,32,32,32,villagers.at(i).get("x"),villagers.at(i).get("y"));//職業ごとに違うイラストバージョン
+						break;
+					case "right":
+						view.paint("villager","villager/"+villagers.at(i).get("job"),32,64,32,32,villagers.at(i).get("x"),villagers.at(i).get("y"));//職業ごとに違うイラストバージョン
+						break;
+					case "back":
+						view.paint("villager","villager/"+villagers.at(i).get("job"),32,96,32,32,villagers.at(i).get("x"),villagers.at(i).get("y"));//職業ごとに違うイラストバージョン
+						break;
+				}
+			},
 			clear:function(target,dx,dy,dw,dh){
 				if(dw===undefined){
 					dw=screen.chipSize;
@@ -690,12 +733,13 @@ window.addEventListener("load",function(){
 								break;
 							case "menu":
 								switch(mainMenu[Model.get("cursor").get("y")+1].name){
+									case "図鑑":
+										Model.get("pokedex").view();
+										view.mes({message:"未実装だよ!いまやってるよ!",doesSwitchMode:false});
+										break;
 									case "レポートに書く":
 										//レポートに書く
-										setCookie("save_data",JSON.stringify(U.map(Model.models,function(model){if(!(model.id=="mapData"||model.id=="frontMapData"||model.id=="isKeyPressed"||model.id=="mapAttr"||model.id=="Func"||model.id=="world")) return model.toJSON()})),60)//クッキーバージョン
-										console.log(JSON.stringify(U.map(Model.models,function(model){
-											if(!(model.id=="mapData"||model.id=="frontMapData"||model.id=="isKeyPressed"||model.id=="mapAttr"||model.id=="Func"||model.id=="world")) return model.toJSON()
-										})))
+										setCookie("save_data",JSON.stringify(U.map(Model.models,function(model){if(model.id=="chara"||model.id=="setting") return model.toJSON()})),60)//クッキーバージョン
 										view.mes("レポートを書きました。");
 										break;
 									case "設定":
@@ -733,12 +777,28 @@ window.addEventListener("load",function(){
 							case "setting":
 								if(setting.nest==0){
 									switch(settingOption[Model.get("cursor").get("y")].name){
+										case "音量":
+											setting.nest++;
+											setting.target=0;
+											break;
 										case "戻る":
 											switchMode("menu");
 											break;
 									}
 								}else if(setting.nest==1){
 									switch(settingOption[setting.target].name){
+										case "音量":
+											switch(settingOption[setting.target].option[Model.get("cursor").get("y")]){
+												case "0%":
+												case "50%":
+												case "100%":
+													Model.get("setting").set("volume",Model.get("Func").parseInt(settingOption[setting.target].option[Model.get("cursor").get("y")]));
+												case "戻る":
+													setting.nest--;
+													Model.get("cursor").set("y",0);
+													break;
+											}
+											break;
 										case "戻る":
 											switchMode("menu");
 											break;
@@ -747,6 +807,7 @@ window.addEventListener("load",function(){
 								break;
 							case "title":
 								switchMode("map");
+								audio.play();
 								break;
 							case "talk":
 								break;
@@ -799,18 +860,9 @@ window.addEventListener("load",function(){
 				}
 			}
 		});
-	/*	var Audio=Backbone.View.extend({
-			el:"<audio src=\"music/C.W.R.mp3\" id=\"BGM\" controls autoplay><p>音声を再生するには、audioタグをサポートしたブラウザが必要です。</p></audio>",
-			play:function(){
-	//			document.getElementById("BGM").play()
-			}
-		});
-		Audio=new Audio()
-		document.getElementById("audio").innerHTML=Audio.el;
-		Audio.play()*/
 		view=new Display();
-		document.getElementById("frontMap").width=document.getElementById("map").width=Model.get("world").get("width")*screen.chipSize;
-		document.getElementById("frontMap").height=document.getElementById("map").height=Model.get("world").get("height")*screen.chipSize;
+		document.getElementById("frontMap").width=document.getElementById("map").width=document.getElementById("villager").width=Model.get("world").get("width")*screen.chipSize;
+		document.getElementById("frontMap").height=document.getElementById("map").height=document.getElementById("villager").height=Model.get("world").get("height")*screen.chipSize;
 		setTimeout(function(){
 			App.log("map drawing start")
 			for(var j=0;j<Model.get("world").get("height");j++){
