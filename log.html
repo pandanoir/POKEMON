@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<script>
+		window.onload=function(){
+			var d=document;
+			var log=document.getElementsByTagName("body")[0].innerHTML;
+			var logs=log.split("\n");
+			for(var i=0;i<logs.length;i++){
+				logs[i]={
+					body:logs[i].split(":")[0],
+					time:logs[i].split(":")[1]
+				}
+				if(logs[i].body.indexOf("loaded")!=-1) logs[i].type="load";
+				if(logs[i].body.indexOf("key")!=-1){
+					logs[i].type="keyAction";
+					logs[i].key=logs[i].body.split(" ")[1];
+				}
+			}
+			console.log(logs)<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<script>
+		window.onload=function(){
+			var d=document;
+			var log="main called:447\nsmart phone:459\ninterval setted:462\nmap drawing start:563\nmap drawing end:966\nkeyDown 32:2866\nkeyUp 32:2978\nkeyDown 39:3561\nkeyDown 68:4126\nkeyUp 68:4833\nkeyUp 39:4875\nkeyDown 40:5653\nkeyDown undefined:7373\nkeyUp undefined:7649\nkeyDown 39:7764\nkeyDown 68:8189\nkeyUp 39:12747\nkeyUp 68:12775\nkeyDown 39:12891\nkeyUp 39:13314\nkeyDown 37:13546\nkeyDown 68:13560\nkeyDown 68:13576\nkeyUp 68:13590\nkeyUp 68:14489\nkeyDown 38:16368\nkeyDown 68:16890\nkeyUp 38:17550\nkeyDown 68:19025\nkeyUp 68:19211\nkeyDown 68:20169\nkeyDown 37:20406\nkeyUp 68:22745\nkeyUp 37:22761\nkeyDown 40:23056\nkeyDown 68:23260\nkeyUp 68:23679\nkeyUp 40:23711\nkeyDown 38:24147\nkeyDown 68:24509\nkeyDown 68:24524\nkeyUp 68:24540\nkeyUp 68:25372\nkeyUp 38:25523\nkeyDown 38:26320\nkeyUp 38:26506\nkeyDown 39:27084\nkeyDown undefined:27542\nkeyUp undefined:28243\nkeyDown 68:28507\nkeyDown 38:29699\nkeyDown 68:29951\nkeyUp 38:30206\nkeyDown 37:31442\nkeyDown 68:32016\nkeyUp 68:32051\nkeyUp 37:32394\nkeyDown 37:33288\nkeyDown undefined:34008\nkeyUp undefined:34675\nkeyDown 68:34829\nkeyUp 68:35962\nkeyUp 37:35985\nkeyDown 37:36614\nkeyDown 68:36640\nbattle start:38310\nkeyUp 37:39013\nkeyUp 68:39065\nkeyDown 39:41331\nkeyUp 39:41509\nkeyDown 40:41981\nkeyUp 40:42250\nkeyDown 39:42454\nkeyUp 39:42652\nkeyDown 32:43107\nkeyUp 32:43246\nkeyDown 32:44219\nkeyUp 32:44329\nkeyDown 32:44968\nkeyUp 32:45133\nkeyDown 77:46209\nmap close.:46209\nkeyUp 77:46313\nkeyDown 38:46816\nkeyUp 38:46924\nkeyDown undefined:47323\nkeyUp undefined:47429\nkeyDown undefined:47546\nkeyUp undefined:47679\nkeyDown 38:47920\nkeyUp 38:48017\nkeyDown 38:48134\nkeyUp 38:48278\nkeyDown 40:49427\nkeyUp 40:49583\nkeyDown 32:50107";
+			var logs=log.split("\n");
+			for(var i=0;i<logs.length;i++){
+				logs[i]={
+					body:logs[i].substring(0,logs[i].lastIndexOf(":")),
+					time:parseInt(logs[i].substring(logs[i].lastIndexOf(":")+1))-447
+				}
+				if(logs[i].body.indexOf("loaded")!=-1) logs[i].type="load";
+				if(logs[i].body.indexOf("key")!=-1){
+					logs[i].type="keyAction";
+					logs[i].key=logs[i].body.split(" ")[1];
+				}
+				logs[i]=logs[i].body+":"+logs[i].time;
+			}
+			d.write("<pre>"+logs.join("\n")+"</pre>")
+		}</script>
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<title></title>
+	</head>
+	<body>
+		
+	</body>
+</html>
+		}</script>
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<title></title>
+	</head>
+	<body></body>
+</html>

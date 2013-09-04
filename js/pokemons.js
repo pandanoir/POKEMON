@@ -44,6 +44,6 @@ pokemonValue=new pokemonValue([new poke({id:"アクサワー",attack:20,defence:
 		result.push(pokemonValue.models[i].get("id"))
 		pokemonValue.models[i].set("no",i);//番号更新時のみ
 	}
-	console.log(JSON.stringify(result))//番号更新時のみ
+//	console.log(JSON.stringify(result))//番号更新時のみ
 	pokemonValue.Length=i+1;
 })()

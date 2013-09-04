@@ -1,18 +1,38 @@
 var testMode=false,
 doesEncount=true,
+logMode=false,
 IntervalTime=50;
 window.addEventListener("load",function(){
+	var logs,log,inc=0;
+	if(logMode){
+		var r = new XMLHttpRequest();
+		r.open("GET", "js/log.txt", true);
+		r.send(null)
+		r.onreadystatechange = function () {
+			if (r.readyState != 4) return;
+			log=r.responseText;
+			logs=log.split("\n");
+			for(var i=0;i<logs.length;i++){
+				logs[i]={
+					body:logs[i].substring(0,logs[i].lastIndexOf(":")),
+					time:parseInt(logs[i].substring(logs[i].lastIndexOf(":")+1))
+				}
+				if(logs[i].body.indexOf("loaded")!=-1) logs[i].type="load";
+				if(logs[i].body.indexOf("key")!=-1){
+					logs[i].type="keyAction";
+					logs[i].key=logs[i].body.split(" ")[1];
+				}
+			}
+			preloadImageLoad();
+			r.onreadystatechange=void 0;
+		};
+	}
 	App.noConsole();
 	// クッキー保存　setCookie(クッキー名, クッキーの値, クッキーの有効日数); //
 	var isSmartPhone="ontouchstart" in window;
 	function setCookie(b,e,d){var c=location.pathname,a=[],a=c.split("/");""!=a[a.length-1]&&(a[a.length-1]="",c=a.join("/"));a=(new Date).getTime();a=(new Date(a+864E5*d)).toUTCString();b=""+(b+"="+escape(e));b+="; path="+c;document.cookie=d?b+("; expires="+a+"; "):b+"; "};
-	function moveMap(target,val){
-		villagerStyle[target]=mapStyle[target]=frontMapStyle[target]=val;
-	}
 	var mapStyle=document.getElementById("map").style,frontMapStyle=document.getElementById("frontMap").style,villagerStyle=document.getElementById("villager").style;
 	frontMapStyle.display="none";
-	moveMap("left","0px");
-	moveMap("top","0px");//スムースウォーキングのためにmapを動かす時に必要な設定。
 	var situation="title";
 	var now=0;
 	var Canvas={
@@ -39,52 +59,59 @@ window.addEventListener("load",function(){
 	switchMode=(function(){
 		var nowScene=situation;
 		return function(scene){
+			var hides=[],shows=[];
 			switch(nowScene){
 				//切り替えでOFFにする方
-				case "menu":view.hide("map").hide("charaScreen").hide("menu");break;
-				case "talk":view.hide("map").hide("charaScreen").hide("mes");break;
-				case "map":if(scene!="talk") view.hide("map").hide("charaScreen");break;
-				case "title":view.hide("title");break;
-				case "battle":view.hide("mes").hide("battle");break;
-				case "setting":view.hide("menu");break;
+				case "menu":hides=["map","charaScreen","menu"];break;
+				case "talk":hides=["map","charaScreen","mes"];break;
+				case "map":if(scene!="talk") hides=["map","charaScreen"];break;
+				case "title":hides=["title"];break;
+				case "battle":hides=["mes","battle"];break;
+				case "setting":hides=["menu"];break;
 			}
 			switch(scene){
 				case "menu":
 					situation="menu";
-					view.show("map").show("charaScreen").show("menu");
+					shows=["map","charaScreen","menu"];
 					break;
 				case "talk":
 					situation="talk";
-					view.show("map").show("charaScreen").show("mes")
+					shows=["map","charaScreen","mes"];
 					break;
 				case "map":
 					situation="map";
 					view.display("chara");
-					view.show("map").show("charaScreen")
+					shows=["map","charaScreen"];
+					view.charaDraw("none");
 					break;
 				case "title":
 					situation="title";
-					view.show("title")
+					shows=["title"];
 					break;
 				case "battle":
 					situation="battle";
-					view.show("mes").show("battle");
-					Canvas.battle.fillStyle="#fff";
-					Canvas.battle.fillRect(0,0,screen.realWidth,screen.realHeight);
+					shows=["mes","battle"];
 					break;
 				case "setting":
 					situation="setting";
-					view.show("map").show("charaScreen").show("menu");
+					shows=["map","charaScreen","menu"];
+					break;
 			}
-			nowScene=scene
+			nowScene=scene;
+			var hides2=_.difference(hides,shows);//消すものの中から表示予定のものをhidesから消してエコロジー化
+			var shows2=_.difference(shows,hides);//表示予定のものからすでに表示されているものをshowsから消してエコロジー化
+			for(var i=0;i<hides2.length;i++) view.hide(hides2[i]);
+			for(var i=0;i<shows2.length;i++) view.show(shows2[i]);
 		}
 	})(),
 	antiKeyAction=false,
 	encount=function(test){
 		if(Model.get("mapAttr").get(Model.get("mapData").get(Model.get("chara").get("y"))[Model.get("chara").get("x")]).isEncountable){
-			if(test=="test"||(Math.random()*100|0)==0){
+			if(test||(Math.random()*100|0)==0){
+				App.log("encount "+test);
 				switchMode("battle");
-				battle({start:true,monster:Model.get("mapAttr").get(Model.get("mapData").get(Model.get("chara").get("y"))[Model.get("chara").get("x")]).livingMonster});
+				if(test!==undefined&&test!="test") battle({start:true,monster:[test]});
+				else battle({start:true,monster:Model.get("mapAttr").get(Model.get("mapData").get(Model.get("chara").get("y"))[Model.get("chara").get("x")]).livingMonster});
 			}
 		}
 	},
@@ -161,6 +188,7 @@ window.addEventListener("load",function(){
 				view.mes({message:option.attack[0].get("name") + " に" + (beforeHP-option.attack[0].get("hp")) + " のダメージ!",callback:function(){option.next?option.next():battle({turnStart:true})}});
 			}
 		}else if(option.end){
+			App.log("battle end");
 			switchMode("map");
 			situation="map";
 		}else if(option.hpGauge){
@@ -225,8 +253,8 @@ window.addEventListener("load",function(){
 	setting={width:200,height:250,nest:0},//セッティング画面の幅と高さ
 	hpGauge={width:140,height:20},//HPゲージの幅と高さ
 	mesBox={height:80},//表示するボックスのサイズ(幅はめいいっぱい)
-	mainMenu=[{name:"メニュ"},{name:"図鑑"},{name:"レポートに書く"},{name:"設定"},{name:"手持ちのポケモン"},{name:"アイテム"},{name:"ゲームに戻る"},{name:"タイトル画面に戻る"},{name:"セーブデータを消す"},{name:"App"}],
-	settingOption=[{name:"音量",option:["0%","50%","100%","戻る"]},{name:"戻る"}];//選択肢
+	mainMenu=[{name:"図鑑"},{name:"レポートに書く"},{name:"設定"},{name:"手持ちのポケモン"},{name:"アイテム"},{name:"ゲームに戻る"},{name:"タイトル画面に戻る"},{name:"セーブデータを消す"},{name:"App"}],
+	settingOption=[{name:"音量",option:["0%","50%","100%","戻る"]},{name:"キャラ画像",option:["石山","まじめ","戻る"]},{name:"戻る"}];//選択肢
 	if(isSmartPhone){
 		Canvas.height=320;
 		for(var key in Canvas){
@@ -240,37 +268,60 @@ window.addEventListener("load",function(){
 	screen.realWidth=(screen.width-2)*screen.chipSize;//見えない2マス分を引いた
 	screen.realHeight=(screen.height-2)*screen.chipSize;//見えない2マス分を引いた
 	//画面外も含めたマップのサイズ
-	var preloadImages={"chara":new Image(),"black":new Image(),"villager/farmer":new Image(),"villager/blacksmith":new Image(),"villager/butcher":new Image(),"villager/citizen":new Image(),"villager/curioshop":new Image()}
+	var preloadImages={"chara":new Image(),"chara1":new Image(),"black":new Image(),"villager/farmer":new Image(),"villager/blacksmith":new Image(),"villager/butcher":new Image(),"villager/citizen":new Image(),"villager/curioshop":new Image(),"villager/cure":new Image()}
 	App.log("images began loading")
-	for(var key in preloadImages){
-		preloadImages[key].src=key+".png";
-	}
-	preloadImages["map.png"]=new Image();
-	preloadImages["map.png"].src="map/map.png";
-	preloadImages["shops.gif"]=new Image();
-	preloadImages["shops.gif"].src="map/shops.gif";
 	var loadedImages=0;
 	var imageLoad=function(){
 		App.log(this.src.replace(/([\s\S]+?)([^\/]+?).(png|gif)/,"$2.$3")+" loaded")
 		loadedImages++;
-		document.getElementById("loading").innerText=loadedImages/(preloadImages.Length+1)*100+"%"
-		if(loadedImages==preloadImages.Length+1){
+		document.getElementById("loading").innerText=loadedImages/(preloadImages.Length)*100+"%"
+		if(loadedImages==preloadImages.Length){
 			//画像+BGMの数
 			App.log("images loaded")
 			main(_);
 		}
 	}
-	audio=new Audio("music/village.mp3");
-	audio.addEventListener("canplaythrough",imageLoad);
-
-	var i=0;
-	for(var key in preloadImages){
-		preloadImages[key].onload=imageLoad;
-		i++;
+	function moveMap(){
+		villagerStyle["left"]=mapStyle["left"]=frontMapStyle["left"]=-(Model.get("chara").get("x")-(screen.width/2|0))*screen.chipSize+"px";
+		villagerStyle["top"]=mapStyle["top"]=frontMapStyle["top"]=-(Model.get("chara").get("y")-(screen.height/2|0))*screen.chipSize+"px";
+		if(Model.get("chara").get("doesRun")==0){
+			//doesRunが0 つまり 走ってない
+			switch(Model.get("chara").get("direction")){
+				case "left":villagerStyle["left"]=mapStyle["left"]=frontMapStyle["left"]=parseInt(mapStyle.left,10)+screen.chipSize/8*Model.get("chara").get("doesWalk")+"px";break;
+				case "front":villagerStyle["top"]=mapStyle["top"]=frontMapStyle["top"]=parseInt(mapStyle.top,10)-screen.chipSize/8*Model.get("chara").get("doesWalk")+"px";break;
+				case "right":villagerStyle["left"]=mapStyle["left"]=frontMapStyle["left"]=parseInt(mapStyle.left,10)-screen.chipSize/8*Model.get("chara").get("doesWalk")+"px";break;
+				case "back":villagerStyle["top"]=mapStyle["top"]=frontMapStyle["top"]=parseInt(mapStyle.top,10)+screen.chipSize/8*Model.get("chara").get("doesWalk")+"px";break;
+			}
+		}else{
+			//doesRunが0でない 走っている
+			switch(Model.get("chara").get("direction")){
+				case "left":villagerStyle["left"]=mapStyle["left"]=frontMapStyle["left"]=parseInt(mapStyle.left,10)+screen.chipSize/4*(Model.get("chara").get("doesRun")%4)+"px";break;
+				case "front":villagerStyle["top"]=mapStyle["top"]=frontMapStyle["top"]=parseInt(mapStyle.top,10)-screen.chipSize/4*(Model.get("chara").get("doesRun")%4)+"px";break;
+				case "right":villagerStyle["left"]=mapStyle["left"]=frontMapStyle["left"]=parseInt(mapStyle.left,10)-screen.chipSize/4*(Model.get("chara").get("doesRun")%4)+"px";break;
+				case "back":villagerStyle["top"]=mapStyle["top"]=frontMapStyle["top"]=parseInt(mapStyle.top,10)+screen.chipSize/4*(Model.get("chara").get("doesRun")%4)+"px";break;
+			}
+		}
 	}
-	preloadImages.Length=i;
+	function preloadImageLoad(){
+		for(var key in preloadImages){
+			preloadImages[key].src=key+".png";
+		}
+		preloadImages["map.png"]=new Image();preloadImages["map.png"].src="map/map.png";
+		preloadImages["shops.gif"]=new Image();preloadImages["shops.gif"].src="map/shops.gif";
+		var i=0;
+		for(var key in preloadImages){
+			preloadImages[key].onload=imageLoad;
+			i++;
+		}
+		preloadImages.Length=i;
+	}
+	if(!logMode){
+		preloadImageLoad();
+	}
+
 	function main(U){
 		App.log("main called")
+		moveMap();//スムースウォーキングのためにmapを動かす時に必要な設定。
 		var Display=Backbone.View.extend({
 			mes:(function(){
 				var messages=[];
@@ -288,6 +339,7 @@ window.addEventListener("load",function(){
 					tasks.push(option);
 					var wait=setInterval(function(){
 					if(!talking||tasks[tasks.length-1].dontWait){
+						//talkingがfalse つまり会話していない もしくはdontWaitつまりスルーする
 						option=tasks.shift();
 						talking=true;
 						talkTask--;
@@ -314,14 +366,9 @@ window.addEventListener("load",function(){
 						}else messages.push({message:message,x:x,y:y})
 						
 						Canvas.mes.clearRect(0,screen.realHeight-mesBox.height,screen.realWidth,screen.realHeight);
-						Canvas.mes.fillStyle="rgba(0,0,0,0.7)";
-						Canvas.mes.strokeStyle="#fff";
-						Canvas.mes.rect(0,screen.realHeight-mesBox.height,screen.realWidth,mesBox.height);
-						Canvas.mes.stroke();
-						Canvas.mes.strokeStyle="#000";
-						Canvas.mes.rect(2,screen.realHeight-mesBox.height+2,screen.realWidth-4,mesBox.height-4);
-						Canvas.mes.fill();
-						Canvas.mes.stroke();
+
+						view.strokeMesBox()//ボックスの描写
+
 						Canvas.mes.shadowOffsetX=Canvas.mes.shadowOffsetY=1;
 						Canvas.mes.shadowColor="rgba(0,0,0,0.3)";
 						Canvas.mes.fillStyle="#fff";
@@ -360,20 +407,32 @@ window.addEventListener("load",function(){
 					},20)
 				}
 			})(),//mes終わり
+			strokeMesBox:function(){
+				Canvas.mes.fillStyle="rgba(0,0,0,0.7)";
+				Canvas.mes.strokeStyle="#fff";
+				Canvas.mes.rect(0,screen.realHeight-mesBox.height,screen.realWidth,mesBox.height);
+				Canvas.mes.stroke();
+
+				Canvas.mes.strokeStyle="#000";
+				Canvas.mes.rect(2,screen.realHeight-mesBox.height+2,screen.realWidth-4,mesBox.height-4);
+				Canvas.mes.fill();
+				Canvas.mes.stroke();
+			},
 			select:function(option){
-				view.mes({message:"",dontWait:true})
-				for(var i=0;i<option.option.length;i++){
-					view.mes({message:option.option[i],y:i*20,overwrite:true,dontWait:true});
+				Canvas[option.canvas].fillStyle=option.color;
+				if(!option.hideCursor) Canvas[option.canvas].fillText(">",Model.get("cursor").get("x")+option.x+2,Model.get("cursor").get("y")*20+option.y);
+				var cursorWidth=Canvas[option.canvas].measureText("> ").width;
+				for(var i=0;i<option.options.length;i++){
+					Canvas[option.canvas].fillText(option.options[i],option.x+cursorWidth,option.y+i*20);
 				}
-				antiKeyAction=true;
 				var mesKeyDown=function(e){
 					e.preventDefault&&e.preventDefault();
 					if(e.keyCode==32){
 						talking=false;
 						window.removeEventListener("keydown",mesKeyDown,false);
-						for(var i=0;i<padKey.length;i++) document.getElementById("pad_"+padKey[i][0]).removeEventListener("touchstart",mesTouch[i],false);
+						window.removeEventListener("touchstart",mesTouch,false);
 						mesKeyDown=void 0;
-						option.callback&&option.callback();
+						option.callback&&option.callback(Model.get("cursor").num());
 						if(talkTask==0){
 							antiKeyAction=false;
 							view.hide("mes");
@@ -381,32 +440,39 @@ window.addEventListener("load",function(){
 						}
 					}
 				}
-				var mesTouch=[];
+				var mesTouch=function(e){
+					e.preventDefault();
+					mesKeyDown({keyCode:padKey[e.target.id]});
+				}
 				window.addEventListener("keydown",mesKeyDown,false);
-				for(var i=0;i<padKey.length;i++){
-					mesTouch.push((function(i){
-						return function(e){
-							e.preventDefault();
-							mesKeyDown({keyCode:padKey[i][1]});
-						}
-					})(i))
-					document.getElementById("pad_"+padKey[i][0]).addEventListener("touchstart",mesTouch[i],false)
-				}
+				window.addEventListener("touchstart",mesTouch,false);
 			},
-			charaDraw:function(direction,motion){
-				//マップのdiv要素のbackgroundImageのurlをたす。
-				if(direction=="front") direction=0;
-				else if(direction=="left") direction=1;
-				else if(direction=="right") direction=2;
-				else if(direction=="back") direction=3;
-				if(motion=="left"){
-					Canvas.chara.drawImage(preloadImages["chara"],0,direction*32,screen.chipSize,screen.chipSize,(screen.width/2|0)*screen.chipSize,(screen.height/2|0)*screen.chipSize,screen.chipSize,screen.chipSize);
-				}else if(motion=="right"){
-					Canvas.chara.drawImage(preloadImages["chara"],screen.chipSize*2,direction*32,screen.chipSize,screen.chipSize,(screen.width/2|0)*screen.chipSize,(screen.height/2|0)*screen.chipSize,screen.chipSize,screen.chipSize);
-				}else{
-					Canvas.chara.drawImage(preloadImages["chara"],screen.chipSize,direction*32,screen.chipSize,screen.chipSize,(screen.width/2|0)*screen.chipSize,(screen.height/2|0)*screen.chipSize,screen.chipSize,screen.chipSize);
+			charaDraw:(function(){
+				//キャラの描写
+				var beforeDirection="",beforeMotion="";
+				return function(motion){
+					//マップのdiv要素のbackgroundImageのurlをたす。
+					var direction=Model.get("chara").get("direction");
+					if(direction==beforeDirection&&motion==beforeMotion&&motion) return;
+					beforeDirection=direction;
+					beforeMotion=motion;
+					Canvas.chara.clearRect((screen.width/2|0)*screen.chipSize,(screen.height/2|0)*screen.chipSize,screen.chipSize,screen.chipSize);
+					if(direction=="front") direction=0;
+					else if(direction=="left") direction=1;
+					else if(direction=="right") direction=2;
+					else if(direction=="back") direction=3;
+					if(motion=="left"){
+						//左足をだしているモーションの時
+						Canvas.chara.drawImage(preloadImages[Model.get("chara").get("img")],0,direction*32,screen.chipSize,screen.chipSize,(screen.width/2|0)*screen.chipSize,(screen.height/2|0)*screen.chipSize,screen.chipSize,screen.chipSize);
+					}else if(motion=="right"){
+						//右足をだしているモーションの時
+						Canvas.chara.drawImage(preloadImages[Model.get("chara").get("img")],screen.chipSize*2,direction*32,screen.chipSize,screen.chipSize,(screen.width/2|0)*screen.chipSize,(screen.height/2|0)*screen.chipSize,screen.chipSize,screen.chipSize);
+					}else{
+						//止まっている時
+						Canvas.chara.drawImage(preloadImages[Model.get("chara").get("img")],screen.chipSize,direction*32,screen.chipSize,screen.chipSize,(screen.width/2|0)*screen.chipSize,(screen.height/2|0)*screen.chipSize,screen.chipSize,screen.chipSize);
+					}
 				}
-			},
+			})(),
 			display:function(key){
 				//keyの状態で表示する
 				switch(key){
@@ -425,12 +491,7 @@ window.addEventListener("load",function(){
 						else Canvas.menu.fillStyle="rgba(136,136,136,0.7)";
 						Canvas.menu.fill();
 						Canvas.menu.stroke();
-						Canvas.menu.fillStyle="#000";
-						if(setting.nest==0) Canvas.menu.fillText(">",Model.get("cursor").get("x")+(screen.realWidth-setting.width)/2+2+10,Model.get("cursor").get("y")*20+(screen.realHeight-setting.height)/2+20);
-						var cursorWidth=Canvas.menu.measureText("> ").width;
-						for(var i=0,j=settingOption.length;i<j;i++){
-							Canvas.menu.fillText(settingOption[i].name,(screen.realWidth-setting.width)/2+cursorWidth+10,i*20+(screen.realHeight-setting.height)/2+20);
-						}
+						view.select({canvas:"menu",options:U.map(settingOption,function(a){return a.name}),x:(screen.realWidth-setting.width)/2+10,y:(screen.realHeight-setting.height)/2+20,color:"#000",hideCursor:setting.nest!=0});
 						Canvas.menu.closePath();
 						if(setting.nest>0){
 							Canvas.menu.beginPath();
@@ -438,16 +499,10 @@ window.addEventListener("load",function(){
 							Canvas.menu.fillStyle="rgba(255,255,255,0.7)";
 							Canvas.menu.fill();
 							Canvas.menu.stroke();
-							Canvas.menu.fillStyle="#000";
-							Canvas.menu.fillText(">",Model.get("cursor").get("x")+(screen.realWidth-setting.width+40)/2+22,Model.get("cursor").get("y")*20+(screen.realHeight-setting.height)/2+20);
-							var cursorWidth=Canvas.menu.measureText("> ").width;
-							for(var i=0,j=settingOption[setting.target].option.length;i<j;i++){
-								Canvas.menu.fillText(settingOption[setting.target].option[i],(screen.realWidth-setting.width+40)/2+cursorWidth+20,i*20+(screen.realHeight-setting.height)/2+20);
-							}
+							view.select({canvas:"menu",options:settingOption[setting.target].option,x:(screen.realWidth-setting.width+40)/2+20,y:(screen.realHeight-setting.height)/2+20,color:"#000"});
 							Canvas.menu.closePath();
 						}
 					case "chara":
-						view.hide("title")
 						for(var i=0,j=villagers.length;i<j;i++){
 							if(!villagers.at(i).get("isPainted")){
 //								view.paint("villager","villager",villagers.at(i).get("x"),villagers.at(i).get("y"));//村人はすべて同じバージョン
@@ -492,52 +547,40 @@ window.addEventListener("load",function(){
 						}
 						//キャラの表示。
 						if(Model.get("chara").get("doesWalk")!=0){
-							if(Model.get("chara").get("doesRun")!=0) Model.get("chara").incrementWalk(2);
-							else Model.get("chara").incrementWalk();
+							//歩くか走っていたら
+							if(Model.get("chara").get("doesRun")!=0) Model.get("chara").incrementWalk(2);//走っている
+							else Model.get("chara").incrementWalk();//歩いている
 						}
 						if(Model.get("chara").get("doesRun")>0){
+							//走っていたら
 							Model.get("chara").incrementRun();
 							switch(Model.get("chara").get("doesRun")%4){
 								case 0:
 								case 1:
-									view.charaDraw(Model.get("chara").get("direction"),"left");
+									view.charaDraw("left");
 									 break;
 								case 2:
 								case 3:
-									view.charaDraw(Model.get("chara").get("direction"),"right");
+									view.charaDraw("right");
 									break;
 							}
 						}else{
+							//走ってなかったら
 							switch(Model.get("chara").get("doesWalk")){
 								case 0:case 2:case 3:
-									view.charaDraw(Model.get("chara").get("direction"),"front");
+									view.charaDraw("front");
 									break;
 								case 4:case 5:
-									view.charaDraw(Model.get("chara").get("direction"),"left");
+									view.charaDraw("left");
 									break;
 								case 6:case 7:
-									view.charaDraw(Model.get("chara").get("direction"),"right");
+									view.charaDraw("right");
 									break;
 							}
 						}
-						moveMap("left",-(Model.get("chara").get("x")-(screen.width/2|0))*screen.chipSize+"px");
-						moveMap("top",-(Model.get("chara").get("y")-(screen.height/2|0))*screen.chipSize+"px");
-						if(Model.get("chara").get("doesRun")==0){
-							switch(Model.get("chara").get("direction")){
-								case "left":moveMap("left",parseInt(mapStyle.left,10)+screen.chipSize/8*Model.get("chara").get("doesWalk")+"px");break;
-								case "front":moveMap("top",parseInt(mapStyle.top,10)-screen.chipSize/8*Model.get("chara").get("doesWalk")+"px");break;
-								case "right":moveMap("left",parseInt(mapStyle.left,10)-screen.chipSize/8*Model.get("chara").get("doesWalk")+"px");break;
-								case "back":moveMap("top",parseInt(mapStyle.top,10)+screen.chipSize/8*Model.get("chara").get("doesWalk")+"px");break;
-							}
-						}else{
-							switch(Model.get("chara").get("direction")){
-								case "left":moveMap("left",parseInt(mapStyle.left,10)+screen.chipSize/4*(Model.get("chara").get("doesRun")%4)+"px");break;
-								case "front":moveMap("top",parseInt(mapStyle.top,10)-screen.chipSize/4*(Model.get("chara").get("doesRun")%4)+"px");break;
-								case "right":moveMap("left",parseInt(mapStyle.left,10)-screen.chipSize/4*(Model.get("chara").get("doesRun")%4)+"px");break;
-								case "back":moveMap("top",parseInt(mapStyle.top,10)+screen.chipSize/4*(Model.get("chara").get("doesRun")%4)+"px");break;
-							}
-						}
+						moveMap();//マップを動かす
 						if(Model.get("chara").get("doesWalk")>=7||Model.get("chara").get("doesWalk")>=4&&Model.get("chara").get("doesRun")!=0){
+							//doesWalkが7以上もしくはdoesWalkが4以上でdoesRunが0じゃないときに回す用
 							Model.get("chara").resetWalk();
 							if(Model.get("isKeyPressed").get("d")&&(Model.get("isKeyPressed").get("left")&&move(-1,0,false)||Model.get("isKeyPressed").get("up")&&move(0,1,false)||Model.get("isKeyPressed").get("right")&&move(1,0,false)||Model.get("isKeyPressed").get("down")&&move(0,-1,false))) Model.get("chara").incrementRun();
 							else Model.get("chara").resetRun();
@@ -552,17 +595,14 @@ window.addEventListener("load",function(){
 					case "map":
 						break;
 					case "battle":
-						view.hide("title");
 						if(isSmartPhone) Canvas.battle.drawImage(enemy.get("img"),(screen.realWidth-200)/2,0,200,200);
 						else Canvas.battle.drawImage(enemy.get("img"),(screen.realWidth-320)/2,0,320,320);
 						break;
 					case "talk":
-						view.hide("title")
 						break;
 					case "menu":
-						view.hide("title");
 						Model.get("cursor").set("maxX",0);
-						Model.get("cursor").set("maxY",mainMenu.length-2);
+						Model.get("cursor").set("maxY",mainMenu.length-1);
 						Canvas.menu.beginPath();
 						Canvas.clear("menu");
 						Canvas.menu.rect((screen.realWidth-menu.width)/2,(screen.realHeight-menu.height)/2,menu.width,menu.height);
@@ -570,11 +610,7 @@ window.addEventListener("load",function(){
 						Canvas.menu.fill();
 						Canvas.menu.stroke();
 						Canvas.menu.fillStyle="#000";
-						Canvas.menu.fillText(">",Model.get("cursor").get("x")+(screen.realWidth-menu.width)/2+2+10,Model.get("cursor").get("y")*20+(screen.realHeight-menu.height)/2+20+20);
-						var cursorWidth=Canvas.menu.measureText("> ").width;
-						for(var i=0,j=mainMenu.length;i<j;i++){
-							Canvas.menu.fillText(mainMenu[i].name,(screen.realWidth-menu.width)/2+cursorWidth+10,i*20+(screen.realHeight-menu.height)/2+20);
-						}
+						view.select({canvas:"menu",options:U.map(mainMenu,function(a){return a.name}),x:(screen.realWidth-menu.width)/2+10,y:(screen.realHeight-menu.height)/2+20});
 						Canvas.menu.closePath();
 						break;
 				}
@@ -583,8 +619,7 @@ window.addEventListener("load",function(){
 				//targetを表示する
 				switch(target){
 					case "map":
-						frontMapStyle.display="block";
-						mapStyle.display="block";
+						frontMapStyle.display=mapStyle.display=villagerStyle.display="block";
 						break;
 					case "charaScreen":
 						break;
@@ -596,11 +631,13 @@ window.addEventListener("load",function(){
 						Canvas.chara.font = "18px 'MS Pゴシック'";
 						Canvas.chara.fillStyle = "#000";
 						Canvas.chara.fillText("ポケ☆モン", (Canvas.width-Canvas.chara.measureText("ポケ☆モン").width)/2, 200);
+						Canvas.chara.fillText("ver "+Model.get("info").get("version"), (Canvas.width-Canvas.chara.measureText("ver "+Model.get("info").get("version")).width)/2, 230);
 						break;
 					case "mes":
 						break;
 					case "battle":
-						Canvas.battle.clearRect(0,0,screen.realWidth,screen.realHeight);
+						Canvas.battle.fillStyle="#fff";
+						Canvas.battle.fillRect(0,0,screen.realWidth,screen.realHeight);
 						break;
 				}
 				return view;
@@ -609,8 +646,7 @@ window.addEventListener("load",function(){
 				//targetを消す
 				switch(target){
 					case "map":
-						frontMapStyle.display="none";
-						mapStyle.display="none";
+						frontMapStyle.display=mapStyle.display=villagerStyle.display="none";
 						break;
 					case "charaScreen":
 						Canvas.clear("chara");
@@ -620,6 +656,7 @@ window.addEventListener("load",function(){
 						Model.get("cursor").set("y",0);
 						break;
 					case "title":
+						Canvas.clear("chara");
 						break;
 					case "mes":
 					case "battle":
@@ -644,18 +681,10 @@ window.addEventListener("load",function(){
 			},
 			paintVillager:function(i){
 				switch(villagers.at(i).get("direction")){
-					case "front":
-						view.paint("villager","villager/"+villagers.at(i).get("job"),32,0,32,32,villagers.at(i).get("x"),villagers.at(i).get("y"));//職業ごとに違うイラストバージョン
-						break;
-					case "left":
-						view.paint("villager","villager/"+villagers.at(i).get("job"),32,32,32,32,villagers.at(i).get("x"),villagers.at(i).get("y"));//職業ごとに違うイラストバージョン
-						break;
-					case "right":
-						view.paint("villager","villager/"+villagers.at(i).get("job"),32,64,32,32,villagers.at(i).get("x"),villagers.at(i).get("y"));//職業ごとに違うイラストバージョン
-						break;
-					case "back":
-						view.paint("villager","villager/"+villagers.at(i).get("job"),32,96,32,32,villagers.at(i).get("x"),villagers.at(i).get("y"));//職業ごとに違うイラストバージョン
-						break;
+					case "front":view.paint("villager","villager/"+villagers.at(i).get("job"),32,0,32,32,villagers.at(i).get("x"),villagers.at(i).get("y"));break;
+					case "left":view.paint("villager","villager/"+villagers.at(i).get("job"),32,32,32,32,villagers.at(i).get("x"),villagers.at(i).get("y"));break;
+					case "right":view.paint("villager","villager/"+villagers.at(i).get("job"),32,64,32,32,villagers.at(i).get("x"),villagers.at(i).get("y"));break;
+					case "back":view.paint("villager","villager/"+villagers.at(i).get("job"),32,96,32,32,villagers.at(i).get("x"),villagers.at(i).get("y"));break;
 				}
 			},
 			clear:function(target,dx,dy,dw,dh){
@@ -732,14 +761,14 @@ window.addEventListener("load",function(){
 								}
 								break;
 							case "menu":
-								switch(mainMenu[Model.get("cursor").get("y")+1].name){
+								switch(mainMenu[Model.get("cursor").get("y")].name){
 									case "図鑑":
 										Model.get("pokedex").view();
 										view.mes({message:"未実装だよ!いまやってるよ!",doesSwitchMode:false});
 										break;
 									case "レポートに書く":
-										//レポートに書く
-										setCookie("save_data",JSON.stringify(U.map(Model.models,function(model){if(model.id=="chara"||model.id=="setting") return model.toJSON()})),60)//クッキーバージョン
+										//レポートに書く。つまりセーブする
+										setCookie("save_data",JSON.stringify(U.map(Model.models,function(model){if(model.id=="chara"||model.id=="setting"||model.id=="info") return model.toJSON()})),60)//クッキーバージョン
 										view.mes("レポートを書きました。");
 										break;
 									case "設定":
@@ -747,19 +776,28 @@ window.addEventListener("load",function(){
 										break;
 									case "手持ちのポケモン":
 									case "アイテム":
-										view.mes({message:"特になにもないよ!未実装だよ!",doesSwitchMode:false});
+										Canvas.menu.beginPath();
+										Canvas.clear("menu");
+										Canvas.menu.rect((screen.realWidth-setting.width)/2,(screen.realHeight-setting.height)/2,setting.width,setting.height);
+										if(setting.nest==0) Canvas.menu.fillStyle="rgba(255,255,255,0.7)";
+										else Canvas.menu.fillStyle="rgba(136,136,136,0.7)";
+										Canvas.menu.fill();
+										Canvas.menu.stroke();
+										view.select({canvas:"menu",options:U.flatten([U.map(Model.get("chara").get("item"),function(a){return a.get("name")}),"戻る"]),x:(screen.realWidth-setting.width)/2+10,y:(screen.realHeight-setting.height)/2+20,color:"#000"});
+										Canvas.menu.closePath();
 										break;
 									case "ゲームに戻る":
 										App.log("return to game");
 										switchMode("map");
 										break;
 									case "タイトル画面に戻る":
-										App.log("return to title")
+										App.log("return to title");
 										switchMode("title");
 										break;
 									case "セーブデータを消す":
 										view.mes({message:"本当に消しますか?",callback:function(){
-											view.select({option:["はい","いいえ"],selected:function(option){
+											view.strokeMesBox();
+											view.select({canvas:"mes",options:["はい","いいえ"],x:0,y:440,callback:function(option){
 												if(option==0){//はいの時
 													setCookie("save_data","",60)//クッキーバージョン
 													view.mes("セーブデータを消しました。");
@@ -767,19 +805,21 @@ window.addEventListener("load",function(){
 													view.mes("キャンセルしました。");
 												}
 											}})
-										}});
+										},doesSwitchMode:false});
 										break;
 									case "App":
 										document.write("<pre>"+App.show()+"</pre>これを<a href=\"mailto:sc1enth@gmail.com?subject=Log&amp;body="+App.show().replace(/\n/g,"%0d%0a")+"\">sc1enth@gmail.com</a>へ送信してください。下のメールフォームからも可能です。その場合はお問い合わせ内容は上のログ(変な数字や英語の書いてある文字列)を貼り付けて、メールアドレスは書きたくない方は sc1enth@gmail.com にして送信ください(返信が必要な場合などは私が送信できるメールアドレスを入力ください)。<script src=\"http://form1.fc2.com/parts/index.php?id=725872\"></script><noscript><a href=\"http://form1.fc2.com/form/?id=725872\" target=\"_blank\">[FC2メールフォーム]</a></noscript>")
-						break;
+										break;
 								}
 								break;
 							case "setting":
 								if(setting.nest==0){
 									switch(settingOption[Model.get("cursor").get("y")].name){
 										case "音量":
-											setting.nest++;
-											setting.target=0;
+										case "キャラ画像":
+											setting.nest=1;
+											setting.target=Model.get("cursor").get("y");
+											Model.get("cursor").set("y",0);
 											break;
 										case "戻る":
 											switchMode("menu");
@@ -793,8 +833,23 @@ window.addEventListener("load",function(){
 												case "50%":
 												case "100%":
 													Model.get("setting").set("volume",Model.get("Func").parseInt(settingOption[setting.target].option[Model.get("cursor").get("y")]));
+													break;
 												case "戻る":
-													setting.nest--;
+													setting.nest=0;
+													Model.get("cursor").set("y",0);
+													break;
+											}
+											break;
+										case "キャラ画像":
+											switch(settingOption[setting.target].option[Model.get("cursor").get("y")]){
+												case "石山":
+													Model.get("setting").set("charaImage","chara");
+													break;
+												case "まじめ":
+													Model.get("setting").set("charaImage","chara1");
+													break;
+												case "戻る":
+													setting.nest=0;
 													Model.get("cursor").set("y",0);
 													break;
 											}
@@ -825,7 +880,6 @@ window.addEventListener("load",function(){
 				}
 			},
 			routine:function(){
-				Canvas.clear("chara");
 				for(var key in Model.get("isKeyPressed").attributes){
 					if(Model.get("isKeyPressed").attributes[key]>0){
 						view.keyAction(key);
@@ -871,14 +925,14 @@ window.addEventListener("load",function(){
 					if(Model.get("mapData").get(j)!==undefined&&Model.get("mapData").get(j)[i]!==undefined){
 						var mapData=Model.get("mapData").get(j)[i];
 						var mapImg=Model.get("mapAttr").get(mapData).img;
-						view.paint("map",mapImg[2], mapImg[0], mapImg[1], 16, 16, i, j);
+						view.paint("map",mapImg[2], mapImg[0], mapImg[1], screen.chipSize, screen.chipSize, i, j);
 					}else view.paint("map",Model.get("mapAttr").get("-1").img,i*screen.chipSize,j*screen.chipSize);
 					
 					if(Model.get("frontMapData").get(j)!==undefined&&Model.get("frontMapData").get(j)[i]!==undefined){
 						var mapData=Model.get("frontMapData").get(j)[i];
 						var mapImg=Model.get("mapAttr").get(mapData).img;
 						if(mapData!=0){
-							view.paint("frontMap",mapImg[2], mapImg[0], mapImg[1], 16, 16, i, j);
+							view.paint("frontMap",mapImg[2], mapImg[0], mapImg[1], screen.chipSize, screen.chipSize, i, j);
 						}
 					}
 				}
@@ -905,15 +959,20 @@ window.addEventListener("load",function(){
 		var keyUp=function(e){
 			App.log("keyUp "+e.keyCode)
 			if(e.keyCode==32){e.preventDefault&&e.preventDefault();Model.get("isKeyPressed").set("space",0);}//space
-			if(e.keyCode==37){e.preventDefault&&e.preventDefault();Model.get("isKeyPressed").set("left",0);view.keyAction("leave left");}//left
-			if(e.keyCode==38){e.preventDefault&&e.preventDefault();Model.get("isKeyPressed").set("up",0);view.keyAction("leave up");}//up
-			if(e.keyCode==39){e.preventDefault&&e.preventDefault();Model.get("isKeyPressed").set("right",0);view.keyAction("leave right");}//right
-			if(e.keyCode==40){e.preventDefault&&e.preventDefault();Model.get("isKeyPressed").set("down",0);view.keyAction("leave down");}//down
+			if(e.keyCode>=37&&e.keyCode<=40){
+				e.preventDefault&&e.preventDefault();
+				Model.get("isKeyPressed").set({"left":0,"up":0,"right":0,"down":0});
+				if(e.keyCode==37) view.keyAction("leave left");//left
+				if(e.keyCode==38) view.keyAction("leave up");//up
+				if(e.keyCode==39) view.keyAction("leave right");//right
+				if(e.keyCode==40) view.keyAction("leave down");//down
+			}
 			if(e.keyCode==77){e.preventDefault&&e.preventDefault();Model.get("isKeyPressed").set("m",0);}//M key
 			if(e.keyCode==69){e.preventDefault&&e.preventDefault();Model.get("isKeyPressed").set("e",0);}//E key
 			if(e.keyCode==68){e.preventDefault&&e.preventDefault();Model.get("isKeyPressed").set("d",0);}//D key
 		}
 		var keyDown=function(e){
+			if(e.keyCode===undefined) return;
 			App.log("keyDown "+e.keyCode)
 			if(e.keyCode==32){
 				e.preventDefault&&e.preventDefault();
@@ -922,10 +981,13 @@ window.addEventListener("load",function(){
 					Model.get("isKeyPressed").get("space",-1);
 				}
 			}//space
-			if(e.keyCode==37){e.preventDefault&&e.preventDefault();if(Model.get("isKeyPressed").get("left")===0){Model.get("isKeyPressed").increment("left");}}//left
-			if(e.keyCode==38){e.preventDefault&&e.preventDefault();if(Model.get("isKeyPressed").get("up")===0){Model.get("isKeyPressed").increment("up");}}//up
-			if(e.keyCode==39){e.preventDefault&&e.preventDefault();if(Model.get("isKeyPressed").get("right")===0){Model.get("isKeyPressed").increment("right");}}//right
-			if(e.keyCode==40){e.preventDefault&&e.preventDefault();if(Model.get("isKeyPressed").get("down")===0){Model.get("isKeyPressed").increment("down");}}//down
+			if(e.keyCode>=37&&e.keyCode<=40){
+				e.preventDefault&&e.preventDefault();
+				if(e.keyCode==37&&Model.get("isKeyPressed").get("left")===0){Model.get("isKeyPressed").increment("left");Model.get("isKeyPressed").set({"up":0,"right":0,"down":0});}//left
+				if(e.keyCode==38&&Model.get("isKeyPressed").get("up")===0){Model.get("isKeyPressed").increment("up");Model.get("isKeyPressed").set({"left":0,"right":0,"down":0});}//up
+				if(e.keyCode==39&&Model.get("isKeyPressed").get("right")===0){Model.get("isKeyPressed").increment("right");Model.get("isKeyPressed").set({"left":0,"up":0,"down":0});}//right
+				if(e.keyCode==40&&Model.get("isKeyPressed").get("down")===0){Model.get("isKeyPressed").increment("down");Model.get("isKeyPressed").set({"left":0,"up":0,"right":0});}//down
+			}
 			if(e.keyCode==68){e.preventDefault&&e.preventDefault();if(Model.get("isKeyPressed").get("d")===0){Model.get("isKeyPressed").increment("d");}}//D key
 			if(e.keyCode==77){
 				e.preventDefault&&e.preventDefault();
@@ -970,6 +1032,21 @@ window.addEventListener("load",function(){
 					}
 				}
 			},false);
+		}
+		if(logMode){
+			var logStart=new Date();
+			setInterval(function(){
+				if(logMode){
+					var rePadKey={32:"space",37:"left",38:"up",39:"right",40:"down",68:"d",77:"m"};
+					if((new Date())-logStart>logs[inc].time){
+						if(logs[inc].type=="keyAction"){
+							if(logs[inc].body.indexOf("keyDown")!=-1) keyDown({keyCode:parseInt(logs[inc].key)});
+							if(logs[inc].body.indexOf("keyUp")!=-1) keyUp({keyCode:parseInt(logs[inc].key)});
+						}
+						inc++;
+					}
+				}
+			},1)
 		}
 		setInterval(view.routine,IntervalTime);
 		App.log("interval setted");
