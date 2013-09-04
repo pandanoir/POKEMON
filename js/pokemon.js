@@ -513,34 +513,14 @@ window.addEventListener("load",function(){
 								view.clear("villager",villagers.at(i).get("x"),villagers.at(i).get("y"));
 								switch(Math.random()*4|0){
 									//方向を決める
-									case 0:
-										//左へ
-										if(villagers.at(i).get("x")-1>=villagers.at(i).get("defaultX")-villagers.at(i).get("range")){
-											move(-1,0,true,villagers.at(i));
-											villagers.at(i).set("direction","left");
-										}
-										break;
-									case 1:
-										//右へ
-										if(villagers.at(i).get("x")+1<=villagers.at(i).get("defaultX")+villagers.at(i).get("range")){
-											move(1,0,true,villagers.at(i));
-											villagers.at(i).set("direction","right");
-										}
-										break;
-									case 2:
-										//下へ
-										if(villagers.at(i).get("y")+1<=villagers.at(i).get("defaultY")+villagers.at(i).get("range")){
-											move(0,1,true,villagers.at(i));
-											villagers.at(i).set("direction","front");
-										}
-										break;
-									case 3:
-										//上へ
-										if(villagers.at(i).get("y")-1>=villagers.at(i).get("defaultY")-villagers.at(i).get("range")){
-											move(0,-1,true,villagers.at(i));
-											villagers.at(i).set("direction","back");
-										}
-										break;
+									case 0://左へ
+									if(villagers.at(i).get("x")-1>=villagers.at(i).get("defaultX")-villagers.at(i).get("range")){move(-1,0,true,villagers.at(i));villagers.at(i).set("direction","left");}break;
+									case 1://右へ
+									if(villagers.at(i).get("x")+1<=villagers.at(i).get("defaultX")+villagers.at(i).get("range")){move(1,0,true,villagers.at(i));villagers.at(i).set("direction","right");}break;
+									case 2://下へ
+									if(villagers.at(i).get("y")+1<=villagers.at(i).get("defaultY")+villagers.at(i).get("range")){move(0,1,true,villagers.at(i));villagers.at(i).set("direction","front");}break;
+									case 3://上へ
+									if(villagers.at(i).get("y")-1>=villagers.at(i).get("defaultY")-villagers.at(i).get("range")){move(0,-1,true,villagers.at(i));villagers.at(i).set("direction","back");}break;
 								}
 								view.paintVillager(i);
 							}
@@ -613,6 +593,24 @@ window.addEventListener("load",function(){
 						view.select({canvas:"menu",options:U.map(mainMenu,function(a){return a.name}),x:(screen.realWidth-menu.width)/2+10,y:(screen.realHeight-menu.height)/2+20});
 						Canvas.menu.closePath();
 						break;
+					case "friendPokemonView":
+						Model.get("cursor").set("maxX",2);
+						Model.get("cursor").set("maxY",3);
+						Canvas.menu.beginPath();
+						Canvas.menu.fillStyle="#9CF";
+						Canvas.menu.fillRect(0,0,screen.realWidth,screen.realHeight);
+						Canvas.menu.closePath();
+						Canvas.menu.fillStyle="#000";
+						Canvas.menu.beginPath();
+						for(var i=0,j=friend.length;i<j;i++){
+							Canvas.menu.fillText(friend.at(i).get("nickname"),screen.realWidth/2*(i%2)+6,screen.realHeight/3*(i/2|0)+20);
+							Canvas.menu.fillText(friend.at(i).get("hp")+"/"+friend.at(i).get("maxHp"),screen.realWidth/2*(i%2)+6,screen.realHeight/3*(i/2|0)+40);
+							Canvas.menu.rect(screen.realWidth/2*(i%2)+2,screen.realHeight/3*(i/2|0)+2,screen.realWidth/2-4,screen.realHeight/3-4);
+						}
+						Canvas.menu.stroke();
+						Canvas.menu.beginPath();
+						break;
+						
 				}
 			},
 			show:function(target){
@@ -710,13 +708,17 @@ window.addEventListener("load",function(){
 					case "down":
 						switch(situation){
 							case "map":
+								//マップ上で矢印キーが押されたから移動する
 								if(!Model.get("isKeyPressed").get("d")){
+									//dが押されていない時
 									if(Model.get("chara").get("doesWalk")==0){
+										//歩いていない時
 										if(key!="up"&&key!="down") Model.get("chara").walk(key);
 										else if(key=="up") Model.get("chara").walk("back");
 										else if(key=="down") Model.get("chara").walk("front");
 									}
 								}else{
+									//走っている
 									if(Model.get("chara").get("doesWalk")<=1){
 										if(key!="up"&&key!="down") Model.get("chara").run(key);
 										else if(key=="up") Model.get("chara").run("back");
@@ -726,10 +728,11 @@ window.addEventListener("load",function(){
 								break;
 							case "menu":
 							case "setting":
-								if(Model.get("isKeyPressed").get(key)===1) Model.get("cursor").move(key);
+								if(Model.get("isKeyPressed").get(key)===1) Model.get("cursor").move(key);//押された瞬間だけ移動
 								break;
 							case "battle":
 								if(Model.get("isKeyPressed").get(key)===1){
+									//押された瞬間だけ移動
 									Model.get("cursor").move(key,false);
 									view.mes({message:">",x:-140+Model.get("cursor").get("x")*60,y:Model.get("cursor").get("y")*20,overwrite:true,move:true,dontWait:true});
 								}
@@ -738,11 +741,13 @@ window.addEventListener("load",function(){
 						break;
 					case "m":
 						if(situation=="menu"){
-							App.log("map open.");
+							//メニュが開かれている時にMを押した
+							App.log("map close.");
 							switchMode("map");
 						}
 						else if(situation=="map"){
-							App.log("map close.");
+							//マップでMを押した
+							App.log("map open.");
 							switchMode("menu");
 						}
 						break;
@@ -755,9 +760,6 @@ window.addEventListener("load",function(){
 								if(Model.get("chara").get("doesWalk")==0){
 									switchMode("talk");
 									talk();
-									setTimeout(function(){
-										talking=true;
-									},21)
 								}
 								break;
 							case "menu":
@@ -768,13 +770,15 @@ window.addEventListener("load",function(){
 										break;
 									case "レポートに書く":
 										//レポートに書く。つまりセーブする
-										setCookie("save_data",JSON.stringify(U.map(Model.models,function(model){if(model.id=="chara"||model.id=="setting"||model.id=="info") return model.toJSON()})),60)//クッキーバージョン
+										setCookie("save_data",JSON.stringify(U.map(Model.models,function(model){if(model.id=="chara"||model.id=="setting"||model.id=="info") return model.toJSON()})),60)
 										view.mes("レポートを書きました。");
 										break;
 									case "設定":
 										switchMode("setting");
 										break;
 									case "手持ちのポケモン":
+										situation="friendPokemonView";
+										break;
 									case "アイテム":
 										Canvas.menu.beginPath();
 										Canvas.clear("menu");
@@ -869,6 +873,9 @@ window.addEventListener("load",function(){
 							case "battle":
 								battle({decide:true});
 								break;
+							case "friendPokemonView":
+								switchMode("map");
+								break;
 						}
 						break;
 					case "leave left":
@@ -911,6 +918,10 @@ window.addEventListener("load",function(){
 						view.display("map");
 						view.display("chara");
 						view.display("setting");
+						break;
+					case "friendPokemonView":
+						view.display("friendPokemonView");
+						break;
 				}
 			}
 		});
@@ -983,10 +994,11 @@ window.addEventListener("load",function(){
 			}//space
 			if(e.keyCode>=37&&e.keyCode<=40){
 				e.preventDefault&&e.preventDefault();
-				if(e.keyCode==37&&Model.get("isKeyPressed").get("left")===0){Model.get("isKeyPressed").increment("left");Model.get("isKeyPressed").set({"up":0,"right":0,"down":0});}//left
-				if(e.keyCode==38&&Model.get("isKeyPressed").get("up")===0){Model.get("isKeyPressed").increment("up");Model.get("isKeyPressed").set({"left":0,"right":0,"down":0});}//up
-				if(e.keyCode==39&&Model.get("isKeyPressed").get("right")===0){Model.get("isKeyPressed").increment("right");Model.get("isKeyPressed").set({"left":0,"up":0,"down":0});}//right
-				if(e.keyCode==40&&Model.get("isKeyPressed").get("down")===0){Model.get("isKeyPressed").increment("down");Model.get("isKeyPressed").set({"left":0,"up":0,"right":0});}//down
+				Model.get("isKeyPressed").set({"left":0,"up":0,"right":0,"down":0});
+				if(e.keyCode==37&&Model.get("isKeyPressed").get("left")===0){Model.get("isKeyPressed").increment("left");}//left
+				else if(e.keyCode==38&&Model.get("isKeyPressed").get("up")===0){Model.get("isKeyPressed").increment("up");}//up
+				else if(e.keyCode==39&&Model.get("isKeyPressed").get("right")===0){Model.get("isKeyPressed").increment("right");}//right
+				else if(e.keyCode==40&&Model.get("isKeyPressed").get("down")===0){Model.get("isKeyPressed").increment("down");}//down
 			}
 			if(e.keyCode==68){e.preventDefault&&e.preventDefault();if(Model.get("isKeyPressed").get("d")===0){Model.get("isKeyPressed").increment("d");}}//D key
 			if(e.keyCode==77){
