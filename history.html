@@ -1,156 +1,36 @@
-	<html>
+<html>
 	<head>
-		<link rel="stylesheet" href="style.css" type="text/css">
+		<link rel="stylesheet" href="style.css" type="text/css">		<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+		<script src="js/FLAutoKerning.min.js"></script>
+		<script>$(function(){FLAutoKerning.process($("body"), FLAutoKerning.DEFAULT_KERNING_INFO);$("#main").height()>$("#left").height()?$("#left").height($("#main").height()):$("#main").height($("#left").height())})</script>
 		<title>更新履歴 &amp; 今後の予定</title>
 		<style>h1{border-bottom: 4px solid #9CF;}article{margin-left:50px;border-bottom:1px solid #ccc}.finished{text-decoration:line-through}</style>
 	</head>
 	<body>
 	<div id="main">
 	<h1>更新履歴</h1>
-		<article>
-		<h2>2013.08.06 Tue</h2>
-			<ul>
-			<li>作り始める。</li>
-			<li>歩けるようになった。</li>
-			<li>メニューをひらけるようになった(中身は何も実装していない)。</li>
-			<li>会話・調べる・宝箱を開けることができるようになった(中身は(略))。</li>
-			</ul>
-		</article>
-		<article>
-		<h2>2013.08.07 Wed</h2>
-			<ul>
-			<li>メニューにゲームに戻る・タイトル画面に戻るを追加、実装。</li>
-			<li>メニューに手持ちのポケモンを追加、未実装。</li>
-			<li>メニュー部分の謎の英語を日本語にした(menuをメニュー、Saveをレポートに書く、Optionを設定)。</li>
-			<li>メニューにカーソルを追加、実装。</li>
-			<li>メニューがはみ出たのでとりあえず高さを増した。</li>
-			<li>障害物のあるところに進まないようにした。</li>
-			<li>ポケモンのクラスを作った</li>
-			</ul>
-		</article>
-		<article>
-		<h2>2013.08.10 Sat</h2>
-			<ul>
-			<li>ダッシュ機能を実装</li>
-			</ul>
-		</article>
-		<article>
-		<h2>2013.08.11 Sun</h2>
-			<ul>
-			<li>メニュをcanvas化</li>
-			<li>レポートに書くを途中までやった(レポートを書きますか?と表示するまで)</li>
-			</ul>
-		</article>
-		<article>
-		<h2>2013.08.12 Mon</h2>
-			<ul>
-			<li>村人を実装(まだマップに居るだけ)</li>
-			<li>アイテムクラスを作った</li>
-			<li>戦闘画面で選択肢を選べるようにした。まだ攻撃のダメージとかは実装してない</li>
-			<li>display.jsとonloadEvent.jsを作り、pokemon.jsを見やすくした。これは完全に俺の趣味</li>
-			<li>display.jsとか切り離して作るためにBaseという変数を作った。使う変数をすべてこのグローバル変数のプロパティとした。このBaseはonloadEvent.js内で定義されている</li>
-			<li>ここへのリンクをつけた</li>
-			<li>スマホに対応させた。実機確認はしていない</li>
-			</ul>
-		</article>
-		<article>
-		<h2>2013.08.14 Wed</h2>
-			<ul>
-			<li>Backbone.jsを取り入れた</li>
-			</ul>
-		</article>
-		<article>
-		<h2>2013.08.15 Thu</h2>
-			<ul>
-			<li>9割方MVCにできた</li>
-			</ul>
-		</article>
-		<article>
-		<h2>2013.08.16 Fri</h2>
-			<ul>
-			<li>スマホ対応がaddEventListenerの影響で切れてたから修正。</li>
-			</ul>
-		</article>
-		<article>
-		<h2>2013.08.17 Sat</h2>
-			<ul>
-			<li>戦闘画面のスマホ対応</li>
-			<li>セーブ機能の実装</li>
-			<li>戦闘コマンドの攻撃、逃げるを実装</li>
-			</ul>
-		</article>
-		<article>
-		<h2>2013.08.19 Mon</h2>
-			<ul>
-			<li>マップが表示されないバグを修正。</li>
-			<li>逃げれないときに起きるエラーを修正。</li>
-			</ul>
-		</article>
-		<article>
-		<h2>2013.08.20 Tue</h2>
-			<ul>
-			<li>マップの描写を画像を完全に読み終わったあとにするようにした(マップが表示されないバグの修正)。</li>
-			<li>店屋の外装を作成</li>
-			</ul>
-		</article>
-		<article>
-		<h2>2013.08.21 Wed</h2>
-			<ul>
-			<li>HPゲージを作成</li>
-			</ul>
-		</article>
-		<article>
-		<h2>2013.08.24 Sat</h2>
-			<ul>
-			<li>マップのサイズを拡張</li>
-			<li>マップエディタを拡張(ボタンの設置など)</li>
-			<li>画像の圧縮</li>
-			<li>キャラ画像を1枚にまとめた</li>
-			<li>いろいろなものをマップに追加(看板など)</li>
-			</ul>
-		</article>
-		<article>
-		<h2>2013.08.25 Sun</h2>
-			<ul>
-			<li>歩く村人の実装</li>
-			</ul>
-		</article>
-		<article>
-		<h2>2013.08.26 Mon</h2>
-			<ul>
-			<li>デザインの変更。</li>
-			</ul>
-		</article>
-		<article>
-		<h2>2013.08.27 Tue</h2>
-			<ul>
-			<li>音量調節をつけました</li>
-			</ul>
-		</article>
-		<article>
-		<h2>2013.08.30 Fri</h2>
-			<ul>
-			<li>マップサイズが大きすぎてメモリの使用がすごいので小型化</li>
-			</ul>
-		</article>
-		<article>
-		<h2>2013.08.31 Sat</h2>
-			<ul>
-			<li>バージョン情報を追加</li>
-			</ul>
-		</article>
-		<article>
-		<h2>2013.09.01 Sun</h2>
-			<ul>
-			<li>キャラクターが歩いているとガタガタとなるバグを解消</li>
-			</ul>
-		</article>
-		<article>
-		<h2>2013.09.04 Wed</h2>
-			<ul>
-			<li>回復屋の登場</li>
-			</ul>
-		</article>
+		<article><h2>2013.08.06 Tue</h2><ul><li>作り始める。</li><li>歩けるようになった。</li><li>メニューをひらけるようになった(中身は何も実装していない)。</li><li>会話・調べる・宝箱を開けることができるようになった(中身は(略))。</li></ul></article>
+		<article><h2>2013.08.07 Wed</h2><ul><li>メニューにゲームに戻る・タイトル画面に戻るを追加、実装。</li><li>メニューに手持ちのポケモンを追加、未実装。</li><li>メニュー部分の謎の英語を日本語にした(menuをメニュー、Saveをレポートに書く、Optionを設定)。</li><li>メニューにカーソルを追加、実装。</li><li>メニューがはみ出たのでとりあえず高さを増した。</li><li>障害物のあるところに進まないようにした。</li><li>ポケモンのクラスを作った</li></ul></article>
+		<article><h2>2013.08.10 Sat</h2><ul><li>ダッシュ機能を実装</li></ul></article>
+		<article><h2>2013.08.11 Sun</h2><ul><li>メニュをcanvas化</li><li>レポートに書くを途中までやった(レポートを書きますか?と表示するまで)</li></ul></article>
+		<article><h2>2013.08.12 Mon</h2><ul><li>村人を実装(まだマップに居るだけ)</li><li>アイテムクラスを作った</li><li>戦闘画面で選択肢を選べるようにした。まだ攻撃のダメージとかは実装してない</li><li>display.jsとonloadEvent.jsを作り、pokemon.jsを見やすくした。これは完全に俺の趣味</li><li>display.jsとか切り離して作るためにBaseという変数を作った。使う変数をすべてこのグローバル変数のプロパティとした。このBaseはonloadEvent.js内で定義されている</li><li>ここへのリンクをつけた</li><li>スマホに対応させた。実機確認はしていない</li></ul></article>
+		<article><h2>2013.08.14 Wed</h2><ul><li>Backbone.jsを取り入れた</li></ul></article>
+		<article><h2>2013.08.15 Thu</h2><ul><li>9割方MVCにできた</li></ul></article>
+		<article><h2>2013.08.16 Fri</h2><ul><li>スマホ対応がaddEventListenerの影響で切れてたから修正。</li></ul></article>
+		<article><h2>2013.08.17 Sat</h2><ul><li>戦闘画面のスマホ対応</li><li>セーブ機能の実装</li><li>戦闘コマンドの攻撃、逃げるを実装</li></ul></article>
+		<article><h2>2013.08.19 Mon</h2><ul><li>マップが表示されないバグを修正。</li><li>逃げれないときに起きるエラーを修正。</li></ul></article>
+		<article><h2>2013.08.20 Tue</h2><ul><li>マップの描写を画像を完全に読み終わったあとにするようにした(マップが表示されないバグの修正)。</li><li>店屋の外装を作成</li></ul></article>
+		<article><h2>2013.08.21 Wed</h2><ul><li>HPゲージを作成</li></ul></article>
+		<article><h2>2013.08.24 Sat</h2><ul><li>マップのサイズを拡張</li><li>マップエディタを拡張(ボタンの設置など)</li><li>画像の圧縮</li><li>キャラ画像を1枚にまとめた</li><li>いろいろなものをマップに追加(看板など)</li></ul></article>
+		<article><h2>2013.08.25 Sun</h2><ul><li>歩く村人の実装</li></ul></article>
+		<article><h2>2013.08.26 Mon</h2><ul><li>デザインの変更。</li></ul></article>
+		<article><h2>2013.08.27 Tue</h2><ul><li>音量調節をつけました</li></ul></article>
+		<article><h2>2013.08.30 Fri</h2><ul><li>マップサイズが大きすぎてメモリの使用がすごいので小型化</li></ul></article>
+		<article><h2>2013.08.31 Sat</h2><ul><li>バージョン情報を追加</li></ul></article>
+		<article><h2>2013.09.01 Sun</h2><ul><li>キャラクターが歩いているとガタガタとなるバグを解消</li></ul></article>
+		<article><h2>2013.09.04 Wed</h2><ul><li>回復屋の登場</li></ul></article>
+		<article><h2>2013.09.08 Sun</h2><ul><li>ポケモンの交代を実装</li></ul></article>
+		<article><h2>2013.09.13 Fri</h2><ul><li>マップの描写を1から作り直し+マップの拡張</li></ul></article>
 	<h1>今後の予定</h1>
 		<ul>
 		<li>戦闘できるようにする</li>
