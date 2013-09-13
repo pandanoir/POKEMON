@@ -1,17 +1,19 @@
 var Pokemon=Backbone.Model.extend({
 	initialize:function(option){
-		this.set("attack",parseInt(pokemonValue.get(option.name).get("attack"),10));
-		this.set("defence",parseInt(pokemonValue.get(option.name).get("defence"),10));
-		this.set("speed",parseInt(pokemonValue.get(option.name).get("speed"),10));
-		this.set("hp",parseInt(pokemonValue.get(option.name).get("hp"),10));
-		this.set("maxHp",parseInt(pokemonValue.get(option.name).get("hp"),10));
-		this.set("src","pokemon/"+pokemonValue.get(option.name).get("src")+".png");
-		this.set("name",option.name);
-		this.set("nickname",option.name);
-		this.set("description",pokemonValue.get(option.name).get("description")||"none");
-		this.set("type",pokemonValue.get(option.name).get("type"));
-		this.set("lv",option.lv);
-		this.set("technique",["叩く","殴る","ける","押し倒す"]);
+		this.set({
+			"attack":parseInt(pokemonValue.get(option.name).get("attack"),10),
+			"defence":parseInt(pokemonValue.get(option.name).get("defence"),10),
+			"speed":parseInt(pokemonValue.get(option.name).get("speed"),10),
+			"hp":parseInt(pokemonValue.get(option.name).get("hp"),10),
+			"maxHp":parseInt(pokemonValue.get(option.name).get("hp"),10),
+			"src":"pokemon/"+pokemonValue.get(option.name).get("src")+".png",
+			"name":option.name,
+			"nickname":option.name,
+			"description":pokemonValue.get(option.name).get("description")||"none",
+			"type":pokemonValue.get(option.name).get("type"),
+			"lv":option.lv,
+			"technique":["叩く","殴る","ける","押し倒す"]
+		});
 	},
 	attack:function(){
 		return (((this.get("attack")*2/*+個体値+努力値/4*/)*this.get("lv")/100)+5);

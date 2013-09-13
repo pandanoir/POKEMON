@@ -1,8 +1,8 @@
-var testMode=true,
+var testMode=false,
 doesEncount=true,
 logMode=false,
 IntervalTime=50;
-Model.get("setting").set("volume",0);
+//Model.get("setting").set("volume",0);
 window.addEventListener("load",function(){
 	var logs,log,inc=0;
 	if(logMode){
