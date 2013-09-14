@@ -2,7 +2,7 @@
 	<head>
 		<link rel="stylesheet" href="style.css" type="text/css">		<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 		<script src="js/FLAutoKerning.min.js"></script>
-		<script>$(function(){FLAutoKerning.process($("#main"), FLAutoKerning.DEFAULT_KERNING_INFO);$("#main").height()>$("#left").height()?$("#left").height($("#main").height()):$("#main").height($("#left").height())})</script>
+		<script>$(function(){if("ontouchstart" in window)document.getElementsByTagName("body")[0].className="smartphone";FLAutoKerning.process($("#main"), FLAutoKerning.DEFAULT_KERNING_INFO);$("#main").height()>$("#left").height()?$("#left").height($("#main").height()):$("#main").height($("#left").height())})</script>
 		<title>遊び方</title>
 	</head>
 	<body>
@@ -23,6 +23,7 @@
 		<li><a href="pokemon.html">ゲーム</a></li>
 		<li><a href="howto.html">遊び方</a></li>
 		<li><a href="history.html">更新履歴 &amp; 今後の予定</a></li>
+		<li><a href="profile.html">プロフィール</a></li>
 		</ul>
 	</div>
 	</body>

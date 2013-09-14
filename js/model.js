@@ -202,7 +202,7 @@ var Person=Backbone.Model.extend({
 		charaImage:"img1"
 	});
 	var info=new klass({
-		version:"0.4.2013.09.08"
+		version:"0.4.2013.09.14"
 	});
 	setting.on("change:volume",function(model,value){
 		audio.volume=value;
