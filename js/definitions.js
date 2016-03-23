@@ -1,4 +1,6 @@
+var UGroup = Unitary.Group;
 var UImage = Unitary.Image;
+var ULine = Unitary.Line;
 var UPoint = Unitary.Point;
 var URect = Unitary.Rect;
 var UText = Unitary.Text;

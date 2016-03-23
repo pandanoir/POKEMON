@@ -4,7 +4,10 @@ var cursor = {
 function drawMenu() {
     var titleHeight = 16;
     var title = newUText('Menu', new UPoint(0, 0)).setFont('16px san-self');
-    var board = new URect(new UPoint(0, 0), new UPoint(47, 320)).setFillColor('#000');
+    var board = new UGroup(
+        new URect(new UPoint(0, 0), new UPoint(50, canvasHeight)).setFillColor('#000'),
+        new ULine(new UPoint(47, 0), new UPoint(47,320)).setStrokeColor('#fff')
+    );
     var cursorText = newUText('>', new UPoint(0, cursor.y * lineHeight + titleHeight));
 
     var menuLists = ['status', 'setting', 'save'];
