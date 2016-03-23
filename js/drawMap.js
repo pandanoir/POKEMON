@@ -14,6 +14,7 @@ function drawMap() {
         dy = - walking * 8 - dash * 16;
 
     // drawing map
+    buffer.add(new URect(new UPoint(0, 0), new UPoint(canvasWidth, canvasHeight)).setFillColor('#000'));
     for (var x = 0; x < mapWidth; x++) {
         for (var y = 0; y < mapHeight; y++) {
             // add 5 to center character
