@@ -1,3 +1,4 @@
+var UCircularSector = Unitary.CircularSector;
 var UGroup = Unitary.Group;
 var UImage = Unitary.Image;
 var ULine = Unitary.Line;
@@ -5,21 +6,25 @@ var UPoint = Unitary.Point;
 var URect = Unitary.Rect;
 var UText = Unitary.Text;
 var mapSrc = './map/shops.gif';
-Canvas.preload(
-    mapSrc,
-    './chara1/left.png',
-    './chara1/left1.png',
-    './chara1/left2.png',
-    './chara1/back.png',
-    './chara1/back1.png',
-    './chara1/back2.png',
-    './chara1/right.png',
-    './chara1/right1.png',
-    './chara1/right2.png',
-    './chara1/front.png',
-    './chara1/front1.png',
-    './chara1/front2.png'
-);
+window.addEventListener('load', function() {
+    Canvas.preload(
+        mapSrc,
+        './chara1/left.png',
+        './chara1/left1.png',
+        './chara1/left2.png',
+        './chara1/back.png',
+        './chara1/back1.png',
+        './chara1/back2.png',
+        './chara1/right.png',
+        './chara1/right1.png',
+        './chara1/right2.png',
+        './chara1/front.png',
+        './chara1/front1.png',
+        './chara1/front2.png'
+    ).then(function() {
+        //d;
+    });
+});
 var sceen = 'MAP';
 var tileSize = 32;
 var canvasWidth = tileSize * 10; // canvas要素の幅
@@ -33,12 +38,16 @@ var key = {
     up: 38,
     right: 39,
     down: 40,
+    B: 66,
     M: 77
 };
 for (var _key in key) {
     key['key' + key[_key]] = _key; // c.f: key['key16'] = 'shift';
-    pressedKey[_key] = false;
+    pressedKey[_key] = 0;
 }
+var cursor = {
+    y: 0
+};
 
 var player = {
     x: 0,
@@ -221,4 +230,16 @@ function drawCanvas() {
             ), 0, 0
         );
     });
+}
+function changeSceen(name) {
+    mainLoop.addOnce(function() {
+        sceen = name;
+    });
+}
+function zerofill(n, m) {
+    var zero = '0';
+    for (var i = 1; i < m; i *= 2) {
+        zero = zero + zero;
+    }
+    return (zero + n).slice(-m);
 }
