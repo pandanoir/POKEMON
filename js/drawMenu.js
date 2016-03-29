@@ -14,6 +14,6 @@ function drawMenu() {
         buffer.add(newUText(menuList[i], new UPoint(lineHeight, i * lineHeight + titleHeight)));
     }
     function newUText(string, point) {
-        return new UText(string, point).setFillColor('#fff').setBaseline('top').setFont('13px san-self');
+        return new UText(string, point).setFillColor('#fff').setBaseline('top').setFont(DEFAULT_FONT);
     };
 };

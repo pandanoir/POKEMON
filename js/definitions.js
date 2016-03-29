@@ -28,6 +28,7 @@ window.addEventListener('load', function() {
     });
 });
 var sceen = 'MAP';
+var DEFAULT_FONT = '13px san-self';
 var tileSize = 32;
 var canvasWidth = tileSize * 10; // canvas要素の幅
 var canvasHeight = canvasWidth; // canvas要素の高さ

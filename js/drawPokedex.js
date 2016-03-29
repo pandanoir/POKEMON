@@ -45,6 +45,6 @@ function drawPokedexDetail(id) {
     buffer.add(name);
 
     function newUText(string, point) {
-        return new UText(string, point).setFillColor('#555').setBaseline('top').setFont('13px san-self');
+        return new UText(string, point).setFillColor('#555').setBaseline('top').setFont(DEFAULT_FONT);
     };
 };
