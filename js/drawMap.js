@@ -1,9 +1,10 @@
+var walkingStep = 0 | FPS / 5;
 function drawMap() {
     var dx = 0,
         dy = 0;
 
-    var walking = 0 | player.walking / 5;
-    var dash = 0 | player.dash / 5;
+    var walking = 0 | player.walking / (walkingStep / 4);
+    var dash = 0 | player.dash / (walkingStep / 4);
     if (player.direction === 'left')
         dx = walking * 8 + dash * 16; // if dash !== 0, walking is always 0.
     if (player.direction === 'up')
@@ -17,11 +18,10 @@ function drawMap() {
     buffer.add(new URect(new UPoint(0, 0), new UPoint(canvasWidth, canvasHeight)).setFillColor('#000'));
     for (var x = 0; x < mapWidth; x++) {
         for (var y = 0; y < mapHeight; y++) {
-            // add 5 to center character
             buffer.add(
                 dictionary[map[x + y * mapWidth]]
                 .move(
-                    (x - player.x + 5) * tileSize + dx,
+                    (x - player.x + 5) * tileSize + dx, // add 5 to center character
                     (y - player.y + 5) * tileSize + dy
                 )
             );
@@ -30,12 +30,11 @@ function drawMap() {
 
     // drawing back object
     for (var i = 0, _i = backObjects.length; i < _i; i++) {
-        // add 5 to center character
         var x = backObjects[i][1], y = backObjects[i][2];
         buffer.add(
             dictionary[backObjects[i][0]]
             .move(
-                (x - player.x + 5) * tileSize + dx,
+                (x - player.x + 5) * tileSize + dx, // add 5 to center character
                 (y - player.y + 5) * tileSize + dy
             )
         );
@@ -73,7 +72,7 @@ function walk() {
     if (player.dash !== 0) {
         player.dash++;
     }
-    if (player.walking === 20 + 1 || player.dash === 10 + 1) {
+    if (player.walking === walkingStep + 1 || player.dash === walkingStep / 2 + 1) {
         player.walking = 0;
         player.dash = 0;
         if (player.direction === 'left') {

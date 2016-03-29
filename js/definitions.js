@@ -1,3 +1,4 @@
+var FPS = 32;
 var UCircularSector = Unitary.CircularSector;
 var UGroup = Unitary.Group;
 var UImage = Unitary.Image;

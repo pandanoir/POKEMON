@@ -19,4 +19,4 @@ mainLoop.addOnce = function(f) {
 }
 setInterval(function() {
     mainLoop.fire();
-}, 10);
+}, 1000 / FPS);
