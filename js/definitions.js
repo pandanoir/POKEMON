@@ -5,6 +5,7 @@ var UImage = Unitary.Image;
 var ULine = Unitary.Line;
 var UPoint = Unitary.Point;
 var URect = Unitary.Rect;
+var USegment = Unitary.Segment;
 var UText = Unitary.Text;
 var mapSrc = './map/shops.gif';
 window.addEventListener('load', function() {
@@ -172,7 +173,10 @@ GRASS, GRASS, GRASS, GRASS
 var backObjects = [
 ];
 var frontObjects = [
-    [SIGN, 1, 0],
+    [SIGN, 1, 0, function() {
+        message = {text: 'ここは はじまりの むら', next: function() {changeSceen('MAP')}}
+        changeSceen('MESSAGE');
+    }],
 
     [ROOF1, 2, 0],
     [ROOF2, 3, 0],

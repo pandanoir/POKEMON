@@ -25,6 +25,15 @@ window.addEventListener('load', function() {
                 cursor.y = 0;
                 changeSceen('MENU');
             }
+            if (pressedKey.space === 1) {
+                var dx = {left: -1, up: 0, right: 1, down: 0}[player.direction];
+                var dy = {left: 0, up: -1, right: 0, down: 1}[player.direction];
+                for (var i = 0, _i = frontObjects.length; i < _i; i++) {
+                    if (frontObjects[i][1] === player.x + dx && frontObjects[i][2] === player.y + dy) {
+                        if (frontObjects[i][3]) frontObjects[i][3](); // action
+                    }
+                }
+            }
             setupCanvas();
             drawMap();
             drawCanvas();
