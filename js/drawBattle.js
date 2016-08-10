@@ -5,12 +5,13 @@ function drawBattle() {
     );
     const messageText = newUText(battle.enemy.name + ' が あらわれた！', new UPoint(9, canvasHeight - boardHeight + 9));
     const commands = new UGroup(
-            new URect(new UPoint(200 - 9, canvasHeight - boardHeight + 9), new UPoint(canvasWidth - 9, canvasHeight - 9)).setStrokeColor('#fff'),
+            new URect(new UPoint(180 - 9, canvasHeight - boardHeight + 9), new UPoint(canvasWidth - 9, canvasHeight - 9)).setStrokeColor('#fff'),
             newUText('たたかう', new UPoint(200, canvasHeight - boardHeight + 9 + 5)),
-            newUText('どうぐ', new UPoint(260, canvasHeight - boardHeight + 9 + 5)),
-            newUText('ポケモン', new UPoint(200, canvasHeight - 9 - 5)).setBaseline('bottom'),
-            newUText('にげる', new UPoint(260, canvasHeight - 9 - 5)).setBaseline('bottom')
+            newUText('どうぐ', new UPoint(270, canvasHeight - boardHeight + 9 + 5)),
+            newUText('ポケモン', new UPoint(200, canvasHeight - boardHeight + 9 + 5 + lineHeight)),
+            newUText('にげる', new UPoint(270, canvasHeight - boardHeight + 9 + 5 + lineHeight))
         );
+    const cursorText = newUText('>', new UPoint(190 + cursor.x * 70, canvasHeight - boardHeight + 9 + 5 + lineHeight * cursor.y));
 
     const enemyImage = new UImage('./pokemon/' + battle.enemy.src, new UPoint(0, 0));
 
@@ -21,4 +22,5 @@ function drawBattle() {
     buffer.add(board);
     buffer.add(messageText);
     buffer.add(commands);
+    buffer.add(cursorText);
 };

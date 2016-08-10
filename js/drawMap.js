@@ -93,7 +93,11 @@ function encount() {
         if (ENCOUNTER_RATE >= Math.random() * 100 | 0) {
             battle.enemy = pokemonList[Math.random() * pokemonList.length | 0];
             battle.friend = player.pokemons[0];
-            battle.enemyTrainer = null;
+            battle.enemyTraimaxXner = null;
+            cursor.x = 0;
+            cursor.y = 0;
+            cursor.maxX = 1;
+            cursor.maxY = 1;
             changeSceen('BATTLE');
         }
     }
