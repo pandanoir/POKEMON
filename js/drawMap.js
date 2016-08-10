@@ -1,4 +1,5 @@
 var walkingStep = 0 | FPS / 5;
+var ENCOUNTER_RATE = 8;
 function drawMap() {
     var dx = 0,
         dy = 0;
@@ -84,5 +85,16 @@ function walk() {
         } else if (player.direction === 'down') {
             player.y++;
         }
+        encount();
     }
-};
+}
+function encount() {
+    if (map[player.x + player.y * mapWidth] === GRASS2) {
+        if (ENCOUNTER_RATE >= Math.random() * 100 | 0) {
+            battle.enemy = pokemonList[Math.random() * pokemonList.length | 0];
+            battle.friend = player.pokemons[0];
+            battle.enemyTrainer = null;
+            changeSceen('BATTLE');
+        }
+    }
+}

@@ -51,6 +51,11 @@ for (var _key in key) {
 var cursor = {
     y: 0
 };
+var battle = {
+    enemy: null,
+    friend: null,
+    enemyTrainer: null
+};
 
 var player = {
     x: 0,
@@ -58,6 +63,7 @@ var player = {
     walking: 0,
     dash: 0,
     direction: 'down',
+    pokemons: [],
     canMove: function(direction) {
         var nextX = this.x, nextY = this.y;
         if (direction === 'left') {
@@ -143,10 +149,10 @@ for (var i = 0, _i = CONSTS.length; i < _i; i++) {
     dictionary[i] = tiles[CONSTS[i].toLowerCase()];
 }
 
-// 2次元配列でマップを表現
+// 1次元配列でマップを表現
 var mapWidth = 12; // 下のmapの横幅
 var mapHeight = 10; // 下のmapの縦の長さ
-var map = [
+/*var map = [
     GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS,
 GRASS, GRASS2, GRASS, GRASS,
     GRASS3, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS,
@@ -167,6 +173,28 @@ GRASS, GRASS, GRASS, GRASS,
 GRASS, GRASS, GRASS, GRASS,
     GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS,
 GRASS, GRASS, GRASS, GRASS
+];*/
+var map = [
+    GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2,
+GRASS2, GRASS2, GRASS2, GRASS2,
+    GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2,
+GRASS2, GRASS2, GRASS2, GRASS2,
+    GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2,
+GRASS2, GRASS2, GRASS2, GRASS2,
+    GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2,
+GRASS2, GRASS2, GRASS2, GRASS2,
+    GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2,
+GRASS2, GRASS2, GRASS2, GRASS2,
+    GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2,
+GRASS2, GRASS2, GRASS2, GRASS2,
+    GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2,
+GRASS2, GRASS2, GRASS2, GRASS2,
+    GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2,
+GRASS2, GRASS2, GRASS2, GRASS2,
+    GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2,
+GRASS2, GRASS2, GRASS2, GRASS2,
+    GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2,
+GRASS2, GRASS2, GRASS2, GRASS2
 ];
 
 // アイテムが重なることを考慮してmap形式ではなく、[object, x, y]という配列でfrontObjectsを保持

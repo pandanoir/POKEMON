@@ -30,7 +30,7 @@ window.addEventListener('load', function() {
                 var dy = {left: 0, up: -1, right: 0, down: 1}[player.direction];
                 for (var i = 0, _i = frontObjects.length; i < _i; i++) {
                     if (frontObjects[i][1] === player.x + dx && frontObjects[i][2] === player.y + dy) {
-                        if (frontObjects[i][3]) frontObjects[i][3](); // action
+                        if (frontObjects[i][3]) frontObjects[i][3](); // cause action. read sign, talk with clerk or open treasure box!
                     }
                 }
             }
