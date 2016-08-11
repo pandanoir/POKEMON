@@ -1,6 +1,6 @@
-var pokemonList;
-var preloadPokemonImage = new Promise(function(resolve, reject) {
-    var xmlHttpRequest = new XMLHttpRequest();
+let pokemonList;
+const preloadPokemonImage = new Promise(function(resolve, reject) {
+    const xmlHttpRequest = new XMLHttpRequest();
     xmlHttpRequest.onreadystatechange = function() {
         if (this.readyState === 4) {
             if (this.status === 200 || this.responseURL.slice(0, 8) === 'file:///') {
@@ -23,10 +23,10 @@ var preloadPokemonImage = new Promise(function(resolve, reject) {
 
 
 function drawPokedexIndex() {
-    var cursorText = newUText('>', new UPoint(0, (pokedex.cursor.y - pokedex.pageYOffset) * lineHeight));
+    const cursorText = newUText('>', new UPoint(0, (pokedex.cursor.y - pokedex.pageYOffset) * lineHeight));
 
     buffer.add(cursorText);
-    for (var i = 0, _i = pokemonList.length; i < _i; i++) {
+    for (let i = 0, _i = pokemonList.length; i < _i; i++) {
         buffer.add(newUText('No ' + zerofill(i + 1, 3), new UPoint(lineHeight, (i - pokedex.pageYOffset) * lineHeight)));
         buffer.add(newUText(pokemonList[i].name, new UPoint(lineHeight * 6, (i - pokedex.pageYOffset) * lineHeight)));
     }
@@ -35,7 +35,7 @@ function drawPokedexIndex() {
     };
 };
 function drawPokedexDetail(id) {
-    var name = new UGroup(
+    const name = new UGroup(
         new URect(new UPoint(0, 0), new UPoint(150, 24)).setFillColor('#fff'),
         new URect(new UPoint(0, 0), new UPoint(150, 24)),
         newUText('No ' + zerofill(id + 1, 3) + ' ' +pokemonList[id].name, new UPoint(3, 2))

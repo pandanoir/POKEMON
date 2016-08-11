@@ -1,11 +1,11 @@
-var walkingStep = 0 | FPS / 5;
-var ENCOUNTER_RATE = 8;
+const walkingStep = 0 | FPS / 5;
+const ENCOUNTER_RATE = 8;
 function drawMap() {
-    var dx = 0,
+    let dx = 0,
         dy = 0;
 
-    var walking = 0 | player.walking / (walkingStep / 4);
-    var dash = 0 | player.dash / (walkingStep / 4);
+    const walking = 0 | player.walking / (walkingStep / 4);
+    const dash = 0 | player.dash / (walkingStep / 4);
     if (player.direction === 'left')
         dx = walking * 8 + dash * 16; // if dash !== 0, walking is always 0.
     if (player.direction === 'up')
@@ -17,8 +17,8 @@ function drawMap() {
 
     // drawing map
     buffer.add(new URect(new UPoint(0, 0), new UPoint(canvasWidth, canvasHeight)).setFillColor('#000'));
-    for (var x = 0; x < mapWidth; x++) {
-        for (var y = 0; y < mapHeight; y++) {
+    for (let x = 0; x < mapWidth; x++) {
+        for (let y = 0; y < mapHeight; y++) {
             buffer.add(
                 dictionary[map[x + y * mapWidth]]
                 .move(
@@ -30,8 +30,8 @@ function drawMap() {
     }
 
     // drawing back object
-    for (var i = 0, _i = backObjects.length; i < _i; i++) {
-        var x = backObjects[i][1], y = backObjects[i][2];
+    for (let i = 0, _i = backObjects.length; i < _i; i++) {
+        const x = backObjects[i][1], y = backObjects[i][2];
         buffer.add(
             dictionary[backObjects[i][0]]
             .move(
@@ -55,9 +55,9 @@ function drawMap() {
     }
 
     // drawing front object
-    for (var i = 0, _i = frontObjects.length; i < _i; i++) {
+    for (let i = 0, _i = frontObjects.length; i < _i; i++) {
         // add 5 to center character
-        var x = frontObjects[i][1], y = frontObjects[i][2];
+        const x = frontObjects[i][1], y = frontObjects[i][2];
         buffer.add(
             dictionary[frontObjects[i][0]].move(
                 (x - player.x + 5) * tileSize + dx,

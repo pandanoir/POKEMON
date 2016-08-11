@@ -1,12 +1,12 @@
-var mainLoop = {
+const mainLoop = {
     list: [],
     listOnce: []
 };
 mainLoop.fire = function() {
-    for (var i = 0, _i = this.list.length; i < _i; i++) {
+    for (let i = 0, _i = this.list.length; i < _i; i++) {
         this.list[i]();
     }
-    for (var i = 0, _i = this.listOnce.length; i < _i; i++) {
+    for (let i = 0, _i = this.listOnce.length; i < _i; i++) {
         this.listOnce[i]();
     }
     this.listOnce = [];

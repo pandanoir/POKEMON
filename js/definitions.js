@@ -1,13 +1,13 @@
-var FPS = 32;
-var UCircularSector = Unitary.CircularSector;
-var UGroup = Unitary.Group;
-var UImage = Unitary.Image;
-var ULine = Unitary.Line;
-var UPoint = Unitary.Point;
-var URect = Unitary.Rect;
-var USegment = Unitary.Segment;
-var UText = Unitary.Text;
-var mapSrc = './map/shops.gif';
+const FPS = 32;
+const UCircularSector = Unitary.CircularSector;
+const UGroup = Unitary.Group;
+const UImage = Unitary.Image;
+const ULine = Unitary.Line;
+const UPoint = Unitary.Point;
+const URect = Unitary.Rect;
+const USegment = Unitary.Segment;
+const UText = Unitary.Text;
+const mapSrc = './map/shops.gif';
 window.addEventListener('load', function() {
     Canvas.preload(
         mapSrc,
@@ -27,14 +27,14 @@ window.addEventListener('load', function() {
         //d;
     });
 });
-var sceen = 'MAP';
-var DEFAULT_FONT = '13px san-self';
-var tileSize = 32;
-var canvasWidth = tileSize * 10; // canvas要素の幅
-var canvasHeight = canvasWidth; // canvas要素の高さ
-var pressedKey = {
+const sceen = 'MAP';
+const DEFAULT_FONT = '13px san-self';
+const tileSize = 32;
+const canvasWidth = tileSize * 10; // canvas要素の幅
+const canvasHeight = canvasWidth; // canvas要素の高さ
+const pressedKey = {
 };
-var key = {
+const key = {
     shift: 16,
     space: 32,
     left: 37,
@@ -44,20 +44,20 @@ var key = {
     B: 66,
     M: 77
 };
-for (var _key in key) {
+for (const _key of Object.keys(key)) {
     key['key' + key[_key]] = _key; // c.f: key['key16'] = 'shift';
     pressedKey[_key] = 0;
 }
-var cursor = {
+const cursor = {
     y: 0
 };
-var battle = {
+const battle = {
     enemy: null,
     friend: null,
     enemyTrainer: null
 };
 
-var player = {
+const player = {
     x: 0,
     y: 0,
     walking: 0,
@@ -65,7 +65,7 @@ var player = {
     direction: 'down',
     pokemons: [],
     canMove: function(direction) {
-        var nextX = this.x, nextY = this.y;
+        const nextX = this.x, nextY = this.y;
         if (direction === 'left') {
             nextX--;
         } else if (direction === 'up') {
@@ -82,7 +82,7 @@ var player = {
         if (obstacles.includes(map[nextX + nextY * mapWidth])) {
             return false;
         }
-        for (var i = 0, _i = frontObjects.length; i < _i; i++) {
+        for (let i = 0, _i = frontObjects.length; i < _i; i++) {
             if (obstacles.includes(frontObjects[i][0]) &&
                 frontObjects[i][1] === nextX &&
                 frontObjects[i][2] === nextY) {
@@ -92,11 +92,11 @@ var player = {
         return true;
     }
 };
-var walking = 0, dash = 0;
+const walking = 0, dash = 0;
 
 // trimは元画像から切り出す処理
-var mapImage = new UImage(mapSrc, new UPoint(0, 0));
-var tiles = {
+const mapImage = new UImage(mapSrc, new UPoint(0, 0));
+const tiles = {
     grass: mapImage.trim(new UPoint(0, 256), tileSize, tileSize),
     grass2: mapImage.trim(new UPoint(96, 256), tileSize, tileSize),
     grass3: mapImage.trim(new UPoint(6 * 32, 0), tileSize, tileSize),
@@ -121,7 +121,7 @@ var tiles = {
     roof15: mapImage.trim(new UPoint(384 + 128, 384), tileSize, tileSize)
 };
 
-var characterImage = {
+const characterImage = {
     left: new UImage('./chara1/left.png', new UPoint(0, 0)),
     left1: new UImage('./chara1/left1.png', new UPoint(0, 0)),
     left2: new UImage('./chara1/left2.png', new UPoint(0, 0)),
@@ -140,19 +140,19 @@ var characterImage = {
 };
 
 // GRASSなどCONSTSを動的に生成
-var CONSTS = Object.keys(tiles).map(function(item) {return item.toUpperCase()});
-var dictionary = [];
+const CONSTS = Object.keys(tiles).map(function(item) {return item.toUpperCase()});
+const dictionary = [];
 
 // GRASS = 0; dictionary[0] = grass; などを動的に生成
-for (var i = 0, _i = CONSTS.length; i < _i; i++) {
+for (let i = 0, _i = CONSTS.length; i < _i; i++) {
     window[CONSTS[i]] = i;
     dictionary[i] = tiles[CONSTS[i].toLowerCase()];
 }
 
 // 1次元配列でマップを表現
-var mapWidth = 12; // 下のmapの横幅
-var mapHeight = 10; // 下のmapの縦の長さ
-/*var map = [
+const mapWidth = 12; // 下のmapの横幅
+const mapHeight = 10; // 下のmapの縦の長さ
+/*const map = [
     GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS,
 GRASS, GRASS2, GRASS, GRASS,
     GRASS3, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS,
@@ -174,7 +174,7 @@ GRASS, GRASS, GRASS, GRASS,
     GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS,
 GRASS, GRASS, GRASS, GRASS
 ];*/
-var map = [
+const map = [
     GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2,
 GRASS2, GRASS2, GRASS2, GRASS2,
     GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2,
@@ -199,9 +199,9 @@ GRASS2, GRASS2, GRASS2, GRASS2
 
 // アイテムが重なることを考慮してmap形式ではなく、[object, x, y]という配列でfrontObjectsを保持
 // objectはタイルのID(CONSTS)を入れる
-var backObjects = [
+const backObjects = [
 ];
-var frontObjects = [
+const frontObjects = [
     [SIGN, 1, 0, function() {
         message = {text: 'ここは はじまりの むら', next: function() {changeSceen('MAP')}}
         changeSceen('MESSAGE');
@@ -225,7 +225,7 @@ var frontObjects = [
     [ROOF14, 5, 2],
     [ROOF15, 6, 2]
 ];
-var obstacles = [
+const obstacles = [
     SIGN,
     ROOF3,
 
@@ -241,8 +241,8 @@ var obstacles = [
     ROOF14,
     ROOF15
 ];
-var canvas, buffer;
-var lineHeight;
+let canvas, buffer;
+let lineHeight;
 window.addEventListener('load', function() {
     canvas = new Canvas('canvas');
     canvas.mode = 'normal';
@@ -271,8 +271,8 @@ function changeSceen(name) {
     });
 }
 function zerofill(n, m) {
-    var zero = '0';
-    for (var i = 1; i < m; i *= 2) {
+    const zero = '00000';
+    for (let i = 5; i < m; i *= 2) {
         zero = zero + zero;
     }
     return (zero + n).slice(-m);

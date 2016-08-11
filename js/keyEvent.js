@@ -1,5 +1,5 @@
-(function() {
-    var __pressedKey = {};
+{
+    const __pressedKey = {};
     window.addEventListener('keydown', function(e) {
         __pressedKey[key['key' + e.keyCode]] = true;
     });
@@ -7,7 +7,7 @@
         __pressedKey[key['key' + e.keyCode]] = false;
     });
     mainLoop.add(function() {
-        for (var key in pressedKey) {
+        for (const key of Object.keys(pressedKey)) {
             if (__pressedKey[key]) {
                 pressedKey[key]++;
             } else {
@@ -15,4 +15,4 @@
             }
         }
     })
-})();
+}
