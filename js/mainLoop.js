@@ -3,11 +3,11 @@ const mainLoop = {
     listOnce: []
 };
 mainLoop.fire = function() {
-    for (let i = 0, _i = this.list.length; i < _i; i++) {
-        this.list[i]();
+    for (const func of this.list) {
+        func();
     }
-    for (let i = 0, _i = this.listOnce.length; i < _i; i++) {
-        this.listOnce[i]();
+    for (const func of this.listOnce) {
+        func();
     }
     this.listOnce = [];
 };

@@ -30,10 +30,10 @@ function drawMap() {
     }
 
     // drawing back object
-    for (let i = 0, _i = backObjects.length; i < _i; i++) {
-        const x = backObjects[i][1], y = backObjects[i][2];
+    for (const backObject of backObjects) {
+        const x = backObject[1], y = backObject[2];
         buffer.add(
-            dictionary[backObjects[i][0]]
+            dictionary[backObject[0]]
             .move(
                 (x - player.x + 5) * tileSize + dx, // add 5 to center character
                 (y - player.y + 5) * tileSize + dy
@@ -55,11 +55,11 @@ function drawMap() {
     }
 
     // drawing front object
-    for (let i = 0, _i = frontObjects.length; i < _i; i++) {
+    for (const frontObject of frontObjects) {
         // add 5 to center character
-        const x = frontObjects[i][1], y = frontObjects[i][2];
+        const x = frontObject[1], y = frontObject[2];
         buffer.add(
-            dictionary[frontObjects[i][0]].move(
+            dictionary[frontObject[0]].move(
                 (x - player.x + 5) * tileSize + dx,
                 (y - player.y + 5) * tileSize + dy
             )
