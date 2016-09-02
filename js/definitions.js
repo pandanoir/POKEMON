@@ -65,16 +65,8 @@ const player = {
     direction: 'down',
     pokemons: [],
     canMove: direction => {
-        const nextX = this.x, nextY = this.y;
-        if (direction === 'left') {
-            nextX--;
-        } else if (direction === 'up') {
-            nextY--;
-        } else if (direction === 'right') {
-            nextX++;
-        } else if (direction === 'down') {
-            nextY++;
-        }
+        const dx = {left: -1, up: 0, right: 1, down: 0}, dy = {left: 0, up: -1, right: 0, down: 1};
+        const nextX = this.x + dx[direction], nextY = this.y + dy[direction];
         if (0 > nextX || nextX > mapWidth - 1 ||
             0 > nextY || nextY > mapHeight - 1) {
             return false;
