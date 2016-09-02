@@ -29,6 +29,7 @@ window.addEventListener('load', () => {
 });
 var sceen = 'MAP';
 const DEFAULT_FONT = '13px san-self';
+const _dx = {left: -1, up: 0, right: 1, down: 0}, _dy = {left: 0, up: -1, right: 0, down: 1}
 const tileSize = 32;
 const canvasWidth = tileSize * 10; // canvas要素の幅
 const canvasHeight = canvasWidth; // canvas要素の高さ
