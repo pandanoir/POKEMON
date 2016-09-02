@@ -44,7 +44,7 @@ const key = {
     B: 66,
     M: 77
 };
-for (const _key of Object.keys(key)) {
+for (var _key of Object.keys(key)) {
     key['key' + key[_key]] = _key; // c.f: key['key16'] = 'shift';
     pressedKey[_key] = 0;
 }
@@ -82,10 +82,10 @@ const player = {
         if (obstacles.includes(map[nextX + nextY * mapWidth])) {
             return false;
         }
-        for (let i = 0, _i = frontObjects.length; i < _i; i++) {
-            if (obstacles.includes(frontObjects[i][0]) &&
-                frontObjects[i][1] === nextX &&
-                frontObjects[i][2] === nextY) {
+        for (var frontObject of frontObjects) {
+            if (obstacles.includes(frontObject[0]) &&
+                frontObject[1] === nextX &&
+                frontObject[2] === nextY) {
                 return false;
             }
         }

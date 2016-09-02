@@ -3,10 +3,10 @@ const mainLoop = {
     listOnce: []
 };
 mainLoop.fire = function() {
-    for (const func of this.list) {
+    for (var func of this.list) {
         func();
     }
-    for (const func of this.listOnce) {
+    for (var func of this.listOnce) {
         func();
     }
     this.listOnce = [];

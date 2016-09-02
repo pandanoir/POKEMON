@@ -30,7 +30,7 @@ function drawMap() {
     }
 
     // drawing back object
-    for (const backObject of backObjects) {
+    for (var backObject of backObjects) {
         const x = backObject[1], y = backObject[2];
         buffer.add(
             dictionary[backObject[0]]
@@ -55,7 +55,7 @@ function drawMap() {
     }
 
     // drawing front object
-    for (const frontObject of frontObjects) {
+    for (var frontObject of frontObjects) {
         // add 5 to center character
         const x = frontObject[1], y = frontObject[2];
         buffer.add(
