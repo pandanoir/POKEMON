@@ -1,12 +1,12 @@
+var pokedex = {
+    cursor: {
+        y: 0
+    },
+    pageYOffset: 0 // pageYOffset is not pixel. this contains the number of line.
+};
 {
-    const pokedex = {
-        cursor: {
-            y: 0
-        },
-        pageYOffset: 0 // pageYOffset is not pixel. this contains the number of line.
-    };
-    const movesCursor = 0;
-    const windowLoad = new Promise(function(resolve, reject) {
+    let movesCursor = 0;
+    const windowLoad = new Promise((resolve, reject) => {
         window.addEventListener('load', resolve);
     });
     Promise.all([preloadPokemonImage, windowLoad]).then(() => {

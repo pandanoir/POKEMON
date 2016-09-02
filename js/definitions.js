@@ -27,7 +27,7 @@ window.addEventListener('load', () => {
         //d;
     });
 });
-const sceen = 'MAP';
+var sceen = 'MAP';
 const DEFAULT_FONT = '13px san-self';
 const tileSize = 32;
 const canvasWidth = tileSize * 10; // canvas要素の幅
@@ -64,9 +64,9 @@ const player = {
     dash: 0,
     direction: 'down',
     pokemons: [],
-    canMove: direction => {
-        const dx = {left: -1, up: 0, right: 1, down: 0}, dy = {left: 0, up: -1, right: 0, down: 1};
-        const nextX = this.x + dx[direction], nextY = this.y + dy[direction];
+    canMove: function(direction) {
+        const dx = _dx[direction], dy = _dy[direction];
+        const nextX = this.x + dx, nextY = this.y + dy;
         if (0 > nextX || nextX > mapWidth - 1 ||
             0 > nextY || nextY > mapHeight - 1) {
             return false;
@@ -262,7 +262,7 @@ function changeSceen(name) {
     mainLoop.addOnce(() => sceen = name);
 }
 function zerofill(n, m) {
-    const zero = '00000';
+    let zero = '00000';
     for (let i = 5; i < m; i *= 2) {
         zero = zero + zero;
     }
