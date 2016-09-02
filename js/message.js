@@ -1,4 +1,4 @@
-mainLoop.add(function() {
+mainLoop.add(() => {
     if (sceen === 'MESSAGE') {
         setupCanvas();
         drawMap();

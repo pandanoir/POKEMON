@@ -1,6 +1,6 @@
 {
     const commands = [['battle', 'item'], ['pokemon', 'escape']];
-    mainLoop.add(function() {
+    mainLoop.add(() => {
         if (sceen === 'BATTLE') {
             setupCanvas();
             drawBattle();

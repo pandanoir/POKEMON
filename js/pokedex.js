@@ -7,17 +7,15 @@
     };
     const movesCursor = 0;
     const windowLoad = new Promise(function(resolve, reject) {
-        window.addEventListener('load', function() {
-            resolve();
-        });
+        window.addEventListener('load', resolve);
     });
-    Promise.all([preloadPokemonImage, windowLoad]).then(function() {
+    Promise.all([preloadPokemonImage, windowLoad]).then(() => {
         setupCanvas();
         drawLoading();
         drawCanvas();
-        const pokemonImage = pokemonList.map(function(_) {return './pokemon/' + _.src;});
-        Canvas.preload.apply(Canvas, pokemonImage).then(function() {
-            mainLoop.add(function() {
+        const pokemonImage = pokemonList.map(_ => './pokemon/' + _.src);
+        Canvas.preload.apply(Canvas, pokemonImage).then(() => {
+            mainLoop.add(() => {
                 if (sceen === 'POKEDEX_INDEX') {
                     setupCanvas();
                     drawPokedexIndex();
@@ -61,7 +59,5 @@
                 }
             });
         });
-    }).catch(function(e) {
-        console.log(e);
-    });
+    }).catch(e => console.log(e));
 }

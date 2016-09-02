@@ -1,7 +1,7 @@
 {
     const menuList = ['pokemon', 'pokedex', 'status', 'setting', 'save'];
     const movesCursor = 0;
-    mainLoop.add(function() {
+    mainLoop.add(() => {
         if (sceen === 'MENU') {
             setupCanvas();
             drawMap();

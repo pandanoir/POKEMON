@@ -17,6 +17,4 @@ mainLoop.add = function(f) {
 mainLoop.addOnce = function(f) {
     this.listOnce[this.listOnce.length] = f;
 }
-setInterval(function() {
-    mainLoop.fire();
-}, 1000 / FPS);
+setInterval(mainLoop.fire.bind(mainLoop), 1000 / FPS);

@@ -1,10 +1,10 @@
-window.addEventListener('load', function() {
+window.addEventListener('load', () => {
     setupCanvas();
     drawMap();
     drawCanvas();
     walk();
 
-    mainLoop.add(function() {
+    mainLoop.add(() => {
         if (sceen === 'MAP') {
             if (player.walking === 0 && player.dash === 0) {
                 for (let d = 0, dir = ['left', 'up', 'right', 'down']; d < 4; d++) {

@@ -16,9 +16,7 @@ const preloadPokemonImage = new Promise(function(resolve, reject) {
     xmlHttpRequest.open('GET', './js/pokemon.json', true);
     xmlHttpRequest.responseType = 'json';
     xmlHttpRequest.send(null);
-}).catch(function(e) {
-    console.log(e);
-});
+}).catch(e => console.log(e));
 
 
 

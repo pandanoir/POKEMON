@@ -8,7 +8,7 @@ const URect = Unitary.Rect;
 const USegment = Unitary.Segment;
 const UText = Unitary.Text;
 const mapSrc = './map/shops.gif';
-window.addEventListener('load', function() {
+window.addEventListener('load', () => {
     Canvas.preload(
         mapSrc,
         './chara1/left.png',
@@ -23,7 +23,7 @@ window.addEventListener('load', function() {
         './chara1/front.png',
         './chara1/front1.png',
         './chara1/front2.png'
-    ).then(function() {
+    ).then(() => {
         //d;
     });
 });
@@ -64,7 +64,7 @@ const player = {
     dash: 0,
     direction: 'down',
     pokemons: [],
-    canMove: function(direction) {
+    canMove: direction => {
         const nextX = this.x, nextY = this.y;
         if (direction === 'left') {
             nextX--;
@@ -140,7 +140,7 @@ const characterImage = {
 };
 
 // GRASSなどCONSTSを動的に生成
-const CONSTS = Object.keys(tiles).map(function(item) {return item.toUpperCase()});
+const CONSTS = Object.keys(tiles).map(item => item.toUpperCase());
 const dictionary = [];
 
 // GRASS = 0; dictionary[0] = grass; などを動的に生成
@@ -202,8 +202,8 @@ GRASS2, GRASS2, GRASS2, GRASS2
 const backObjects = [
 ];
 const frontObjects = [
-    [SIGN, 1, 0, function() {
-        message = {text: 'ここは はじまりの むら', next: function() {changeSceen('MAP')}}
+    [SIGN, 1, 0, () => {
+        message = {text: 'ここは はじまりの むら', next: () => changeSceen('MAP')}
         changeSceen('MESSAGE');
     }],
 
@@ -243,7 +243,7 @@ const obstacles = [
 ];
 let canvas, buffer;
 let lineHeight;
-window.addEventListener('load', function() {
+window.addEventListener('load', () => {
     canvas = new Canvas('canvas');
     canvas.mode = 'normal';
 
@@ -257,7 +257,7 @@ function setupCanvas() {
     buffer.removeAllObjects();
 };
 function drawCanvas() {
-    buffer.draw().then(function() {
+    buffer.draw().then(() => {
         canvas.canvas.putImageData(
             buffer.canvas.getImageData(
                 0, 0, canvasWidth, canvasHeight
@@ -266,9 +266,7 @@ function drawCanvas() {
     });
 }
 function changeSceen(name) {
-    mainLoop.addOnce(function() {
-        sceen = name;
-    });
+    mainLoop.addOnce(() => sceen = name);
 }
 function zerofill(n, m) {
     const zero = '00000';
