@@ -243,6 +243,7 @@ window.addEventListener('load', () => {
     buffer.mode = 'normal';
     
     lineHeight = canvas.canvas.measureText('あ').width;
+    mainLoop.start();
 });
 function setupCanvas() {
     buffer.clear();
