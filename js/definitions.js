@@ -90,29 +90,32 @@ const walking = 0, dash = 0;
 // trimは元画像から切り出す処理
 const mapImage = new UImage(mapSrc, new UPoint(0, 0));
 const tiles = {
-    grass: mapImage.trim(new UPoint(0, 256), tileSize, tileSize),
-    grass2: mapImage.trim(new UPoint(96, 256), tileSize, tileSize),
-    grass3: mapImage.trim(new UPoint(6 * 32, 0), tileSize, tileSize),
-    sign: mapImage.trim(new UPoint(928, 64), tileSize, tileSize),
+    grass: new UPoint(0, 256),
+    grass2: new UPoint(96, 256),
+    grass3: new UPoint(6 * 32, 0),
+    sign: new UPoint(928, 64),
 
-    roof1: mapImage.trim(new UPoint(800, 96), tileSize, tileSize),
-    roof2: mapImage.trim(new UPoint(800 + 32, 96), tileSize, tileSize),
-    roof3: mapImage.trim(new UPoint(800 + 64, 96), tileSize, tileSize),
-    roof4: mapImage.trim(new UPoint(800 + 96, 96), tileSize, tileSize),
-    roof5: mapImage.trim(new UPoint(800 + 128, 96), tileSize, tileSize),
+    roof1: new UPoint(800, 96),
+    roof2: new UPoint(800 + 32, 96),
+    roof3: new UPoint(800 + 64, 96),
+    roof4: new UPoint(800 + 96, 96),
+    roof5: new UPoint(800 + 128, 96),
 
-    roof6: mapImage.trim(new UPoint(384, 384 - 32), tileSize, tileSize),
-    roof7: mapImage.trim(new UPoint(384 + 32, 384 - 32), tileSize, tileSize),
-    roof8: mapImage.trim(new UPoint(384 + 64, 384 - 32), tileSize, tileSize),
-    roof9: mapImage.trim(new UPoint(384 + 96, 384 - 32), tileSize, tileSize),
-    roof10: mapImage.trim(new UPoint(384 + 128, 384 - 32), tileSize, tileSize),
+    roof6: new UPoint(384, 384 - 32),
+    roof7: new UPoint(384 + 32, 384 - 32),
+    roof8: new UPoint(384 + 64, 384 - 32),
+    roof9: new UPoint(384 + 96, 384 - 32),
+    roof10: new UPoint(384 + 128, 384 - 32),
 
-    roof11: mapImage.trim(new UPoint(384, 384), tileSize, tileSize),
-    roof12: mapImage.trim(new UPoint(384 + 32, 384), tileSize, tileSize),
-    roof13: mapImage.trim(new UPoint(384 + 64, 384), tileSize, tileSize),
-    roof14: mapImage.trim(new UPoint(384 + 96, 384), tileSize, tileSize),
-    roof15: mapImage.trim(new UPoint(384 + 128, 384), tileSize, tileSize)
+    roof11: new UPoint(384, 384),
+    roof12: new UPoint(384 + 32, 384),
+    roof13: new UPoint(384 + 64, 384),
+    roof14: new UPoint(384 + 96, 384),
+    roof15: new UPoint(384 + 128, 384)
 };
+for (var key of Object.keys(tiles)) {
+    tiles[key] = mapImage.trim(tiles[key], tileSize, tileSize);
+}
 
 const characterImage = {
     left: new UImage('./chara1/left.png', new UPoint(0, 0)),
