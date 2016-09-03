@@ -16,7 +16,7 @@ var pokedex = {
         const pokemonImage = pokemonList.map(_ => './pokemon/' + _.src);
         Canvas.preload.apply(Canvas, pokemonImage).then(() => {
             mainLoop.add(() => {
-                if (sceen === 'POKEDEX_INDEX') {
+                if (sceen === SCEEN_POKEDEX_INDEX) {
                     setupCanvas();
                     drawPokedexIndex();
                     drawCanvas();
@@ -38,10 +38,10 @@ var pokedex = {
                     }
                     if (pressedKey.space === 1) {
                         pokedex.detailID = pokedex.cursor.y;
-                        changeSceen('POKEDEX_DETAIL');
+                        changeSceen(SCEEN_POKEDEX_DETAIL);
                     }
                     if (pressedKey.B === 1) {
-                        changeSceen('MENU');
+                        changeSceen(SCEEN_MENU);
                     }
                     if (movesCursor !== 0) {
                         movesCursor++;
@@ -49,12 +49,12 @@ var pokedex = {
                     if (movesCursor === 11) {
                         movesCursor = 0;
                     }
-                } else if (sceen === 'POKEDEX_DETAIL') {
+                } else if (sceen === SCEEN_POKEDEX_DETAIL) {
                     setupCanvas();
                     drawPokedexDetail(pokedex.detailID);
                     drawCanvas();
                     if (pressedKey.space === 1 || pressedKey.B === 1) {
-                        changeSceen('POKEDEX_INDEX');
+                        changeSceen(SCEEN_POKEDEX_INDEX);
                     }
                 }
             });

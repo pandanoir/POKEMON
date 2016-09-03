@@ -7,6 +7,12 @@ const UPoint = Unitary.Point;
 const URect = Unitary.Rect;
 const USegment = Unitary.Segment;
 const UText = Unitary.Text;
+const SCEEN_BATTLE = 'BATTLE',
+    SCEEN_MAP = 'MAP',
+    SCEEN_MENU = 'MENU',
+    SCEEN_MESSAGE = 'MESSAGE',
+    SCEEN_POKEDEX_INDEX = 'POKEDEX_INDEX',
+    SCEEN_POKEDEX_DETAIL = 'POKEDEX_DETAIL';
 const mapSrc = './map/shops.gif';
 window.addEventListener('load', () => {
     Canvas.preload(
@@ -27,7 +33,7 @@ window.addEventListener('load', () => {
         //d;
     });
 });
-var sceen = 'MAP';
+var sceen = SCEEN_MAP;
 const DEFAULT_FONT = '13px san-self';
 const _dx = {left: -1, up: 0, right: 1, down: 0}, _dy = {left: 0, up: -1, right: 0, down: 1}
 const tileSize = 32;
@@ -201,8 +207,8 @@ const backObjects = [
 ];
 const frontObjects = [
     [SIGN, 1, 0, () => {
-        message = {text: 'ここは はじまりの むら', next: () => changeSceen('MAP')}
-        changeSceen('MESSAGE');
+        message = {text: 'ここは はじまりの むら', next: () => changeSceen(SCEEN_MAP)}
+        changeSceen(SCEEN_MESSAGE);
     }],
 
     [ROOF1, 2, 0],

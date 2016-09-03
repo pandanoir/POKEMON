@@ -1,5 +1,5 @@
 mainLoop.add(() => {
-    if (sceen === 'MESSAGE') {
+    if (sceen === SCEEN_MESSAGE) {
         setupCanvas();
         drawMap();
         drawMessage();

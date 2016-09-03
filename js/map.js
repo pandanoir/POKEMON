@@ -1,5 +1,5 @@
 mainLoop.add(() => {
-    if (sceen === 'MAP') {
+    if (sceen === SCEEN_MAP) {
         if (player.walking === 0 && player.dash === 0) {
             for (let d = 0, dir = ['left', 'up', 'right', 'down']; d < 4; d++) {
                 if (pressedKey[dir[d]] > 0) {
@@ -17,7 +17,7 @@ mainLoop.add(() => {
         }
         if (pressedKey.M === 1) {
             cursor.y = 0;
-            changeSceen('MENU');
+            changeSceen(SCEEN_MENU);
         }
         if (pressedKey.space === 1) {
             const dx = _dx[player.direction];

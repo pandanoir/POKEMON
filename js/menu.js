@@ -2,7 +2,7 @@ var menuList = ['pokemon', 'pokedex', 'status', 'setting', 'save'];
 {
     let movesCursor = 0;
     mainLoop.add(() => {
-        if (sceen === 'MENU') {
+        if (sceen === SCEEN_MENU) {
             setupCanvas();
             drawMap();
             drawMenu();
@@ -23,13 +23,13 @@ var menuList = ['pokemon', 'pokedex', 'status', 'setting', 'save'];
             }
             if (pressedKey.space === 1) {
                 if (menuList[cursor.y] === 'pokedex') {
-                    changeSceen('POKEDEX_INDEX');
+                    changeSceen(SCEEN_POKEDEX_INDEX);
                 } else {
-                    changeSceen('MAP');
+                    changeSceen(SCEEN_MAP);
                 }
             }
             if (pressedKey.M === 1 || pressedKey.B === 1) {
-                changeSceen('MAP');
+                changeSceen(SCEEN_MAP);
             }
         }
     });

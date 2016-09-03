@@ -1,7 +1,7 @@
 {
     const commands = [['battle', 'item'], ['pokemon', 'escape']];
     mainLoop.add(() => {
-        if (sceen === 'BATTLE') {
+        if (sceen === SCEEN_BATTLE) {
             setupCanvas();
             drawBattle();
             drawCanvas();
@@ -19,11 +19,11 @@
             }
             if (pressedKey.M === 1) {
                 cursor.y = 0;
-                changeSceen('MENU');
+                changeSceen(SCEEN_MENU);
             }
             if (pressedKey.space === 1) {
                 if (commands[cursor.y][cursor.x] === 'escape') {
-                    changeSceen('MAP');
+                    changeSceen(SCEEN_MAP);
                 }
             }
         }
