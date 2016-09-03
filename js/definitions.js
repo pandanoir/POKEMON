@@ -266,9 +266,5 @@ function changeSceen(name) {
     mainLoop.addOnce(() => sceen = name);
 }
 function zerofill(n, m) {
-    let zero = '00000';
-    for (let i = 5; i < m; i *= 2) {
-        zero = zero + zero;
-    }
-    return (zero + n).slice(-m);
+    return '0'.repeat(m - ('' + n).length) + n;
 }
