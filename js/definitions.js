@@ -113,10 +113,12 @@ const tiles = {
     roof14: new UPoint(384 + 96, 384),
     roof15: new UPoint(384 + 128, 384)
 };
-for (var key of Object.keys(tiles)) {
-    tiles[key] = mapImage.trim(tiles[key], tileSize, tileSize);
+{
+    let key;
+    for (key of Object.keys(tiles)) {
+        tiles[key] = mapImage.trim(tiles[key], tileSize, tileSize);
+    }
 }
-
 const characterImage = {
     left: new UImage('./chara1/left.png', new UPoint(0, 0)),
     left1: new UImage('./chara1/left1.png', new UPoint(0, 0)),
