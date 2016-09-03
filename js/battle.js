@@ -3,7 +3,7 @@
     mainLoop.add(() => {
         if (sceen === SCEEN_BATTLE) {
             setupCanvas();
-            drawBattle();
+            draw[sceen]();
             drawCanvas();
             if (pressedKey.down === 1 && cursor.maxY >= cursor.y + 1) {
                 cursor.y++;

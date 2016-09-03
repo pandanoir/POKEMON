@@ -1,4 +1,4 @@
-function drawMessage() {
+draw[SCEEN_MESSAGE] = () => {
     const boardHeight = 100;
     const messageBoard = new UGroup(
         new URect(new UPoint(0, canvasHeight - boardHeight), new UPoint(canvasWidth, canvasHeight)).setFillColor('#000'),

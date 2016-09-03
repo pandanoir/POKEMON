@@ -12,7 +12,9 @@ const SCEEN_BATTLE = 'BATTLE',
     SCEEN_MENU = 'MENU',
     SCEEN_MESSAGE = 'MESSAGE',
     SCEEN_POKEDEX_INDEX = 'POKEDEX_INDEX',
-    SCEEN_POKEDEX_DETAIL = 'POKEDEX_DETAIL';
+    SCEEN_POKEDEX_DETAIL = 'POKEDEX_DETAIL',
+    SCEEN_LOADING = 'LOADING',
+    SCEEN_START = SCEEN_MAP;
 const mapSrc = './map/shops.gif';
 window.addEventListener('load', () => {
     Canvas.preload(
@@ -33,7 +35,7 @@ window.addEventListener('load', () => {
         //d;
     });
 });
-var sceen = SCEEN_MAP;
+var sceen = SCEEN_START;
 const DEFAULT_FONT = '13px san-self';
 const _dx = {left: -1, up: 0, right: 1, down: 0}, _dy = {left: 0, up: -1, right: 0, down: 1}
 const tileSize = 32;
@@ -55,6 +57,7 @@ for (var _key of Object.keys(key)) {
     key['key' + key[_key]] = _key; // c.f: key['key16'] = 'shift';
     pressedKey[_key] = 0;
 }
+const draw = {};
 const cursor = {
     y: 0
 };

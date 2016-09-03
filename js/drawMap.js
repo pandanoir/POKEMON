@@ -1,6 +1,6 @@
 const walkingStep = 0 | FPS / 5;
 const ENCOUNTER_RATE = 8;
-function drawMap() {
+draw[SCEEN_MAP] = () => {
     let dx = 0,
         dy = 0;
 

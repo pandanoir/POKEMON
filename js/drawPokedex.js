@@ -20,7 +20,7 @@ const preloadPokemonImage = new Promise(function(resolve, reject) {
 
 
 
-function drawPokedexIndex() {
+draw[SCEEN_POKEDEX_INDEX] = () => {
     const cursorText = newUText('>', new UPoint(0, (pokedex.cursor.y - pokedex.pageYOffset) * lineHeight));
 
     buffer.add(cursorText);
@@ -32,7 +32,7 @@ function drawPokedexIndex() {
         return new UText(string, point).setFillColor('#555').setBaseline('top').setFont('13px san-self');
     };
 };
-function drawPokedexDetail(id) {
+draw[SCEEN_POKEDEX_DETAIL] = (id) => {
     const name = new UGroup(
         new URect(new UPoint(0, 0), new UPoint(150, 24)).setFillColor('#fff'),
         new URect(new UPoint(0, 0), new UPoint(150, 24)),

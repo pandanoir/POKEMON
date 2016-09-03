@@ -4,8 +4,8 @@ var menuList = ['pokemon', 'pokedex', 'status', 'setting', 'save'];
     mainLoop.add(() => {
         if (sceen === SCEEN_MENU) {
             setupCanvas();
-            drawMap();
-            drawMenu();
+            draw[SCEEN_MAP]();
+            draw[sceen]();
             drawCanvas();
             if (pressedKey.up > 0 && movesCursor === 0 && cursor.y - 1 >= 0) {
                 cursor.y--;

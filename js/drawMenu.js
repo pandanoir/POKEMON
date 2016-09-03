@@ -1,4 +1,4 @@
-function drawMenu() {
+draw[SCEEN_MENU] = () => {
     const titleHeight = 16;
     const title = newUText('Menu', new UPoint(0, 0)).setFont('16px san-self');
     const board = new UGroup(

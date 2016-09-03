@@ -1,4 +1,4 @@
-function drawBattle() {
+draw[SCEEN_BATTLE] = () => {
     const boardHeight = 70;
     const board = new UGroup(
         new URect(new UPoint(0, canvasHeight - boardHeight), new UPoint(canvasWidth, canvasHeight)).setFillColor('#000')
