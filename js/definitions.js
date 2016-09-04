@@ -1,65 +1,23 @@
-import {mainLoopAddOnce} from './mainLoop.js';
+import SCEEN from './definition/sceen.js';
+import {pressedKey, key} from './definition/key.js';
+import {tiles, tileSize} from './definition/mapImage.js';
+import characterImage from './definition/characterImage.js';
+import {UCircularSector, UGroup, UImage, ULine, UPoint, URect, USegment, UText} from './definition/unitary.js';
+import {changeSceen} from './sceen.js';
+import pokemonList from './pokemon.json';
 
-export const FPS = 32,
-    UCircularSector = Unitary.CircularSector,
-    UGroup = Unitary.Group,
-    UImage = Unitary.Image,
-    ULine = Unitary.Line,
-    UPoint = Unitary.Point,
-    URect = Unitary.Rect,
-    USegment = Unitary.Segment,
-    UText = Unitary.Text,
-    SCEEN_BATTLE = 'BATTLE',
-    SCEEN_MAP = 'MAP',
-    SCEEN_MENU = 'MENU',
-    SCEEN_MESSAGE = 'MESSAGE',
-    SCEEN_POKEDEX_INDEX = 'POKEDEX_INDEX',
-    SCEEN_POKEDEX_DETAIL = 'POKEDEX_DETAIL',
-    SCEEN_LOADING = 'LOADING',
-    SCEEN_START = SCEEN_MAP,
-    mapSrc = './map/shops.gif';
-window.addEventListener('load', () => {
-    Canvas.preload(
-        mapSrc,
-        './chara1/left.png',
-        './chara1/left1.png',
-        './chara1/left2.png',
-        './chara1/back.png',
-        './chara1/back1.png',
-        './chara1/back2.png',
-        './chara1/right.png',
-        './chara1/right1.png',
-        './chara1/right2.png',
-        './chara1/front.png',
-        './chara1/front1.png',
-        './chara1/front2.png'
-    ).then(() => {
-        //d;
-    });
-});
-export let sceen = SCEEN_START;
+export {SCEEN};
+export {pressedKey,key};
+export {tiles, tileSize};
+export {characterImage};
+export {UCircularSector, UGroup, UImage, ULine, UPoint, URect, USegment, UText};
+export {pokemonList};
+export const FPS = 32;
 export const DEFAULT_FONT = '13px san-self',
     _dx = {left: -1, up: 0, right: 1, down: 0}, _dy = {left: 0, up: -1, right: 0, down: 1},
-    tileSize = 32,
     canvasWidth = tileSize * 10, // canvas要素の幅
     canvasHeight = canvasWidth, // canvas要素の高さ
-    pressedKey = {
-    },
-    key = {
-        shift: 16,
-        space: 32,
-        left: 37,
-        up: 38,
-        right: 39,
-        down: 40,
-        B: 66,
-        M: 77
-    },
     menuList = ['pokemon', 'pokedex', 'status', 'setting', 'save'];
-for (var _key of Object.keys(key)) {
-    key['key' + key[_key]] = _key; // c.f: key['key16'] = 'shift';
-    pressedKey[_key] = 0;
-}
 export const draw = {};
 export const cursor = {
         y: 0
@@ -75,14 +33,16 @@ export const cursor = {
         friend: null,
         enemyTrainer: null
     },
-    player = {
-        x: 0,
-        y: 0,
-        walking: 0,
-        dash: 0,
-        direction: 'down',
-        pokemons: [],
-        canMove: function(direction) {
+    player = new class Player {
+        constructor() {
+            this.x = 0;
+            this.y = 0;
+            this.walking = 0;
+            this.dash = 0;
+            this.direction = 'down';
+            this.pokemons = [];
+        }
+        canMove(direction) {
             const dx = _dx[direction], dy = _dy[direction];
             const nextX = this.x + dx, nextY = this.y + dy;
             if (0 > nextX || nextX > mapWidth - 1 ||
@@ -92,7 +52,8 @@ export const cursor = {
             if (obstacles.includes(map[nextX + nextY * mapWidth])) {
                 return false;
             }
-            for (var frontObject of frontObjects) {
+            let frontObject;
+            for (frontObject of frontObjects) {
                 if (obstacles.includes(frontObject[0]) &&
                     frontObject[1] === nextX &&
                     frontObject[2] === nextY) {
@@ -103,56 +64,7 @@ export const cursor = {
         }
     };
 
-// trimは元画像から切り出す処理
-export const mapImage = new UImage(mapSrc, new UPoint(0, 0)),
-    tiles = {
-        grass: new UPoint(0, 256),
-        grass2: new UPoint(96, 256),
-        grass3: new UPoint(6 * 32, 0),
-        sign: new UPoint(928, 64),
-
-        roof1: new UPoint(800, 96),
-        roof2: new UPoint(800 + 32, 96),
-        roof3: new UPoint(800 + 64, 96),
-        roof4: new UPoint(800 + 96, 96),
-        roof5: new UPoint(800 + 128, 96),
-
-        roof6: new UPoint(384, 384 - 32),
-        roof7: new UPoint(384 + 32, 384 - 32),
-        roof8: new UPoint(384 + 64, 384 - 32),
-        roof9: new UPoint(384 + 96, 384 - 32),
-        roof10: new UPoint(384 + 128, 384 - 32),
-
-        roof11: new UPoint(384, 384),
-        roof12: new UPoint(384 + 32, 384),
-        roof13: new UPoint(384 + 64, 384),
-        roof14: new UPoint(384 + 96, 384),
-        roof15: new UPoint(384 + 128, 384)
-    };
-{
-    let key;
-    for (key of Object.keys(tiles)) {
-        tiles[key] = mapImage.trim(tiles[key], tileSize, tileSize);
-    }
-}
-export const characterImage = {
-        left: new UImage('./chara1/left.png', new UPoint(0, 0)),
-        left1: new UImage('./chara1/left1.png', new UPoint(0, 0)),
-        left2: new UImage('./chara1/left2.png', new UPoint(0, 0)),
-
-        up: new UImage('./chara1/back.png', new UPoint(0, 0)),
-        up1: new UImage('./chara1/back1.png', new UPoint(0, 0)),
-        up2: new UImage('./chara1/back2.png', new UPoint(0, 0)),
-
-        right: new UImage('./chara1/right.png', new UPoint(0, 0)),
-        right1: new UImage('./chara1/right1.png', new UPoint(0, 0)),
-        right2: new UImage('./chara1/right2.png', new UPoint(0, 0)),
-
-        down: new UImage('./chara1/front.png', new UPoint(0, 0)),
-        down1: new UImage('./chara1/front1.png', new UPoint(0, 0)),
-        down2: new UImage('./chara1/front2.png', new UPoint(0, 0))
-    },
-    dictionary = [];
+export const dictionary = [];
 
 // GRASSなどCONSTSを動的に生成
 const CONSTS = Object.keys(tiles).map(item => item.toUpperCase());
@@ -218,8 +130,8 @@ export const backObjects = [
     ],
     frontObjects = [
         [SIGN, 1, 0, () => {
-            message = {text: 'ここは はじまりの むら', next: () => changeSceen(SCEEN_MAP)}
-            changeSceen(SCEEN_MESSAGE);
+            message = {text: 'ここは はじまりの むら', next: () => changeSceen(SCEEN.MAP)}
+            changeSceen(SCEEN.MESSAGE);
         }],
 
         [ROOF1, 2, 0],
@@ -258,25 +170,6 @@ export const backObjects = [
     ];
 export let canvas, buffer;
 export let lineHeight;
-export let pokemonList;
-export const preloadPokemonImage = new Promise(function(resolve, reject) {
-        const xmlHttpRequest = new XMLHttpRequest();
-        xmlHttpRequest.onreadystatechange = function() {
-            if (this.readyState === 4) {
-                if (this.status === 200 || this.responseURL.slice(0, 8) === 'file:///') {
-                    if (this.response) {
-                        pokemonList = this.response;
-                        resolve();
-                    }
-                } else {
-                    reject();
-                }
-            }
-        };
-        xmlHttpRequest.open('GET', './js/pokemon.json', true);
-        xmlHttpRequest.responseType = 'json';
-        xmlHttpRequest.send(null);
-    }).catch(e => console.log(e));
 
 window.addEventListener('load', () => {
     canvas = new Canvas('canvas');
@@ -299,9 +192,6 @@ export function drawCanvas() {
             ), 0, 0
         );
     });
-}
-export function changeSceen(name) {
-    mainLoopAddOnce(() => sceen = name);
 }
 export function zerofill(n, m) {
     return '0'.repeat(m - ('' + n).length) + n;

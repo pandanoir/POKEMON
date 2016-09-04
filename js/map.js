@@ -1,5 +1,6 @@
 import draw, {walk} from './drawMap.js';
-import {player, pressedKey, cursor, changeSceen, _dx, _dy, frontObjects} from './definitions.js'
+import {player, pressedKey, cursor, _dx, _dy, frontObjects, SCEEN} from './definitions.js';
+import {changeSceen} from './sceen.js';
 
 export default () => {
     if (player.walking === 0 && player.dash === 0) {
@@ -19,7 +20,7 @@ export default () => {
     }
     if (pressedKey.M === 1) {
         cursor.y = 0;
-        changeSceen(SCEEN_MENU);
+        changeSceen(SCEEN.MENU);
     }
     if (pressedKey.space === 1) {
         const dx = _dx[player.direction];

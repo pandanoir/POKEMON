@@ -1,4 +1,5 @@
-import {player, FPS, URect, UPoint, buffer, canvasWidth, canvasHeight, map, mapWidth, mapHeight, dictionary, backObjects, characterImage, frontObjects, tileSize, battle, cursor, changeSceen, SCEEN_BATTLE, pokemonList} from './definitions.js';
+import {player, FPS, URect, UPoint, buffer, canvasWidth, canvasHeight, map, mapWidth, mapHeight, dictionary, backObjects, characterImage, frontObjects, tileSize, battle, cursor, SCEEN, pokemonList} from './definitions.js';
+import {changeSceen} from './sceen.js';
 
 const walkingStep = 0 | FPS / 5;
 const ENCOUNTER_RATE = 8;
@@ -100,7 +101,7 @@ export function encount() {
             cursor.y = 0;
             cursor.maxX = 1;
             cursor.maxY = 1;
-            changeSceen(SCEEN_BATTLE);
+            changeSceen(SCEEN.BATTLE);
         }
     }
 }

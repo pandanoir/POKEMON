@@ -1,6 +1,7 @@
 import draw from './drawMenu.js';
 import drawMap from './drawMap.js';
-import {SCEEN_MAP, SCEEN_POKEDEX_INDEX, pressedKey, cursor, menuList, changeSceen} from './definitions.js';
+import {SCEEN, pressedKey, cursor, menuList} from './definitions.js';
+import {changeSceen} from './sceen.js';
 
 let movesCursor = 0;
 export default () => {
@@ -22,12 +23,12 @@ export default () => {
     }
     if (pressedKey.space === 1) {
         if (menuList[cursor.y] === 'pokedex') {
-            changeSceen(SCEEN_POKEDEX_INDEX);
+            changeSceen(SCEEN.POKEDEX_INDEX);
         } else {
-            changeSceen(SCEEN_MAP);
+            changeSceen(SCEEN.MAP);
         }
     }
     if (pressedKey.M === 1 || pressedKey.B === 1) {
-        changeSceen(SCEEN_MAP);
+        changeSceen(SCEEN.MAP);
     }
 };

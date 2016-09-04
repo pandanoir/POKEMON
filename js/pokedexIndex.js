@@ -1,5 +1,6 @@
 import draw from './drawPokedexIndex.js';
-import {SCEEN_MENU, SCEEN_POKEDEX_DETAIL, changeSceen, pokemonList, pressedKey, pokedex, lineHeight, canvasHeight} from './definitions.js';
+import {SCEEN, pokemonList, pressedKey, pokedex, lineHeight, canvasHeight} from './definitions.js';
+import {changeSceen} from './sceen.js';
 
 let movesCursor = 0;
 export default () => {
@@ -22,10 +23,10 @@ export default () => {
     }
     if (pressedKey.space === 1) {
         pokedex.detailID = pokedex.cursor.y;
-        changeSceen(SCEEN_POKEDEX_DETAIL);
+        changeSceen(SCEEN.POKEDEX_DETAIL);
     }
     if (pressedKey.B === 1) {
-        changeSceen(SCEEN_MENU);
+        changeSceen(SCEEN.MENU);
     }
     if (movesCursor !== 0) {
         movesCursor++;

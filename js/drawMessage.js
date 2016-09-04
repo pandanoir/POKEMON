@@ -1,3 +1,4 @@
+import {UGroup, URect, USegment, UPoint, UText, canvasHeight, canvasWidth, buffer, DEFAULT_FONT, message} from './definitions.js';
 export default () => {
     const boardHeight = 100;
     const messageBoard = new UGroup(
