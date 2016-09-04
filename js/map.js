@@ -25,9 +25,9 @@ export default () => {
     if (pressedKey.space === 1) {
         const dx = _dx[player.direction];
         const dy = _dy[player.direction];
-        for (var frontObject of frontObjects) {
-            if (frontObject[1] === player.x + dx && frontObject[2] === player.y + dy) {
-                if (frontObject[3]) frontObject[3](); // cause action. read sign, talk with clerk or open treasure box!
+        for (let i = 0, _i = frontObjects.length; i < _i; i = 0 | i + 1) {
+            if (frontObjects[i][1] === player.x + dx && frontObjects[i][2] === player.y + dy) {
+                if (frontObjects[i][3]) frontObjects[i][3](); // cause action. read sign, talk with clerk or open treasure box!
             }
         }
     }
