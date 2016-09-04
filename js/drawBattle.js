@@ -1,4 +1,6 @@
-draw[SCEEN_BATTLE] = () => {
+import {URect, UGroup, UPoint, UText, UImage, canvasHeight, canvasWidth, battle, lineHeight, cursor, DEFAULT_FONT} from './definitions.js';
+
+export default () => {
     const boardHeight = 70;
     const board = new UGroup(
         new URect(new UPoint(0, canvasHeight - boardHeight), new UPoint(canvasWidth, canvasHeight)).setFillColor('#000')
