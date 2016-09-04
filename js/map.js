@@ -1,5 +1,6 @@
 import draw, {walk} from './drawMap.js';
-import {player, pressedKey, cursor, changeSceen, _dx, _dy, frontObjects} from './definitions.js'
+import {player, pressedKey, cursor, _dx, _dy, frontObjects, SCEEN} from './definitions.js';
+import {changeSceen} from './sceen.js';
 
 export default () => {
     if (player.walking === 0 && player.dash === 0) {
@@ -19,14 +20,14 @@ export default () => {
     }
     if (pressedKey.M === 1) {
         cursor.y = 0;
-        changeSceen(SCEEN_MENU);
+        changeSceen(SCEEN.MENU);
     }
     if (pressedKey.space === 1) {
         const dx = _dx[player.direction];
         const dy = _dy[player.direction];
-        for (var frontObject of frontObjects) {
-            if (frontObject[1] === player.x + dx && frontObject[2] === player.y + dy) {
-                if (frontObject[3]) frontObject[3](); // cause action. read sign, talk with clerk or open treasure box!
+        for (let i = 0, _i = frontObjects.length; i < _i; i = 0 | i + 1) {
+            if (frontObjects[i][1] === player.x + dx && frontObjects[i][2] === player.y + dy) {
+                if (frontObjects[i][3]) frontObjects[i][3](); // cause action. read sign, talk with clerk or open treasure box!
             }
         }
     }

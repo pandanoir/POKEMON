@@ -1,5 +1,6 @@
 import draw from './drawBattle.js';
-import {pressedKey, cursor, changeSceen, SCEEN_MENU, SCEEN_MAP} from './definitions.js';
+import {pressedKey, cursor, SCEEN} from './definitions.js';
+import {changeSceen} from './sceen.js';
 
 const commands = [['battle', 'item'], ['pokemon', 'escape']];
 export default () => {
@@ -16,13 +17,9 @@ export default () => {
     if (pressedKey.left === 1 && cursor.x - 1 >= 0) {
         cursor.x--;
     }
-    if (pressedKey.M === 1) {
-        cursor.y = 0;
-        changeSceen(SCEEN_MENU);
-    }
     if (pressedKey.space === 1) {
         if (commands[cursor.y][cursor.x] === 'escape') {
-            changeSceen(SCEEN_MAP);
+            changeSceen(SCEEN.MAP);
         }
     }
 };
