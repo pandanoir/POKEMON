@@ -22,21 +22,22 @@ export default () => {
     buffer.add(new URect(new UPoint(0, 0), new UPoint(canvasWidth, canvasHeight)).setFillColor('#000'));
     for (let x = 0; x < mapWidth; x++) {
         for (let y = 0; y < mapHeight; y++) {
+            const X = (x - player.x + 5) * tileSize + dx, // add 5 to center character
+                Y = (y - player.y + 5) * tileSize + dy;
+            if (X >= canvasWidth || -tileSize >= X ||
+                Y >= canvasHeight || -tileSize >= Y) continue; // over canvas
             buffer.add(
                 dictionary[map[x + y * mapWidth]]
-                .move(
-                    (x - player.x + 5) * tileSize + dx, // add 5 to center character
-                    (y - player.y + 5) * tileSize + dy
-                )
+                .move(X, Y)
             );
         }
     }
 
     // drawing back object
-    for (var backObject of backObjects) {
-        const x = backObject[1], y = backObject[2];
+    for (let i = 0, _i = backObjects.length; i < _i; i = 0 | i + 1) {
+        const x = backObjects[i][1], y = backObjects[i][2];
         buffer.add(
-            dictionary[backObject[0]]
+            dictionary[backObjects[i][0]]
             .move(
                 (x - player.x + 5) * tileSize + dx, // add 5 to center character
                 (y - player.y + 5) * tileSize + dy
@@ -58,11 +59,11 @@ export default () => {
     }
 
     // drawing front object
-    for (var frontObject of frontObjects) {
+    for (let i = 0, _i = frontObjects.length; i < _i; i = 0 | i + 1) {
         // add 5 to center character
-        const x = frontObject[1], y = frontObject[2];
+        const x = frontObjects[i][1], y = frontObjects[i][2];
         buffer.add(
-            dictionary[frontObject[0]].move(
+            dictionary[frontObjects[i][0]].move(
                 (x - player.x + 5) * tileSize + dx,
                 (y - player.y + 5) * tileSize + dy
             )
