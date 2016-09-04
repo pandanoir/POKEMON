@@ -1,4 +1,6 @@
-draw[SCEEN_MENU] = () => {
+import {UPoint, UGroup, URect, ULine, UText, cursor, lineHeight, buffer, menuList, DEFAULT_FONT} from './definitions.js';
+
+export default () => {
     const titleHeight = 16;
     const title = newUText('Menu', new UPoint(0, 0)).setFont('16px san-self');
     const board = new UGroup(

@@ -1,6 +1,8 @@
+import {player, FPS, URect, UPoint, buffer, canvasWidth, canvasHeight, map, mapWidth, mapHeight, dictionary, backObjects, characterImage, frontObjects, tileSize, battle, cursor, changeSceen, SCEEN_BATTLE, pokemonList} from './definitions.js';
+
 const walkingStep = 0 | FPS / 5;
 const ENCOUNTER_RATE = 8;
-draw[SCEEN_MAP] = () => {
+export default () => {
     let dx = 0,
         dy = 0;
 
@@ -66,7 +68,7 @@ draw[SCEEN_MAP] = () => {
         );
     }
 }
-function walk() {
+export function walk() {
     if (player.walking !== 0) {
         player.walking++;
     }
@@ -88,7 +90,7 @@ function walk() {
         encount();
     }
 }
-function encount() {
+export function encount() {
     if (map[player.x + player.y * mapWidth] === GRASS2) {
         if (ENCOUNTER_RATE >= Math.random() * 100 | 0) {
             battle.enemy = pokemonList[Math.random() * pokemonList.length | 0];
