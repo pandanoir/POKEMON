@@ -1,3 +1,5 @@
+import {mainLoopAddOnce} from './mainLoop.js';
+
 export const FPS = 32,
     UCircularSector = Unitary.CircularSector,
     UGroup = Unitary.Group,
@@ -299,7 +301,7 @@ export function drawCanvas() {
     });
 }
 export function changeSceen(name) {
-    sceen = name;
+    mainLoopAddOnce(() => sceen = name);
 }
 export function zerofill(n, m) {
     return '0'.repeat(m - ('' + n).length) + n;

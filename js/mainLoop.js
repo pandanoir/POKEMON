@@ -8,6 +8,9 @@ import pokedexIndex from './pokedexIndex.js';
 import keyEvent from './keyEvent.js';
 import {UPoint, preloadPokemonImage, changeSceen, SCEEN_LOADING, SCEEN_START, SCEEN_MAP, SCEEN_MENU, SCEEN_MESSAGE, sceen, pokemonList, FPS} from './definitions.js';
 
+export function mainLoopAddOnce(f) {
+    mainLoop.addOnce(f);
+}
 const mainLoop = {
     list: [],
     listOnce: []
