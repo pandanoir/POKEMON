@@ -17,10 +17,6 @@ export default () => {
     if (pressedKey.left === 1 && cursor.x - 1 >= 0) {
         cursor.x--;
     }
-    if (pressedKey.M === 1) {
-        cursor.y = 0;
-        changeSceen(SCEEN_MENU);
-    }
     if (pressedKey.space === 1) {
         if (commands[cursor.y][cursor.x] === 'escape') {
             changeSceen(SCEEN.MAP);
