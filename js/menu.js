@@ -7,18 +7,18 @@ let movesCursor = 0;
 export default () => {
     drawMap();
     draw();
-    if (pressedKey.up > 0 && movesCursor === 0 && cursor.y - 1 >= 0) {
+    if ((pressedKey.up === 1 || pressedKey.up > 10) && movesCursor === 0 && cursor.y - 1 >= 0) {
         cursor.y--;
         movesCursor = 1;
     }
-    if (pressedKey.down > 0 && movesCursor === 0 && cursor.y + 1 <= menuList.length - 1) {
+    if ((pressedKey.down === 1 || pressedKey.down > 10) && movesCursor === 0 && cursor.y + 1 <= menuList.length - 1) {
         cursor.y++;
         movesCursor = 1;
     }
     if (movesCursor !== 0) {
         movesCursor++;
     }
-    if (movesCursor === 11) {
+    if (movesCursor === 3) {
         movesCursor = 0;
     }
     if (pressedKey.space === 1) {

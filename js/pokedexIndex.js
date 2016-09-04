@@ -31,7 +31,7 @@ export default () => {
     if (movesCursor !== 0) {
         movesCursor++;
     }
-    if (movesCursor === 11) {
+    if (movesCursor === 6) {
         movesCursor = 0;
     }
 }
