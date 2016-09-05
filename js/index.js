@@ -41,6 +41,6 @@ new Promise((resolve, reject) => {
     Canvas.preload(...pokemonImage).then(() => {
         changeSceen(SCEEN.START);
     });
+    mainLoop.start();
 })
-.then(mainLoop.start.bind(mainLoop))
 .catch(e => console.log(e));

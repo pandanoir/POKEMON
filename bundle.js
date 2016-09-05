@@ -100,176 +100,48 @@ function sceenEquals(name) {
 }
 
 var pokemonList = [
-    {
-        "name": "アクサワー",
-        "src": "akusawa.png"
-    },
-    {
-        "name": "ビビン",
-        "src": "bibin.png"
-    },
-    {
-        "name": "ボボヌザウルス",
-        "src": "bobonuzaurusu.png"
-    },
-    {
-        "name": "ブベツ",
-        "src": "bubetu.png"
-    },
-    {
-        "name": "ブロロウ",
-        "src": "burorou.png"
-    },
-    {
-        "name": "ビョロボロ",
-        "src": "byoroboro.png"
-    },
-    {
-        "name": "ヂヴァザン",
-        "src": "divazan.png"
-    },
-    {
-        "name": "ドドロノゴメス",
-        "src": "dodoronogomesu.png"
-    },
-    {
-        "name": "ドフ",
-        "src": "dohu.png"
-    },
-    {
-        "name": "フェイク",
-        "src": "feiku.png"
-    },
-    {
-        "name": "フォッド",
-        "src": "foddo.png"
-    },
-    {
-        "name": "ごんざれす",
-        "src": "gonzaresu.png"
-    },
-    {
-        "name": "ハンシー",
-        "src": "hanshi.png"
-    },
-    {
-        "name": "ヘィローセ",
-        "src": "heirose.png"
-    },
-    {
-        "name": "ヒネリ",
-        "src": "hineri.png"
-    },
-    {
-        "name": "ホッソクァス",
-        "src": "hossoqasu.png"
-    },
-    {
-        "name": "イパサスコ",
-        "src": "ipasasuko.png"
-    },
-
-    {
-        "name": "ジャネン",
-        "src": "janen.png"
-    },
-    {
-        "name": "コムシ",
-        "src": "komushi.png"
-    },
-    {
-        "name": "コロゾウ",
-        "src": "korozou.png"
-    },
-    {
-        "name": "マクジョウ",
-        "src": "makujou.png"
-    },
-    {
-        "name": "マムー",
-        "src": "mamu-.png"
-    },
-    {
-        "name": "まさる",
-        "src": "masaru2.png"
-    },
-    {
-        "name": "モシモ",
-        "src": "moshimo.png"
-    },
-    {
-        "name": "ンバジョー",
-        "src": "nbajo.png"
-    },
-    {
-        "name": "ピサンチョー",
-        "src": "pisantyo.png"
-    },
-    {
-        "name": "ラストダンケ",
-        "src": "rasutodanke.png"
-    },
-    {
-        "name": "サイコ",
-        "src": "saiko.png"
-    },
-    {
-        "name": "サーフェイズ",
-        "src": "sa-feizu.png"
-    },
-
-    {
-        "name": "スサイミ",
-        "src": "susaimi.png"
-    },
-    {
-        "name": "テカイン",
-        "src": "tekain.png"
-    },
-    {
-        "name": "テラオン",
-        "src": "teraon.png"
-    },
-    {
-        "name": "チュパンディ",
-        "src": "tyupandhi.png"
-    },
-    {
-        "name": "ウラミ",
-        "src": "urami.png"
-    },
-    {
-        "name": "ハットゥ",
-        "src": "hatto.png"
-    },
-    {
-        "name": "ドンブゥディー",
-        "src": "donbudhi.png"
-    },
-    {
-        "name": "ピャーラン",
-        "src": "pyaran.png"
-    },
-    {
-        "name": "闇",
-        "src": "yami.png"
-    },
-    {
-        "name": "ギャンキュー",
-        "src": "gyankyu.png"
-    },
-    {
-        "name": "undefined",
-        "src": "BSL5LWDCMAEyLb5.png"
-    },
-    {
-        "name": "undefined",
-        "src": "BSL9shmCAAAMDM8.png"
-    },
-    {
-        "name": "undefined",
-        "src": "BSMtg9xCcAEci2e.png"
-    }
+    {"name": "アクサワー", "src": "akusawa.png"},
+    {"name": "ビビン", "src": "bibin.png"},
+    {"name": "ボボヌザウルス", "src": "bobonuzaurusu.png"},
+    {"name": "ブベツ", "src": "bubetu.png"},
+    {"name": "ブロロウ", "src": "burorou.png"},
+    {"name": "ビョロボロ", "src": "byoroboro.png"},
+    {"name": "ヂヴァザン", "src": "divazan.png"},
+    {"name": "ドドロノゴメス", "src": "dodoronogomesu.png"},
+    {"name": "ドフ", "src": "dohu.png"},
+    {"name": "フェイク", "src": "feiku.png"},
+    {"name": "フォッド", "src": "foddo.png"},
+    {"name": "ごんざれす", "src": "gonzaresu.png"},
+    {"name": "ハンシー", "src": "hanshi.png"},
+    {"name": "ヘィローセ", "src": "heirose.png"},
+    {"name": "ヒネリ", "src": "hineri.png"},
+    {"name": "ホッソクァス", "src": "hossoqasu.png"},
+    {"name": "イパサスコ", "src": "ipasasuko.png"},
+    {"name": "ジャネン", "src": "janen.png"},
+    {"name": "コムシ", "src": "komushi.png"},
+    {"name": "コロゾウ", "src": "korozou.png"},
+    {"name": "マクジョウ", "src": "makujou.png"},
+    {"name": "マムー", "src": "mamu-.png"},
+    {"name": "まさる", "src": "masaru2.png"},
+    {"name": "モシモ", "src": "moshimo.png"},
+    {"name": "ンバジョー", "src": "nbajo.png"},
+    {"name": "ピサンチョー", "src": "pisantyo.png"},
+    {"name": "ラストダンケ", "src": "rasutodanke.png"},
+    {"name": "サイコ", "src": "saiko.png"},
+    {"name": "サーフェイズ", "src": "sa-feizu.png"},
+    {"name": "スサイミ", "src": "susaimi.png"},
+    {"name": "テカイン", "src": "tekain.png"},
+    {"name": "テラオン", "src": "teraon.png"},
+    {"name": "チュパンディ", "src": "tyupandhi.png"},
+    {"name": "ウラミ", "src": "urami.png"},
+    {"name": "ハットゥ", "src": "hatto.png"},
+    {"name": "ドンブゥディー", "src": "donbudhi.png"},
+    {"name": "ピャーラン", "src": "pyaran.png"},
+    {"name": "闇", "src": "yami.png"},
+    {"name": "ギャンキュー", "src": "gyankyu.png"},
+    {"name": "undefined", "src": "BSL5LWDCMAEyLb5.png"},
+    {"name": "undefined", "src": "BSL9shmCAAAMDM8.png"},
+    {"name": "undefined", "src": "BSMtg9xCcAEci2e.png"}
 ]
 ;
 
@@ -784,8 +656,10 @@ var draw$6 = () => {
 
     buffer.add(cursorText);
     for (let i = 0, _i = pokemonList.length; i < _i; i++) {
-        buffer.add(newUText('No ' + zerofill(i + 1, 3), new UPoint(lineHeight, (i - pokedex.pageYOffset) * lineHeight)));
-        buffer.add(newUText(pokemonList[i].name, new UPoint(lineHeight * 6, (i - pokedex.pageYOffset) * lineHeight)));
+        const Y = (i - pokedex.pageYOffset) * lineHeight;
+        if (Y >= canvasHeight || -2 * lineHeight >= Y) continue;
+        buffer.add(newUText('No ' + zerofill(i + 1, 3), new UPoint(lineHeight, Y)));
+        buffer.add(newUText(pokemonList[i].name, new UPoint(lineHeight * 6, Y)));
     }
     function newUText(string, point) {
         return new UText(string, point).setFillColor('#555').setBaseline('top').setFont('13px san-self');
@@ -795,7 +669,7 @@ var draw$6 = () => {
 let movesCursor$2 = 0;
 var pokedexIndex = () => {
     draw$6();
-    if ((pressedKey.up === 1 || pressedKey.up > 20)
+    if ((pressedKey.up === 1 || pressedKey.up > 10)
         && movesCursor$2 === 0 && pokedex.cursor.y - 1 >= 0) {
         pokedex.cursor.y--;
         if (pokedex.cursor.y - pokedex.pageYOffset <= 5 && pokedex.pageYOffset - 1 >= 0) {
@@ -803,8 +677,8 @@ var pokedexIndex = () => {
         }
         movesCursor$2 = 1;
     }
-    if ((pressedKey.down === 1 || pressedKey.down > 20)
-        && movesCursor$2 === 0) {
+    if ((pressedKey.down === 1 || pressedKey.down > 10)
+        && movesCursor$2 === 0 && pokemonList.length > pokedex.cursor.y + 1) {
         pokedex.cursor.y++;
         if (pokedex.cursor.y - pokedex.pageYOffset >= 25 && (pokemonList.length - (pokedex.pageYOffset)) * lineHeight >= canvasHeight) {
             pokedex.pageYOffset++;
@@ -821,7 +695,7 @@ var pokedexIndex = () => {
     if (movesCursor$2 !== 0) {
         movesCursor$2++;
     }
-    if (movesCursor$2 === 6) {
+    if (movesCursor$2 === 3) {
         movesCursor$2 = 0;
     }
 }
