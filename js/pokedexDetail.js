@@ -1,4 +1,4 @@
-import draw from './drawPokedexDetail.js';
+import draw from './draw/drawPokedexDetail.js';
 import {SCEEN, pressedKey, pokedex} from './definitions.js';
 import {changeSceen} from './sceen.js';
 

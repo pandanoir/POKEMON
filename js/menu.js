@@ -1,5 +1,5 @@
-import draw from './drawMenu.js';
-import drawMap from './drawMap.js';
+import draw from './draw/drawMenu.js';
+import drawMap from './draw/drawMap.js';
 import {SCEEN, pressedKey, cursor, menuList} from './definitions.js';
 import {changeSceen} from './sceen.js';
 

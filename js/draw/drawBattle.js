@@ -1,4 +1,4 @@
-import {URect, UGroup, UPoint, UText, UImage, canvasHeight, canvasWidth, buffer, battle, lineHeight, cursor, DEFAULT_FONT} from './definitions.js';
+import {URect, UGroup, UPoint, UText, UImage, canvasHeight, canvasWidth, buffer, battle, lineHeight, cursor, DEFAULT_FONT} from '../definitions.js';
 
 export default () => {
     const boardHeight = 70;

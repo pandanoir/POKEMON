@@ -1,4 +1,4 @@
-import {UPoint, UText, UGroup, URect, UImage, pokemonList, buffer, DEFAULT_FONT, zerofill} from './definitions.js';
+import {UPoint, UText, UGroup, URect, UImage, pokemonList, buffer, DEFAULT_FONT, zerofill} from '../definitions.js';
 
 export default (id) => {
     const name = new UGroup(

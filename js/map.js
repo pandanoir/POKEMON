@@ -1,4 +1,4 @@
-import draw, {walk} from './drawMap.js';
+import draw, {walk} from './draw/drawMap.js';
 import {player, pressedKey, cursor, _dx, _dy, frontObjects, SCEEN} from './definitions.js';
 import {changeSceen} from './sceen.js';
 

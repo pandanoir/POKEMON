@@ -1,4 +1,4 @@
-import {UPoint, UGroup, URect, ULine, UText, cursor, lineHeight, buffer, menuList, canvasHeight, DEFAULT_FONT} from './definitions.js';
+import {UPoint, UGroup, URect, ULine, UText, cursor, lineHeight, buffer, menuList, canvasHeight, DEFAULT_FONT} from '../definitions.js';
 
 export default () => {
     const titleHeight = 16;

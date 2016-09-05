@@ -1,4 +1,4 @@
-import draw from './drawLoading.js';
+import draw from './draw/drawLoading.js';
 
 export default () => {
     draw();

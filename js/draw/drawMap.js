@@ -1,5 +1,5 @@
-import {player, FPS, URect, UPoint, buffer, canvasWidth, canvasHeight, map, mapWidth, mapHeight, dictionary, backObjects, characterImage, frontObjects, tileSize, battle, cursor, SCEEN, pokemonList} from './definitions.js';
-import {changeSceen} from './sceen.js';
+import {player, FPS, URect, UPoint, buffer, canvasWidth, canvasHeight, map, mapWidth, mapHeight, dictionary, backObjects, characterImage, frontObjects, tileSize, battle, cursor, SCEEN, pokemonList} from '../definitions.js';
+import {changeSceen} from '../sceen.js';
 
 const walkingStep = 0 | FPS / 5;
 const ENCOUNTER_RATE = 8;

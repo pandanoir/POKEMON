@@ -1,4 +1,4 @@
-import {UPoint, UText, pokedex, pokemonList, lineHeight, canvasHeight, buffer, zerofill} from './definitions.js';
+import {UPoint, UText, pokedex, pokemonList, lineHeight, canvasHeight, buffer, zerofill} from '../definitions.js';
 
 export default () => {
     const cursorText = newUText('>', new UPoint(0, (pokedex.cursor.y - pokedex.pageYOffset) * lineHeight));

@@ -1,4 +1,4 @@
-import draw from './drawBattle.js';
+import draw from './draw/drawBattle.js';
 import {pressedKey, cursor, SCEEN} from './definitions.js';
 import {changeSceen} from './sceen.js';
 
