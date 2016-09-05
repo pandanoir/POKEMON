@@ -5,7 +5,7 @@ import {changeSceen} from './sceen.js';
 let movesCursor = 0;
 export default () => {
     draw();
-    if ((pressedKey.up === 1 || pressedKey.up > 20)
+    if ((pressedKey.up === 1 || pressedKey.up > 10)
         && movesCursor === 0 && pokedex.cursor.y - 1 >= 0) {
         pokedex.cursor.y--;
         if (pokedex.cursor.y - pokedex.pageYOffset <= 5 && pokedex.pageYOffset - 1 >= 0) {
@@ -13,8 +13,8 @@ export default () => {
         }
         movesCursor = 1;
     }
-    if ((pressedKey.down === 1 || pressedKey.down > 20)
-        && movesCursor === 0) {
+    if ((pressedKey.down === 1 || pressedKey.down > 10)
+        && movesCursor === 0 && pokemonList.length > pokedex.cursor.y + 1) {
         pokedex.cursor.y++;
         if (pokedex.cursor.y - pokedex.pageYOffset >= 25 && (pokemonList.length - (pokedex.pageYOffset)) * lineHeight >= canvasHeight) {
             pokedex.pageYOffset++;
@@ -31,7 +31,7 @@ export default () => {
     if (movesCursor !== 0) {
         movesCursor++;
     }
-    if (movesCursor === 6) {
+    if (movesCursor === 3) {
         movesCursor = 0;
     }
 }
