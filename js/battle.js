@@ -3,7 +3,8 @@ import {pressedKey, cursor, SCEEN} from './definitions.js';
 import {changeSceen} from './sceen.js';
 
 const commands = [['battle', 'item'], ['pokemon', 'escape']];
-export default () => {
+const out = {};
+out[SCEEN.BATTLE.MAIN] = () => {
     draw();
     if (pressedKey.down === 1 && cursor.maxY >= cursor.y + 1) {
         cursor.y++;
@@ -18,8 +19,24 @@ export default () => {
         cursor.x--;
     }
     if (pressedKey.space === 1) {
-        if (commands[cursor.y][cursor.x] === 'escape') {
+        const command = commands[cursor.y][cursor.x];
+        if (command === 'battle') {
+            changeSceen(SCEEN.BATTLE.MOVE);
+        }
+        if (command === 'item') {
+            changeSceen(SCEEN.BATTLE.ITEM);
+        }
+        if (command === 'pokemon') {
+            changeSceen(SCEEN.BATTLE.CHANGE_POKEMON);
+        }
+        if (command === 'escape') {
             changeSceen(SCEEN.MAP);
         }
     }
 };
+out[SCEEN.BATTLE.ITEM] = () => {};
+out[SCEEN.BATTLE.MOVE] = () => {};
+out[SCEEN.BATTLE.CHANGE_POKEMON] = () => {};
+out[SCEEN.BATTLE.ATTACK] = () => {};
+
+export default out;
