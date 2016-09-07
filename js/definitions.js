@@ -111,7 +111,7 @@ export const map = [
 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2',
     'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2',
 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2'
-].map(item => MAP[ITEM]);
+].map(item => MAP[item]);
 
 // アイテムが重なることを考慮してmap形式ではなく、[object, x, y]という配列でfrontObjectsを保持
 // objectはタイルのID(CONSTS)を入れる

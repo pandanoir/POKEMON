@@ -5,7 +5,7 @@ import {changeSceen} from './sceen.js';
 const commands = [['battle', 'item'], ['pokemon', 'escape']];
 const out = {};
 out[SCEEN.BATTLE.MAIN] = () => {
-    draw();
+    draw[SCEEN.BATTLE.MAIN]();
     if (pressedKey.down === 1 && cursor.maxY >= cursor.y + 1) {
         cursor.y++;
     }

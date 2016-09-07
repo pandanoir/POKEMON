@@ -199,11 +199,11 @@ const player = new class Player {
         canMove(direction) {
             const dx = _dx[direction], dy = _dy[direction];
             const nextX = this.x + dx, nextY = this.y + dy;
-            if (0 > nextX || nextX > mapWidth$1 - 1 ||
+            if (0 > nextX || nextX > mapWidth - 1 ||
                 0 > nextY || nextY > mapHeight - 1) {
                 return false;
             }
-            if (obstacles.includes(map[nextX + nextY * mapWidth$1])) {
+            if (obstacles.includes(map[nextX + nextY * mapWidth])) {
                 return false;
             }
             let frontObject;
@@ -217,7 +217,7 @@ const player = new class Player {
             return true;
         }
     };
-const mapWidth$1 = 12;
+const mapWidth = 12;
 const mapHeight = 10;
 // 下のmapの縦の長さ
 /*const map = [
@@ -263,7 +263,7 @@ const map = [
 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2',
     'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2',
 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2'
-].map(item => MAP[ITEM]);
+].map(item => MAP[item]);
 
 // アイテムが重なることを考慮してmap形式ではなく、[object, x, y]という配列でfrontObjectsを保持
 // objectはタイルのID(CONSTS)を入れる
@@ -401,7 +401,7 @@ out$1[sceen.BATTLE.ATTACK] = () => {};
 const commands = [['battle', 'item'], ['pokemon', 'escape']];
 const out = {};
 out[sceen.BATTLE.MAIN] = () => {
-    out$1();
+    out$1[sceen.BATTLE.MAIN]();
     if (pressedKey.down === 1 && cursor.maxY >= cursor.y + 1) {
         cursor.y++;
     }
@@ -460,14 +460,14 @@ var drawMap = () => {
 
     // drawing map
     buffer.add(new URect(new UPoint(0, 0), new UPoint(canvasWidth, canvasHeight)).setFillColor('#000'));
-    for (let x = 0; x < mapWidth$1; x++) {
+    for (let x = 0; x < mapWidth; x++) {
         for (let y = 0; y < mapHeight; y++) {
             const X = (x - player.x + 5) * tileSize + dx, // add 5 to center character
                 Y = (y - player.y + 5) * tileSize + dy;
             if (X >= canvasWidth || -tileSize >= X ||
                 Y >= canvasHeight || -tileSize >= Y) continue; // over canvas
             buffer.add(
-                dictionary[map[x + y * mapWidth$1]]
+                dictionary[map[x + y * mapWidth]]
                 .move(X, Y)
             );
         }

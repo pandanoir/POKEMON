@@ -1,5 +1,5 @@
 import draw from './draw/drawMap.js';
-import {player, pressedKey, cursor, _dx, _dy, frontObjects, SCEEN, walkingStep, map, MAP, battle, pokemonList} from './definitions.js';
+import {player, pressedKey, cursor, _dx, _dy, frontObjects, SCEEN, walkingStep, map, MAP, battle, pokemonList, mapWidth} from './definitions.js';
 import {changeSceen} from './sceen.js';
 
 const ENCOUNTER_RATE = 8;
