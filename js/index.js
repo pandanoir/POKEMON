@@ -4,8 +4,7 @@ import loading from './loading.js';
 import map from './map.js';
 import menu from './menu.js';
 import message from './message.js';
-import pokedexDetail from './pokedexDetail.js';
-import pokedexIndex from './pokedexIndex.js';
+import pokedex from './pokedex.js';
 import keyEvent from './keyEvent.js';
 import {SCEEN, pokemonList, setupCanvas, drawCanvas} from './definitions.js';
 import {sceenEquals, changeSceen} from './sceen.js';
@@ -14,12 +13,17 @@ mainLoop.add(keyEvent);
 
 const sceenFunc = {};
 sceenFunc[SCEEN.BATTLE.MAIN] = battle;
+{
+    let key;
+    for (key of Object.keys(SCEEN.POKEDEX)) {
+        sceenFunc[SCEEN.POKEDEX[key]] = pokedex[SCEEN.POKEDEX[key]];
+    }
+}
+
 sceenFunc[SCEEN.LOADING] = loading;
 sceenFunc[SCEEN.MAP] = map;
 sceenFunc[SCEEN.MENU] = menu;
 sceenFunc[SCEEN.MESSAGE] = message;
-sceenFunc[SCEEN.POKEDEX.INDEX] = pokedexIndex;
-sceenFunc[SCEEN.POKEDEX.DETAIL] = pokedexDetail;
 let key;
 for (key of Object.keys(sceenFunc)) {
     const SCEEN = key, func = sceenFunc[key];

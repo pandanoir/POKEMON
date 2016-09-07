@@ -1,10 +1,18 @@
 const sceen = {
-    BATTLE: 'BATTLE',
+    BATTLE: {
+        MAIN: 'BATTLE_MAIN',
+        ITEM: 'BATTLE_ITEM',
+        MOVE: 'BATTLE_MOVE',
+        CHANGE_POKEMON: 'BATTLE_CHANGE_POKEMON',
+        ATTACK: 'BATTLE_ATTACK'
+    },
     MAP: 'MAP',
     MENU: 'MENU',
     MESSAGE: 'MESSAGE',
-    POKEDEX_INDEX: 'POKEDEX_INDEX',
-    POKEDEX_DETAIL: 'POKEDEX_DETAIL',
+    POKEDEX: {
+        INDEX: 'POKEDEX_INDEX',
+        DETAIL: 'POKEDEX_DETAIL'
+    },
     LOADING: 'LOADING'
 };
 sceen.START = sceen.MAP;
@@ -93,13 +101,13 @@ for (key$3 of Object.keys(characterImage)) {
 
 let sceen$1 = sceen.START;
 function changeSceen(name) {
-    mainLoop.addOnce(() => sceen$1 = name);
+    mainLoop.addOnce(() => sceen$1 = name); // sceen = name causes message skip
 }
 function sceenEquals(name) {
     return name === sceen$1;
 }
 
-var pokemonList = [
+var pokemonList$1 = [
     {"name": "アクサワー", "src": "akusawa.png"},
     {"name": "ビビン", "src": "bibin.png"},
     {"name": "ボボヌザウルス", "src": "bobonuzaurusu.png"},
@@ -155,13 +163,7 @@ const menuList = ['pokemon', 'pokedex', 'status', 'setting', 'save'];
 const cursor = {
         y: 0
     };
-const pokedex = {
-        cursor: {
-            y: 0
-        },
-        pageYOffset: 0 // pageYOffset is not pixel. this contains the number of line.
-    };
-const battle = {
+const battle$1 = {
         enemy: null,
         friend: null,
         enemyTrainer: null
@@ -178,11 +180,11 @@ const player = new class Player {
         canMove(direction) {
             const dx = _dx[direction], dy = _dy[direction];
             const nextX = this.x + dx, nextY = this.y + dy;
-            if (0 > nextX || nextX > mapWidth - 1 ||
+            if (0 > nextX || nextX > mapWidth$1 - 1 ||
                 0 > nextY || nextY > mapHeight - 1) {
                 return false;
             }
-            if (obstacles.includes(map[nextX + nextY * mapWidth])) {
+            if (obstacles.includes(map$1[nextX + nextY * mapWidth$1])) {
                 return false;
             }
             let frontObject;
@@ -208,7 +210,7 @@ for (let i = 0, _i = CONSTS.length; i < _i; i++) {
 }
 
 // 1次元配列でマップを表現
-const mapWidth = 12;
+const mapWidth$1 = 12;
 const mapHeight = 10;
 // 下のmapの縦の長さ
 /*const map = [
@@ -233,7 +235,7 @@ GRASS, GRASS, GRASS, GRASS,
     GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS,
 GRASS, GRASS, GRASS, GRASS
 ];*/
-const map = [
+const map$1 = [
     GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2,
 GRASS2, GRASS2, GRASS2, GRASS2,
     GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2,
@@ -327,9 +329,6 @@ function drawCanvas() {
         );
     });
 }
-function zerofill(n, m) {
-    return '0'.repeat(m - ('' + n).length) + n;
-}
 
 const mainLoop = new class MainLoop {
     constructor() {
@@ -362,7 +361,7 @@ var draw$1 = () => {
     const board = new UGroup(
         new URect(new UPoint(0, canvasHeight - boardHeight), new UPoint(canvasWidth, canvasHeight)).setFillColor('#000')
     );
-    const messageText = newUText(battle.enemy.name + ' が あらわれた！', new UPoint(9, canvasHeight - boardHeight + 9));
+    const messageText = newUText(battle$1.enemy.name + ' が あらわれた！', new UPoint(9, canvasHeight - boardHeight + 9));
     const commands = new UGroup(
             new URect(new UPoint(180 - 9, canvasHeight - boardHeight + 9), new UPoint(canvasWidth - 9, canvasHeight - 9)).setStrokeColor('#fff'),
             newUText('たたかう', new UPoint(200, canvasHeight - boardHeight + 9 + 5)),
@@ -372,7 +371,7 @@ var draw$1 = () => {
         );
     const cursorText = newUText('>', new UPoint(190 + cursor.x * 70, canvasHeight - boardHeight + 9 + 5 + lineHeight * cursor.y));
 
-    const enemyImage = new UImage('./pokemon/' + battle.enemy.src, new UPoint(0, 0));
+    const enemyImage = new UImage('./pokemon/' + battle$1.enemy.src, new UPoint(0, 0));
 
     function newUText(string, point) {
         return new UText(string, point).setFillColor('#fff').setBaseline('top').setFont(DEFAULT_FONT);
@@ -385,7 +384,7 @@ var draw$1 = () => {
 };
 
 const commands = [['battle', 'item'], ['pokemon', 'escape']];
-var battle$1 = () => {
+var battle$2 = () => {
     draw$1();
     if (pressedKey.down === 1 && cursor.maxY >= cursor.y + 1) {
         cursor.y++;
@@ -400,7 +399,17 @@ var battle$1 = () => {
         cursor.x--;
     }
     if (pressedKey.space === 1) {
-        if (commands[cursor.y][cursor.x] === 'escape') {
+        const command = commands[cursor.y][cursor.x];
+        if (command === 'battle') {
+            changeSceen(sceen.BATTLE.MOVE);
+        }
+        if (command === 'item') {
+            changeSceen(sceen.BATTLE.ITEM);
+        }
+        if (command === 'pokemon') {
+            changeSceen(sceen.BATTLE.CHANGE_POKEMON);
+        }
+        if (command === 'escape') {
             changeSceen(sceen.MAP);
         }
     }
@@ -414,14 +423,13 @@ var loading = () => {
     draw$2();
 };
 
-const walkingStep = 0 | FPS / 5;
-const ENCOUNTER_RATE = 8;
+const walkingStep$1 = 0 | FPS / 5;
 var drawMap = () => {
     let dx = 0,
         dy = 0;
 
-    const walking = 0 | player.walking / (walkingStep / 4);
-    const dash = 0 | player.dash / (walkingStep / 4);
+    const walking = 0 | player.walking / (walkingStep$1 / 4);
+    const dash = 0 | player.dash / (walkingStep$1 / 4);
     if (player.direction === 'left')
         dx = walking * 8 + dash * 16; // if dash !== 0, walking is always 0.
     if (player.direction === 'up')
@@ -433,14 +441,14 @@ var drawMap = () => {
 
     // drawing map
     buffer.add(new URect(new UPoint(0, 0), new UPoint(canvasWidth, canvasHeight)).setFillColor('#000'));
-    for (let x = 0; x < mapWidth; x++) {
+    for (let x = 0; x < mapWidth$1; x++) {
         for (let y = 0; y < mapHeight; y++) {
             const X = (x - player.x + 5) * tileSize + dx, // add 5 to center character
                 Y = (y - player.y + 5) * tileSize + dy;
             if (X >= canvasWidth || -tileSize >= X ||
                 Y >= canvasHeight || -tileSize >= Y) continue; // over canvas
             buffer.add(
-                dictionary[map[x + y * mapWidth]]
+                dictionary[map$1[x + y * mapWidth$1]]
                 .move(X, Y)
             );
         }
@@ -483,6 +491,39 @@ var drawMap = () => {
         );
     }
 }
+
+var map$2 = () => {
+    if (player.walking === 0 && player.dash === 0) {
+        for (let d = 0, dir = ['left', 'up', 'right', 'down']; d < 4; d++) {
+            if (pressedKey[dir[d]] > 0) {
+                player.direction = dir[d];
+                if (player.canMove(dir[d])) {
+                    if (pressedKey.shift > 0) {
+                        player.dash = 1;
+                    } else {
+                        player.walking = 1;
+                    }
+                }
+                break;
+            }
+        }
+    }
+    if (pressedKey.M === 1) {
+        cursor.y = 0;
+        changeSceen(sceen.MENU);
+    }
+    if (pressedKey.space === 1) {
+        const dx = _dx[player.direction];
+        const dy = _dy[player.direction];
+        for (let i = 0, _i = frontObjects.length; i < _i; i = 0 | i + 1) {
+            if (frontObjects[i][1] === player.x + dx && frontObjects[i][2] === player.y + dy) {
+                if (frontObjects[i][3]) frontObjects[i][3](); // cause action. read sign, talk with clerk or open treasure box!
+            }
+        }
+    }
+    drawMap();
+    walk();
+};
 function walk() {
     if (player.walking !== 0) {
         player.walking++;
@@ -515,43 +556,10 @@ function encount() {
             cursor.y = 0;
             cursor.maxX = 1;
             cursor.maxY = 1;
-            changeSceen(sceen.BATTLE);
+            changeSceen(sceen.BATTLE.MAIN);
         }
     }
 }
-
-var map$1 = () => {
-    if (player.walking === 0 && player.dash === 0) {
-        for (let d = 0, dir = ['left', 'up', 'right', 'down']; d < 4; d++) {
-            if (pressedKey[dir[d]] > 0) {
-                player.direction = dir[d];
-                if (player.canMove(dir[d])) {
-                    if (pressedKey.shift > 0) {
-                        player.dash = 1;
-                    } else {
-                        player.walking = 1;
-                    }
-                }
-                break;
-            }
-        }
-    }
-    if (pressedKey.M === 1) {
-        cursor.y = 0;
-        changeSceen(sceen.MENU);
-    }
-    if (pressedKey.space === 1) {
-        const dx = _dx[player.direction];
-        const dy = _dy[player.direction];
-        for (let i = 0, _i = frontObjects.length; i < _i; i = 0 | i + 1) {
-            if (frontObjects[i][1] === player.x + dx && frontObjects[i][2] === player.y + dy) {
-                if (frontObjects[i][3]) frontObjects[i][3](); // cause action. read sign, talk with clerk or open treasure box!
-            }
-        }
-    }
-    drawMap();
-    walk();
-};
 
 var draw$3 = () => {
     const titleHeight = 16;
@@ -593,7 +601,7 @@ var menu = () => {
     }
     if (pressedKey.space === 1) {
         if (menuList[cursor.y] === 'pokedex') {
-            changeSceen(sceen.POKEDEX_INDEX);
+            changeSceen(sceen.POKEDEX.INDEX);
         } else {
             changeSceen(sceen.MAP);
         }
@@ -629,77 +637,6 @@ var message$1 = () => {
     }
 };
 
-var draw$5 = (id) => {
-    const name = new UGroup(
-        new URect(new UPoint(0, 0), new UPoint(150, 24)).setFillColor('#fff'),
-        new URect(new UPoint(0, 0), new UPoint(150, 24)),
-        newUText('No ' + zerofill(id + 1, 3) + ' ' +pokemonList[id].name, new UPoint(3, 2))
-    );
-
-    buffer.add(new UImage('./pokemon/' + pokemonList[id].src, new UPoint(0, 0)));
-    buffer.add(name);
-
-    function newUText(string, point) {
-        return new UText(string, point).setFillColor('#555').setBaseline('top').setFont(DEFAULT_FONT);
-    };
-};
-
-var pokedexDetail = () => {
-    draw$5(pokedex.detailID);
-    if (pressedKey.space === 1 || pressedKey.B === 1) {
-        changeSceen(sceen.POKEDEX_INDEX);
-    }
-}
-
-var draw$6 = () => {
-    const cursorText = newUText('>', new UPoint(0, (pokedex.cursor.y - pokedex.pageYOffset) * lineHeight));
-
-    buffer.add(cursorText);
-    for (let i = 0, _i = pokemonList.length; i < _i; i++) {
-        const Y = (i - pokedex.pageYOffset) * lineHeight;
-        if (Y >= canvasHeight || -2 * lineHeight >= Y) continue;
-        buffer.add(newUText('No ' + zerofill(i + 1, 3), new UPoint(lineHeight, Y)));
-        buffer.add(newUText(pokemonList[i].name, new UPoint(lineHeight * 6, Y)));
-    }
-    function newUText(string, point) {
-        return new UText(string, point).setFillColor('#555').setBaseline('top').setFont('13px san-self');
-    };
-};
-
-let movesCursor$2 = 0;
-var pokedexIndex = () => {
-    draw$6();
-    if ((pressedKey.up === 1 || pressedKey.up > 10)
-        && movesCursor$2 === 0 && pokedex.cursor.y - 1 >= 0) {
-        pokedex.cursor.y--;
-        if (pokedex.cursor.y - pokedex.pageYOffset <= 5 && pokedex.pageYOffset - 1 >= 0) {
-            pokedex.pageYOffset--;
-        }
-        movesCursor$2 = 1;
-    }
-    if ((pressedKey.down === 1 || pressedKey.down > 10)
-        && movesCursor$2 === 0 && pokemonList.length > pokedex.cursor.y + 1) {
-        pokedex.cursor.y++;
-        if (pokedex.cursor.y - pokedex.pageYOffset >= 25 && (pokemonList.length - (pokedex.pageYOffset)) * lineHeight >= canvasHeight) {
-            pokedex.pageYOffset++;
-        }
-        movesCursor$2 = 1;
-    }
-    if (pressedKey.space === 1) {
-        pokedex.detailID = pokedex.cursor.y;
-        changeSceen(sceen.POKEDEX_DETAIL);
-    }
-    if (pressedKey.B === 1) {
-        changeSceen(sceen.MENU);
-    }
-    if (movesCursor$2 !== 0) {
-        movesCursor$2++;
-    }
-    if (movesCursor$2 === 3) {
-        movesCursor$2 = 0;
-    }
-}
-
 const __pressedKey = {};
 window.addEventListener('keydown', e => __pressedKey[key$1['key' + e.keyCode]] = true);
 window.addEventListener('keyup', e => __pressedKey[key$1['key' + e.keyCode]] = false);
@@ -717,13 +654,13 @@ var keyEvent = () => {
 mainLoop.add(keyEvent);
 
 const sceenFunc = {};
-sceenFunc[sceen.BATTLE] = battle$1;
+sceenFunc[sceen.BATTLE.MAIN] = battle$2;
 sceenFunc[sceen.LOADING] = loading;
-sceenFunc[sceen.MAP] = map$1;
+sceenFunc[sceen.MAP] = map$2;
 sceenFunc[sceen.MENU] = menu;
 sceenFunc[sceen.MESSAGE] = message$1;
-sceenFunc[sceen.POKEDEX_INDEX] = pokedexIndex;
-sceenFunc[sceen.POKEDEX_DETAIL] = pokedexDetail;
+sceenFunc[sceen.POKEDEX.INDEX] = pokedexIndex;
+sceenFunc[sceen.POKEDEX.DETAIL] = pokedexDetail;
 let key;
 for (key of Object.keys(sceenFunc)) {
     const SCEEN = key, func = sceenFunc[key];
@@ -741,7 +678,7 @@ new Promise((resolve, reject) => {
 })
 .then(() => {
     changeSceen(sceen.LOADING);
-    const pokemonImage = pokemonList.map(_ => './pokemon/' + _.src);
+    const pokemonImage = pokemonList$1.map(_ => './pokemon/' + _.src);
     Canvas.preload(...pokemonImage).then(() => {
         changeSceen(sceen.START);
     });
