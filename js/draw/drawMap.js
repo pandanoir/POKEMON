@@ -70,39 +70,3 @@ export default () => {
         );
     }
 }
-export function walk() {
-    if (player.walking !== 0) {
-        player.walking++;
-    }
-    if (player.dash !== 0) {
-        player.dash++;
-    }
-    if (player.walking === walkingStep + 1 || player.dash === walkingStep / 2 + 1) {
-        player.walking = 0;
-        player.dash = 0;
-        if (player.direction === 'left') {
-            player.x--;
-        } else if (player.direction === 'up') {
-            player.y--;
-        } else if (player.direction === 'right') {
-            player.x++;
-        } else if (player.direction === 'down') {
-            player.y++;
-        }
-        encount();
-    }
-}
-export function encount() {
-    if (map[player.x + player.y * mapWidth] === GRASS2) {
-        if (ENCOUNTER_RATE >= Math.random() * 100 | 0) {
-            battle.enemy = pokemonList[Math.random() * pokemonList.length | 0];
-            battle.friend = player.pokemons[0];
-            battle.enemyTraimaxXner = null;
-            cursor.x = 0;
-            cursor.y = 0;
-            cursor.maxX = 1;
-            cursor.maxY = 1;
-            changeSceen(SCEEN.BATTLE);
-        }
-    }
-}
