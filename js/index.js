@@ -12,11 +12,13 @@ import {sceenEquals, changeSceen} from './sceen.js';
 mainLoop.add(keyEvent);
 
 const sceenFunc = {};
-sceenFunc[SCEEN.BATTLE.MAIN] = battle;
 {
     let key;
     for (key of Object.keys(SCEEN.POKEDEX)) {
         sceenFunc[SCEEN.POKEDEX[key]] = pokedex[SCEEN.POKEDEX[key]];
+    }
+    for (key of Object.keys(SCEEN.BATTLE)) {
+        sceenFunc[SCEEN.BATTLE[key]] = battle[SCEEN.BATTLE[key]];
     }
 }
 

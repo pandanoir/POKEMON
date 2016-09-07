@@ -1,6 +1,7 @@
-import {URect, UGroup, UPoint, UText, UImage, canvasHeight, canvasWidth, buffer, battle, lineHeight, cursor, DEFAULT_FONT} from '../definitions.js';
+import {URect, UGroup, UPoint, UText, UImage, SCEEN, canvasHeight, canvasWidth, buffer, battle, lineHeight, cursor, DEFAULT_FONT} from '../definitions.js';
 
-export default () => {
+const out = {};
+out[SCEEN.BATTLE.MAIN] = () => {
     const boardHeight = 70;
     const board = new UGroup(
         new URect(new UPoint(0, canvasHeight - boardHeight), new UPoint(canvasWidth, canvasHeight)).setFillColor('#000')
@@ -26,3 +27,9 @@ export default () => {
     buffer.add(commands);
     buffer.add(cursorText);
 };
+out[SCEEN.BATTLE.ITEM] = () => {};
+out[SCEEN.BATTLE.MOVE] = () => {};
+out[SCEEN.BATTLE.CHANGE_POKEMON] = () => {};
+out[SCEEN.BATTLE.ATTACK] = () => {};
+
+export default out;
