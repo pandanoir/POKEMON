@@ -1,7 +1,8 @@
 import draw from './draw/drawMap.js';
-import {player, pressedKey, cursor, _dx, _dy, frontObjects, SCEEN} from './definitions.js';
+import {player, pressedKey, cursor, _dx, _dy, frontObjects, SCEEN, walkingStep, map, MAP, battle, pokemonList} from './definitions.js';
 import {changeSceen} from './sceen.js';
 
+const ENCOUNTER_RATE = 8;
 export default () => {
     if (player.walking === 0 && player.dash === 0) {
         for (let d = 0, dir = ['left', 'up', 'right', 'down']; d < 4; d++) {
@@ -57,7 +58,7 @@ function walk() {
     }
 }
 function encount() {
-    if (map[player.x + player.y * mapWidth] === GRASS2) {
+    if (map[player.x + player.y * mapWidth] === MAP.GRASS2) {
         if (ENCOUNTER_RATE >= Math.random() * 100 | 0) {
             battle.enemy = pokemonList[Math.random() * pokemonList.length | 0];
             battle.friend = player.pokemons[0];

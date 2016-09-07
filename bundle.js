@@ -76,6 +76,18 @@ for (key$2 of Object.keys(tiles)) {
 }
 Canvas.preload(mapSrc);
 
+const dictionary = [];
+
+// GRASSなどCONSTSを動的に生成
+const CONSTS = Object.keys(tiles).map(item => item.toUpperCase());
+const MAP = {};
+
+// GRASS = 0; dictionary[0] = grass; などを動的に生成
+for (let i = 0, _i = CONSTS.length; i < _i; i++) {
+    MAP[CONSTS[i]] = i;
+    dictionary[i] = tiles[CONSTS[i].toLowerCase()];
+}
+
 const characterImage = {
     left: './chara1/left.png',
     left1: './chara1/left1.png',
@@ -107,7 +119,7 @@ function sceenEquals(name) {
     return name === sceen$1;
 }
 
-var pokemonList$1 = [
+var pokemonList = [
     {"name": "アクサワー", "src": "akusawa.png"},
     {"name": "ビビン", "src": "bibin.png"},
     {"name": "ボボヌザウルス", "src": "bobonuzaurusu.png"},
@@ -154,6 +166,7 @@ var pokemonList$1 = [
 ;
 
 const FPS = 32;
+const walkingStep = 0 | FPS / 5;
 const DEFAULT_FONT = '13px san-self';
 const _dx = {left: -1, up: 0, right: 1, down: 0};
 const _dy = {left: 0, up: -1, right: 0, down: 1};
@@ -163,7 +176,13 @@ const menuList = ['pokemon', 'pokedex', 'status', 'setting', 'save'];
 const cursor = {
         y: 0
     };
-const battle$1 = {
+const pokedex = {
+        cursor: {
+            y: 0
+        },
+        pageYOffset: 0 // pageYOffset is not pixel. this contains the number of line.
+    };
+const battle = {
         enemy: null,
         friend: null,
         enemyTrainer: null
@@ -184,7 +203,7 @@ const player = new class Player {
                 0 > nextY || nextY > mapHeight - 1) {
                 return false;
             }
-            if (obstacles.includes(map$1[nextX + nextY * mapWidth$1])) {
+            if (obstacles.includes(map[nextX + nextY * mapWidth$1])) {
                 return false;
             }
             let frontObject;
@@ -198,65 +217,53 @@ const player = new class Player {
             return true;
         }
     };
-const dictionary = [];
-
-// GRASSなどCONSTSを動的に生成
-const CONSTS = Object.keys(tiles).map(item => item.toUpperCase());
-
-// GRASS = 0; dictionary[0] = grass; などを動的に生成
-for (let i = 0, _i = CONSTS.length; i < _i; i++) {
-    window[CONSTS[i]] = i;
-    dictionary[i] = tiles[CONSTS[i].toLowerCase()];
-}
-
-// 1次元配列でマップを表現
 const mapWidth$1 = 12;
 const mapHeight = 10;
 // 下のmapの縦の長さ
 /*const map = [
-    GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS,
-GRASS, GRASS2, GRASS, GRASS,
-    GRASS3, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS,
-GRASS, GRASS, GRASS, GRASS,
-    GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS,
-GRASS, GRASS, GRASS, GRASS,
-    GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS,
-GRASS, GRASS, GRASS, GRASS,
-    GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS,
-GRASS, GRASS, GRASS, GRASS,
-    GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS,
-GRASS, GRASS, GRASS, GRASS,
-    GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS,
-GRASS, GRASS, GRASS, GRASS,
-    GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS,
-GRASS, GRASS, GRASS, GRASS,
-    GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS,
-GRASS, GRASS, GRASS, GRASS,
-    GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS,
-GRASS, GRASS, GRASS, GRASS
-];*/
-const map$1 = [
-    GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2,
-GRASS2, GRASS2, GRASS2, GRASS2,
-    GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2,
-GRASS2, GRASS2, GRASS2, GRASS2,
-    GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2,
-GRASS2, GRASS2, GRASS2, GRASS2,
-    GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2,
-GRASS2, GRASS2, GRASS2, GRASS2,
-    GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2,
-GRASS2, GRASS2, GRASS2, GRASS2,
-    GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2,
-GRASS2, GRASS2, GRASS2, GRASS2,
-    GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2,
-GRASS2, GRASS2, GRASS2, GRASS2,
-    GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2,
-GRASS2, GRASS2, GRASS2, GRASS2,
-    GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2,
-GRASS2, GRASS2, GRASS2, GRASS2,
-    GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2, GRASS2,
-GRASS2, GRASS2, GRASS2, GRASS2
-];
+    'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS',
+'GRASS', 'GRASS2', 'GRASS', 'GRASS',
+    'GRASS3', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS',
+'GRASS', 'GRASS', 'GRASS', 'GRASS',
+    'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS',
+'GRASS', 'GRASS', 'GRASS', 'GRASS',
+    'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS',
+'GRASS', 'GRASS', 'GRASS', 'GRASS',
+    'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS',
+'GRASS', 'GRASS', 'GRASS', 'GRASS',
+    'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS',
+'GRASS', 'GRASS', 'GRASS', 'GRASS',
+    'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS',
+'GRASS', 'GRASS', 'GRASS', 'GRASS',
+    'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS',
+'GRASS', 'GRASS', 'GRASS', 'GRASS',
+    'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS',
+'GRASS', 'GRASS', 'GRASS', 'GRASS',
+    'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS', 'GRASS',
+'GRASS', 'GRASS', 'GRASS', 'GRASS'
+].map(item => MAP[item]);*/
+const map = [
+    'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2',
+'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2',
+    'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2',
+'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2',
+    'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2',
+'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2',
+    'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2',
+'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2',
+    'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2',
+'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2',
+    'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2',
+'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2',
+    'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2',
+'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2',
+    'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2',
+'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2',
+    'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2',
+'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2',
+    'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2',
+'GRASS2', 'GRASS2', 'GRASS2', 'GRASS2'
+].map(item => MAP[ITEM]);
 
 // アイテムが重なることを考慮してmap形式ではなく、[object, x, y]という配列でfrontObjectsを保持
 // objectはタイルのID(CONSTS)を入れる
@@ -264,44 +271,44 @@ let message = {};
 const backObjects = [
     ];
 const frontObjects = [
-        [SIGN, 1, 0, () => {
+        [MAP.SIGN, 1, 0, () => {
             message = {text: 'ここは はじまりの むら', next: () => changeSceen(sceen.MAP)}
             changeSceen(sceen.MESSAGE);
         }],
 
-        [ROOF1, 2, 0],
-        [ROOF2, 3, 0],
-        [ROOF3, 4, 0],
-        [ROOF4, 5, 0],
-        [ROOF5, 6, 0],
+        [MAP.ROOF1, 2, 0],
+        [MAP.ROOF2, 3, 0],
+        [MAP.ROOF3, 4, 0],
+        [MAP.ROOF4, 5, 0],
+        [MAP.ROOF5, 6, 0],
 
-        [ROOF6, 2, 1],
-        [ROOF7, 3, 1],
-        [ROOF8, 4, 1],
-        [ROOF9, 5, 1],
-        [ROOF10, 6, 1],
+        [MAP.ROOF6, 2, 1],
+        [MAP.ROOF7, 3, 1],
+        [MAP.ROOF8, 4, 1],
+        [MAP.ROOF9, 5, 1],
+        [MAP.ROOF10, 6, 1],
 
-        [ROOF11, 2, 2],
-        [ROOF12, 3, 2],
-        [ROOF13, 4, 2],
-        [ROOF14, 5, 2],
-        [ROOF15, 6, 2]
+        [MAP.ROOF11, 2, 2],
+        [MAP.ROOF12, 3, 2],
+        [MAP.ROOF13, 4, 2],
+        [MAP.ROOF14, 5, 2],
+        [MAP.ROOF15, 6, 2]
     ];
 const obstacles = [
-        SIGN,
-        ROOF3,
+        MAP.SIGN,
+        MAP.ROOF3,
 
-        ROOF6,
-        ROOF7,
-        ROOF8,
-        ROOF9,
-        ROOF10,
+        MAP.ROOF6,
+        MAP.ROOF7,
+        MAP.ROOF8,
+        MAP.ROOF9,
+        MAP.ROOF10,
 
-        ROOF11,
-        ROOF12,
-        ROOF13,
-        ROOF14,
-        ROOF15
+        MAP.ROOF11,
+        MAP.ROOF12,
+        MAP.ROOF13,
+        MAP.ROOF14,
+        MAP.ROOF15
     ];
 let canvas;
 let buffer;
@@ -328,6 +335,9 @@ function drawCanvas() {
             ), 0, 0
         );
     });
+}
+function zerofill(n, m) {
+    return '0'.repeat(m - ('' + n).length) + n;
 }
 
 const mainLoop = new class MainLoop {
@@ -356,12 +366,13 @@ const mainLoop = new class MainLoop {
     }
 }
 
-var draw$1 = () => {
+const out$1 = {};
+out$1[sceen.BATTLE.MAIN] = () => {
     const boardHeight = 70;
     const board = new UGroup(
         new URect(new UPoint(0, canvasHeight - boardHeight), new UPoint(canvasWidth, canvasHeight)).setFillColor('#000')
     );
-    const messageText = newUText(battle$1.enemy.name + ' が あらわれた！', new UPoint(9, canvasHeight - boardHeight + 9));
+    const messageText = newUText(battle.enemy.name + ' が あらわれた！', new UPoint(9, canvasHeight - boardHeight + 9));
     const commands = new UGroup(
             new URect(new UPoint(180 - 9, canvasHeight - boardHeight + 9), new UPoint(canvasWidth - 9, canvasHeight - 9)).setStrokeColor('#fff'),
             newUText('たたかう', new UPoint(200, canvasHeight - boardHeight + 9 + 5)),
@@ -371,7 +382,7 @@ var draw$1 = () => {
         );
     const cursorText = newUText('>', new UPoint(190 + cursor.x * 70, canvasHeight - boardHeight + 9 + 5 + lineHeight * cursor.y));
 
-    const enemyImage = new UImage('./pokemon/' + battle$1.enemy.src, new UPoint(0, 0));
+    const enemyImage = new UImage('./pokemon/' + battle.enemy.src, new UPoint(0, 0));
 
     function newUText(string, point) {
         return new UText(string, point).setFillColor('#fff').setBaseline('top').setFont(DEFAULT_FONT);
@@ -382,10 +393,15 @@ var draw$1 = () => {
     buffer.add(commands);
     buffer.add(cursorText);
 };
+out$1[sceen.BATTLE.ITEM] = () => {};
+out$1[sceen.BATTLE.MOVE] = () => {};
+out$1[sceen.BATTLE.CHANGE_POKEMON] = () => {};
+out$1[sceen.BATTLE.ATTACK] = () => {};
 
 const commands = [['battle', 'item'], ['pokemon', 'escape']];
-var battle$2 = () => {
-    draw$1();
+const out = {};
+out[sceen.BATTLE.MAIN] = () => {
+    out$1();
     if (pressedKey.down === 1 && cursor.maxY >= cursor.y + 1) {
         cursor.y++;
     }
@@ -414,22 +430,25 @@ var battle$2 = () => {
         }
     }
 };
+out[sceen.BATTLE.ITEM] = () => {};
+out[sceen.BATTLE.MOVE] = () => {};
+out[sceen.BATTLE.CHANGE_POKEMON] = () => {};
+out[sceen.BATTLE.ATTACK] = () => {};
 
-var draw$2 = () => {
+var draw$1 = () => {
     buffer.add(new UText('loading...', new UPoint(canvasWidth / 2, canvasHeight / 2)).setAlign('center').setBaseline('middle').setFont(DEFAULT_FONT));
 };
 
 var loading = () => {
-    draw$2();
+    draw$1();
 };
 
-const walkingStep$1 = 0 | FPS / 5;
 var drawMap = () => {
     let dx = 0,
         dy = 0;
 
-    const walking = 0 | player.walking / (walkingStep$1 / 4);
-    const dash = 0 | player.dash / (walkingStep$1 / 4);
+    const walking = 0 | player.walking / (walkingStep / 4);
+    const dash = 0 | player.dash / (walkingStep / 4);
     if (player.direction === 'left')
         dx = walking * 8 + dash * 16; // if dash !== 0, walking is always 0.
     if (player.direction === 'up')
@@ -448,7 +467,7 @@ var drawMap = () => {
             if (X >= canvasWidth || -tileSize >= X ||
                 Y >= canvasHeight || -tileSize >= Y) continue; // over canvas
             buffer.add(
-                dictionary[map$1[x + y * mapWidth$1]]
+                dictionary[map[x + y * mapWidth$1]]
                 .move(X, Y)
             );
         }
@@ -492,7 +511,8 @@ var drawMap = () => {
     }
 }
 
-var map$2 = () => {
+const ENCOUNTER_RATE = 8;
+var map$1 = () => {
     if (player.walking === 0 && player.dash === 0) {
         for (let d = 0, dir = ['left', 'up', 'right', 'down']; d < 4; d++) {
             if (pressedKey[dir[d]] > 0) {
@@ -547,7 +567,7 @@ function walk() {
     }
 }
 function encount() {
-    if (map[player.x + player.y * mapWidth] === GRASS2) {
+    if (map[player.x + player.y * mapWidth] === MAP.GRASS2) {
         if (ENCOUNTER_RATE >= Math.random() * 100 | 0) {
             battle.enemy = pokemonList[Math.random() * pokemonList.length | 0];
             battle.friend = player.pokemons[0];
@@ -561,7 +581,7 @@ function encount() {
     }
 }
 
-var draw$3 = () => {
+var draw$2 = () => {
     const titleHeight = 16;
     const title = newUText('Menu', new UPoint(0, 0)).setFont('16px san-self');
     const board = new UGroup(
@@ -584,7 +604,7 @@ var draw$3 = () => {
 let movesCursor = 0;
 var menu = () => {
     drawMap();
-    draw$3();
+    draw$2();
     if ((pressedKey.up === 1 || pressedKey.up > 10) && movesCursor === 0 && cursor.y - 1 >= 0) {
         cursor.y--;
         movesCursor = 1;
@@ -611,7 +631,7 @@ var menu = () => {
     }
 };
 
-var draw$4 = () => {
+var draw$3 = () => {
     const boardHeight = 100;
     const messageBoard = new UGroup(
         new URect(new UPoint(0, canvasHeight - boardHeight), new UPoint(canvasWidth, canvasHeight)).setFillColor('#000'),
@@ -631,9 +651,80 @@ var draw$4 = () => {
 
 var message$1 = () => {
     drawMap();
-    draw$4();
+    draw$3();
     if (pressedKey.space === 1) {
         message.next();
+    }
+};
+
+const out$3 = {};
+out$3[sceen.POKEDEX.DETAIL] = (id) => {
+    const name = new UGroup(
+        new URect(new UPoint(0, 0), new UPoint(150, 24)).setFillColor('#fff'),
+        new URect(new UPoint(0, 0), new UPoint(150, 24)),
+        newUText('No ' + zerofill(id + 1, 3) + ' ' +pokemonList[id].name, new UPoint(3, 2))
+    );
+
+    buffer.add(new UImage('./pokemon/' + pokemonList[id].src, new UPoint(0, 0)));
+    buffer.add(name);
+
+    function newUText(string, point) {
+        return new UText(string, point).setFillColor('#555').setBaseline('top').setFont(DEFAULT_FONT);
+    };
+};
+out$3[sceen.POKEDEX.INDEX] = () => {
+    const cursorText = newUText('>', new UPoint(0, (pokedex.cursor.y - pokedex.pageYOffset) * lineHeight));
+
+    buffer.add(cursorText);
+    for (let i = 0, _i = pokemonList.length; i < _i; i++) {
+        const Y = (i - pokedex.pageYOffset) * lineHeight;
+        if (Y >= canvasHeight || -2 * lineHeight >= Y) continue;
+        buffer.add(newUText('No ' + zerofill(i + 1, 3), new UPoint(lineHeight, Y)));
+        buffer.add(newUText(pokemonList[i].name, new UPoint(lineHeight * 6, Y)));
+    }
+    function newUText(string, point) {
+        return new UText(string, point).setFillColor('#555').setBaseline('top').setFont('13px san-self');
+    };
+};
+
+let movesCursor$1 = 0;
+const out$2 = {};
+out$2[sceen.POKEDEX.DETAIL] = () => {
+    out$3[sceen.POKEDEX.DETAIL](pokedex.detailID);
+    if (pressedKey.space === 1 || pressedKey.B === 1) {
+        changeSceen(sceen.POKEDEX.INDEX);
+    }
+};
+out$2[sceen.POKEDEX.INDEX] = () => {
+    out$3[sceen.POKEDEX.INDEX]();
+    if ((pressedKey.up === 1 || pressedKey.up > 10)
+        && movesCursor$1 === 0 && pokedex.cursor.y - 1 >= 0) {
+        pokedex.cursor.y--;
+        if (pokedex.cursor.y - pokedex.pageYOffset <= 5 && pokedex.pageYOffset - 1 >= 0) {
+            pokedex.pageYOffset--;
+        }
+        movesCursor$1 = 1;
+    }
+    if ((pressedKey.down === 1 || pressedKey.down > 10)
+        && movesCursor$1 === 0 && pokemonList.length > pokedex.cursor.y + 1) {
+        pokedex.cursor.y++;
+        if (pokedex.cursor.y - pokedex.pageYOffset >= 25 && (pokemonList.length - (pokedex.pageYOffset)) * lineHeight >= canvasHeight) {
+            pokedex.pageYOffset++;
+        }
+        movesCursor$1 = 1;
+    }
+    if (pressedKey.space === 1) {
+        pokedex.detailID = pokedex.cursor.y;
+        changeSceen(sceen.POKEDEX.DETAIL);
+    }
+    if (pressedKey.B === 1) {
+        changeSceen(sceen.MENU);
+    }
+    if (movesCursor$1 !== 0) {
+        movesCursor$1++;
+    }
+    if (movesCursor$1 === 3) {
+        movesCursor$1 = 0;
     }
 };
 
@@ -654,13 +745,20 @@ var keyEvent = () => {
 mainLoop.add(keyEvent);
 
 const sceenFunc = {};
-sceenFunc[sceen.BATTLE.MAIN] = battle$2;
+{
+    let key;
+    for (key of Object.keys(sceen.POKEDEX)) {
+        sceenFunc[sceen.POKEDEX[key]] = out$2[sceen.POKEDEX[key]];
+    }
+    for (key of Object.keys(sceen.BATTLE)) {
+        sceenFunc[sceen.BATTLE[key]] = out[sceen.BATTLE[key]];
+    }
+}
+
 sceenFunc[sceen.LOADING] = loading;
-sceenFunc[sceen.MAP] = map$2;
+sceenFunc[sceen.MAP] = map$1;
 sceenFunc[sceen.MENU] = menu;
 sceenFunc[sceen.MESSAGE] = message$1;
-sceenFunc[sceen.POKEDEX.INDEX] = pokedexIndex;
-sceenFunc[sceen.POKEDEX.DETAIL] = pokedexDetail;
 let key;
 for (key of Object.keys(sceenFunc)) {
     const SCEEN = key, func = sceenFunc[key];
@@ -678,7 +776,7 @@ new Promise((resolve, reject) => {
 })
 .then(() => {
     changeSceen(sceen.LOADING);
-    const pokemonImage = pokemonList$1.map(_ => './pokemon/' + _.src);
+    const pokemonImage = pokemonList.map(_ => './pokemon/' + _.src);
     Canvas.preload(...pokemonImage).then(() => {
         changeSceen(sceen.START);
     });

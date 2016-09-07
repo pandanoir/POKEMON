@@ -32,4 +32,17 @@ for (key of Object.keys(tiles)) {
     tiles[key] = mapImage.trim(tiles[key], tileSize, tileSize);
 }
 Canvas.preload(mapSrc);
-export {tiles, tileSize};
+
+const dictionary = [];
+
+// GRASSなどCONSTSを動的に生成
+const CONSTS = Object.keys(tiles).map(item => item.toUpperCase());
+const MAP = {};
+
+// GRASS = 0; dictionary[0] = grass; などを動的に生成
+for (let i = 0, _i = CONSTS.length; i < _i; i++) {
+    MAP[CONSTS[i]] = i;
+    dictionary[i] = tiles[CONSTS[i].toLowerCase()];
+}
+
+export {tiles, tileSize, dictionary, MAP};
