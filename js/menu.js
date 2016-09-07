@@ -23,7 +23,7 @@ export default () => {
     }
     if (pressedKey.space === 1) {
         if (menuList[cursor.y] === 'pokedex') {
-            changeSceen(SCEEN.POKEDEX_INDEX);
+            changeSceen(SCEEN.POKEDEX.INDEX);
         } else {
             changeSceen(SCEEN.MAP);
         }

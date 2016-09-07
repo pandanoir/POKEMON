@@ -1,10 +1,18 @@
 const sceen = {
-    BATTLE: 'BATTLE',
+    BATTLE: {
+        MAIN: 'BATTLE_MAIN',
+        ITEM: 'BATTLE_ITEM',
+        MOVE: 'BATTLE_MOVE',
+        CHANGE_POKEMON: 'BATTLE_CHANGE_POKEMON',
+        ATTACK: 'BATTLE_ATTACK'
+    },
     MAP: 'MAP',
     MENU: 'MENU',
     MESSAGE: 'MESSAGE',
-    POKEDEX_INDEX: 'POKEDEX_INDEX',
-    POKEDEX_DETAIL: 'POKEDEX_DETAIL',
+    POKEDEX {
+        INDEX: 'POKEDEX_INDEX',
+        DETAIL: 'POKEDEX_DETAIL'
+    },
     LOADING: 'LOADING'
 };
 sceen.START = sceen.MAP;

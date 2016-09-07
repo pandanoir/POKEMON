@@ -6,6 +6,6 @@ let movesCursor = 0;
 export default () => {
     draw(pokedex.detailID);
     if (pressedKey.space === 1 || pressedKey.B === 1) {
-        changeSceen(SCEEN.POKEDEX_INDEX);
+        changeSceen(SCEEN.POKEDEX.INDEX);
     }
 }

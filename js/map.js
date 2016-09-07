@@ -66,7 +66,7 @@ function encount() {
             cursor.y = 0;
             cursor.maxX = 1;
             cursor.maxY = 1;
-            changeSceen(SCEEN.BATTLE);
+            changeSceen(SCEEN.BATTLE.MAIN);
         }
     }
 }

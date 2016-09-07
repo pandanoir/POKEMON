@@ -23,7 +23,7 @@ export default () => {
     }
     if (pressedKey.space === 1) {
         pokedex.detailID = pokedex.cursor.y;
-        changeSceen(SCEEN.POKEDEX_DETAIL);
+        changeSceen(SCEEN.POKEDEX.DETAIL);
     }
     if (pressedKey.B === 1) {
         changeSceen(SCEEN.MENU);
