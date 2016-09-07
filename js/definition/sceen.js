@@ -9,7 +9,7 @@ const sceen = {
     MAP: 'MAP',
     MENU: 'MENU',
     MESSAGE: 'MESSAGE',
-    POKEDEX {
+    POKEDEX: {
         INDEX: 'POKEDEX_INDEX',
         DETAIL: 'POKEDEX_DETAIL'
     },
